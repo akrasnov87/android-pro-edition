@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference android:title="Версия" android:key="MBL_APP_VERSION" android:summary="0.0.0.0" app:summary="Общая информация о приложении"/>
+    <Preference android:icon="@drawable/ic_baseline_system_update_24" android:title="Доступно обновление" android:key="SERVER_APP_VERSION" android:summary="0.0.0.0" app:isPreferenceVisible="false" app:summary="Информация о доступном обновлении"/>
+    <Preference android:icon="@drawable/ic_baseline_settings_system_daydream_24" android:title="Сервисы" android:key="SERVICE" android:summary="Настройки предоставленные сервером"/>
+
+    <PreferenceCategory android:icon="@drawable/ic_bug_report_24dp" android:title="Отладка" android:summary="Включен режим отладки приложения">
+        <SwitchPreference android:title="Включить" android:key="MBL_DEBUG" android:summary="Включить режим отладки"/>
+        <Preference android:title="Создать исключение" android:key="MBL_GENERATED_ERROR" android:summary="Генерация исключения для проверки механизма обработки ошибок. Внимание будет перезапуск приложения!!!"/>
+        <Preference android:title="Создать уведомления" android:key="MBL_GENERATED_NOTIFICATION" android:summary="Тестовая отправка уведомления"/>
+    </PreferenceCategory>
+</PreferenceScreen>

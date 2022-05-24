@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             tools:context=".ui.result.ResultFragment">
 
-            <com.mobwal.home.ui.GeoLocationLayout
+            <com.mobwal.pro.ui.GeoLocationLayout
                 app:layout_constraintTop_toTopOf="parent"
                 android:id="@+id/create_result_location"
                 android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:layout_marginStart="@dimen/indent_16"
                 android:layout_marginEnd="@dimen/indent_16"/>
 
-            <com.mobwal.home.ui.CheckLayout
+            <com.mobwal.pro.ui.CheckLayout
                 app:layout_constraintTop_toBottomOf="@id/create_result_location"
                 android:id="@+id/create_result_check"
                 android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                 android:layout_marginEnd="@dimen/indent_16"
                 android:textColor="?android:attr/textColorSecondary"/>
 
-            <com.mobwal.home.ui.AttachmentLayout
+            <com.mobwal.pro.ui.AttachmentLayout
                 android:id="@+id/create_result_gallery"
                 android:layout_width="match_parent"
                 android:layout_height="96dp"

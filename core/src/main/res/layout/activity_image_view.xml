@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ru.mobnius.core.ui.component.ErrorFieldView
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorSecondaryText"
+        android:elevation="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/image_view_progress_bar"
+        android:padding="8dp"
+        android:theme="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:layout_gravity="center_horizontal"
+        android:progressDrawable="@drawable/progress_background"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error"/>
+
+    <ProgressBar
+        android:id="@+id/image_view_loading_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/image_view_progress_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/indent_medium"
+        android:contentDescription="@string/image"
+        android:scaleType="matrix"
+        app:layout_constraintBottom_toTopOf="@id/image_view_rotate"
+        app:layout_constraintTop_toBottomOf="@id/image_view_loading_photo"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="-16dp" />
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="Hello World!"
+        app:layout_constraintBottom_toTopOf="@id/image_view_rotate"
+        app:layout_constraintTop_toBottomOf="@id/image_view_progress_bar" />
+
+    <ImageButton
+        android:id="@+id/image_view_rotate"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="@dimen/indent_medium"
+        android:background="@drawable/ic_baseline_rotate_right_24"
+        android:contentDescription="@string/image_rotate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/image_view_center"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="@dimen/indent_medium"
+        android:background="@drawable/ic_baseline_filter_center_focus_24"
+        android:contentDescription="@string/image_view_center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/image_view_delete"
+        app:layout_constraintStart_toEndOf="@id/image_view_rotate" />
+
+    <ImageButton
+        android:id="@+id/image_view_delete"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="@dimen/indent_medium"
+        android:background="@drawable/ic_baseline_delete_24"
+        android:contentDescription="@string/image_view_remove"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

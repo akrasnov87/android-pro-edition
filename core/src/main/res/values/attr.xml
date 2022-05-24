@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ErrorFieldView">
+        <attr name="errorMessageTextSize" format="reference" />
+        <attr name="errorMessageTextColor" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="TextFieldView">
+        <attr name="labelText" format="reference|string" />
+        <attr name="labelTextSize" format="reference" />
+        <attr name="labelTextColor" format="reference" />
+
+        <attr name="valueText" format="reference|string" />
+        <attr name="valueTextSize" format="reference" />
+        <attr name="valueTextColor" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="SignatureField">
+        <attr name="signatureSrc" format="string" />
+        <attr name="signatureLabel" format="string" />
+        <attr name="signatureRemoveIcon" format="reference" />
+        <attr name="signatureDefaultSrc" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ExpandableTextLayout">
+        <attr name="titleText" format="string" />
+        <attr name="contentText" format="string" />
+        <attr name="expanded" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="AutoCompleteFieldView">
+        <attr name="autoCompleteLabel" format="string" />
+        <attr name="autoCompleteHint" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="FooterBar">
+        <attr name="saveButtonText" format="string" />
+        <attr name="secondButtonVisible" format="boolean" />
+        <attr name="secondIconButton" format="reference" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference android:title="Адрес запроса" android:key="MBL_BASE_URL" android:summary="Базовый адрес для запросов"/>
+    <Preference android:title="Синхронизация" android:key="MBL_BG_SYNC_INTERVAL" android:summary="Интервал синхронизации фоновых данных"/>
+    <Preference android:title="Трекинг" android:key="MBL_TRACK_INTERVAL" android:summary="Интервал получения гео-данных"/>
+    <Preference android:title="Телеметрия" android:key="MBL_TELEMETRY_INTERVAL" android:summary="Интервал сбора показаний мобильного устройства"/>
+    <Preference android:title="Логирование" android:key="MBL_LOG" android:summary="Режим логирования действий"/>
+    <Preference android:title="Геолокация" android:key="MBL_LOCATION" android:summary="Режим получения координат"/>
+    <Preference android:title="Геолокация" android:key="MBL_TRACK_LOCATION" android:summary="Режим фонового получения координат"/>
+    <Preference android:title="Геолокация" android:key="MBL_DISTANCE" android:summary="Минимальная дистанция для обновления координат"/>
+    <SwitchPreference android:enabled="false" android:title="Проверка включения гео-данных" android:key="MBL_GEO_CHECK" android:summary="отключена"/>
+    <Preference android:title="Сжатие" android:key="MBL_ZIP" android:summary="Сжатие данных при обмене информацией с сервером"/>
+    <Preference android:title="Продолжительность видеосъемки" android:key="MBL_VIDEO_DURATION" android:summary="Продолжительность: "/>
+    <Preference android:title="Качество видео" android:key="MBL_VIDEO_QUALITY" android:summary="Качество: "/>
+</PreferenceScreen>

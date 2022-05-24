@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/auth_no_internet"
+        android:text="@string/no_internet"
+        android:layout_alignParentTop="true"
+        tools:visibility="visible"
+        style="@style/BlueTheme.Error.Message"/>
+
+    <TextView
+        android:id="@+id/auth_no_server"
+        android:text="@string/no_server_connection"
+        android:layout_below="@id/auth_no_internet"
+        tools:visibility="visible"
+        style="@style/BlueTheme.Error.Message"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/auth_version"
+        android:layout_below="@id/auth_no_server">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/indent_high"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/indent_high">
+
+            <!-- логин -->
+            <EditText
+                android:id="@+id/auth_login"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/high_font_size"
+                android:hint="@string/login"
+                android:inputType="text"
+                tools:ignore="Autofill"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/auth_login_clear"/>
+
+            <ImageButton
+                android:id="@+id/auth_login_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_clear_text_24dp"
+                android:background="@android:color/transparent"
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:contentDescription="@string/clear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/auth_login"/>
+
+            <!-- пароль -->
+            <EditText
+                android:id="@+id/auth_password"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:textSize="@dimen/high_font_size"
+                android:inputType="textPassword"
+                tools:ignore="Autofill"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/auth_login"
+                app:layout_constraintEnd_toStartOf="@id/auth_password_show"/>
+
+            <ImageButton
+                android:id="@+id/auth_password_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_visibility_off_outlined_24dp"
+                android:background="@android:color/transparent"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/show_password"
+                app:layout_constraintStart_toEndOf="@id/auth_password"
+                app:layout_constraintTop_toTopOf="@id/auth_password"
+                app:layout_constraintEnd_toStartOf="@id/auth_password_clear"
+                app:layout_constraintBottom_toBottomOf="@id/auth_password" />
+
+            <ImageButton
+                android:id="@+id/auth_password_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_clear_text_24dp"
+                android:background="@android:color/transparent"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:contentDescription="@string/clear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/auth_password"
+                app:layout_constraintBottom_toBottomOf="@id/auth_password"/>
+
+            <Button
+                android:id="@+id/auth_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/indent_high"
+                android:enabled="false"
+                android:text="@string/enter"
+                android:textSize="@dimen/medium_font_size"
+                android:padding="@dimen/indent_high"
+                style="@style/BlueTheme.ButtonStyle"
+                app:layout_constraintTop_toBottomOf="@id/auth_password"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/auth_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/auth_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/indent_medium"
+        android:layout_marginBottom="@dimen/indent_medium"
+        android:textSize="@dimen/small_font_size"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true"
+        tools:text="Версия: 4.2.0.520" />
+
+</RelativeLayout>

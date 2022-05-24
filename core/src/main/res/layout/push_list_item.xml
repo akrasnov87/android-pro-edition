@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/indent_medium">
+
+    <TextView
+        android:id="@+id/push_list_item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/push_list_item_date"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="@dimen/indent_medium"
+        android:textSize="@dimen/medium_font_size"
+        android:textColor="@color/colorHint"
+        tools:text="Заголовок" />
+
+    <TextView
+        android:id="@+id/push_list_item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="@dimen/small_font_size"
+        android:textColor="@color/colorHint"
+        tools:text="21.05.2020" />
+
+    <TextView
+        android:id="@+id/push_list_item_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/indent_medium"
+        tools:text="Текст уведомления"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="@dimen/small_font_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/push_list_item_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

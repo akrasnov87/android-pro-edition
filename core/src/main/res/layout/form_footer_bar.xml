@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/indent_medium">
+
+        <Button
+            android:id="@+id/footer_bar_save"
+            style="@style/BlueTheme.ButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            tools:enabled="true"
+            android:layout_marginEnd="@dimen/indent_medium"
+            tools:text="Сохранить"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/footer_bar_second_button"/>
+
+        <ImageButton
+            android:id="@+id/footer_bar_second_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@drawable/ic_baseline_wallpaper_48"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/to_gallery"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/footer_bar_save"
+            app:layout_constraintBottom_toBottomOf="@id/footer_bar_save"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

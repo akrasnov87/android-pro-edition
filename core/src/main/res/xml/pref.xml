@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference android:title="Версия" android:key="MBL_APP_VERSION" android:summary="0.0.0.0" app:summary="Общая информация о приложении"/>
+
+    <PreferenceCategory android:icon="@drawable/ic_settings_remote_24dp" android:title="Администрирование" android:summary="Серверные настройки">
+        <Preference android:title="Синхронизация" android:key="MBL_BG_SYNC_INTERVAL" android:summary="Интервал синхронизации фоновых данных"/>
+        <Preference android:title="Трекинг" android:key="MBL_TRACK_INTERVAL" android:summary="Интервал получения гео-данных"/>
+        <Preference android:title="Телеметрия" android:key="MBL_TELEMETRY_INTERVAL" android:summary="Интервал сбора показаний мобильного устройства"/>
+        <SwitchPreference android:enabled="false" android:title="Проверка включения гео-данных" android:key="MBL_GEO_CHECK" android:summary="отключена"/>
+        <Preference android:title="Доступно обновление" android:key="SERVER_APP_VERSION" android:summary="0.0.0.0" app:isPreferenceVisible="false" app:summary="Информация о доступном обновлении"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:icon="@drawable/ic_pin_icon_24dp" android:title="Авторизация" android:summary="Настройки авторизации">
+        <SwitchPreference android:enabled="true" android:title="Пин-код" android:key="MBL_PIN" android:summary="Включить режим авторизации по пин-коду"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:icon="@drawable/ic_bug_report_24dp" android:title="Отладка" android:summary="Включен режим отладки приложения">
+        <SwitchPreference android:title="Включить" android:key="MBL_DEBUG" android:summary="Включить режим отладки"/>
+        <Preference android:title="Создать исключение" android:key="MBL_GENERATED_ERROR" android:summary="Генерация исключения для проверки механизма обработки ошибок. Внимание будет перезапуск приложения!!!"/>
+    </PreferenceCategory>
+</PreferenceScreen>

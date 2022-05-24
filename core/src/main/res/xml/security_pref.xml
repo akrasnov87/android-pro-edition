@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        android:enabled="true"
+        android:key="MBL_PIN"
+        android:summary="Включить режим авторизации по пин-коду"
+        android:title="Пин-код"
+        android:icon="@drawable/ic_pin_icon_24dp"/>
+
+    <Preference
+        android:title="Сбросить настройки"
+        android:key="MBL_RESET"
+        android:summary="Сброс настроек и авторизации"
+        android:icon="@drawable/ic_baseline_delete_24"/>
+</PreferenceScreen>

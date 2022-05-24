@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/gallery_footer_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/indent_small"
+        android:padding="@dimen/indent_medium"
+        android:textColor="?android:attr/colorPrimary"
+        tools:textColor="@android:color/black"
+        android:elevation="4dp"
+        android:gravity="center|center_horizontal"
+        android:text="@string/no_attachments"
+        android:textSize="@dimen/high_font_size"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery_footer_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gallery_footer_bar"/>
+
+    <ru.mobnius.core.ui.component.FooterBar
+        android:id="@+id/gallery_footer_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:saveButtonText="@string/save"
+        app:secondButtonVisible="true"
+        app:secondIconButton="@drawable/ic_baseline_description_48"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

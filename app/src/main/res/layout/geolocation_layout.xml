@@ -29,7 +29,7 @@
         android:textColor="?android:attr/textColorSecondary"
         tools:text="10.000000 : 11.000000"/>
 
-    <com.mobwal.home.ui.global.HorizontalProgressLayout
+    <com.mobwal.pro.ui.global.HorizontalProgressLayout
         android:id="@+id/location_progress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

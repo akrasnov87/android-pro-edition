@@ -1,0 +1,94 @@
+<resources>
+
+    <style name="BlueTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+        <item name="android:colorBackground">@color/colorSecondaryText</item>
+        <item name="android:textSize">@dimen/small_font_size</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+        <item name="android:colorAccent">@color/colorFloatingLight</item>
+        <item name="colorAccent">@color/colorFloatingLight</item>
+        <item name="colorError">@color/colorSecondary</item>
+        <item name="titleTextColor">@color/colorSecondaryText</item>
+        <item name="colorBackgroundFloating">@color/colorSecondaryText</item>
+        <item name="android:windowBackground">@color/colorSecondaryText</item>
+        <item name="android:textColorHint">@color/colorHint</item>
+        <item name="android:textColorSecondary">@color/colorHintDark</item>
+
+        <item name="buttonStyle">@style/BlueTheme.Dialog.ButtonStyle</item>
+        <item name="editTextStyle">@style/BlueTheme.EditTextStyle</item>
+    </style>
+
+    <style name="BlueTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BlueTheme.Error">
+
+    </style>
+
+    <style name="BlueTheme.Error.Message">
+        <item name="android:visibility">gone</item>
+        <item name="android:textColor">@color/colorSecondary</item>
+        <item name="android:textSize">@dimen/medium_font_size</item>
+        <item name="android:padding">@dimen/indent_medium</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="textAllCaps">true</item>
+        <item name="elevation">@dimen/elevation</item>
+    </style>
+
+    <style name="BlueTheme.Error.Close">
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <!--Стиль для родительского layout отдельного ряда в RecyclerView (item_something.xml)-->
+    <style name="BlueTheme.Dialog.ButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="BlueTheme.ButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/button_state</item>
+        <item name="android:textColor">@color/colorSecondaryText</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="BlueTheme.ButtonStyle.Alt" parent="BlueTheme.ButtonStyle">
+        <item name="android:background">@drawable/button_state_alt</item>
+    </style>
+
+    <style name="BlueTheme.EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/colorPrimaryText</item>
+    </style>
+
+    <style name="BlueTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@drawable/side_nav_bar</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:gravity">bottom</item>
+    </style>
+
+    <style name="BlueTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/colorSecondaryText</item>
+    </style>
+
+    <style name="BlueTheme.NavigationItemView" parent="TextAppearance.AppCompat.Light.SearchResult.Subtitle">
+        <item name="android:textSize">@dimen/small_font_size</item>
+        <item name="android:textColor">@color/colorHint</item>
+    </style>
+
+    <style name="BlueTheme.ProgressBarHorizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">40dip</item>
+        <item name="android:maxHeight">60dip</item>
+        <item name="android:scaleY">8</item>
+        <item name="android:progressTint">@color/colorSuccess</item>
+        <item name="android:secondaryProgressTint">@color/colorHintLight</item>
+    </style>
+
+</resources>

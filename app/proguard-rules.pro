@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.mobwal.home.models.db.** { *; }
+-keep class com.mobwal.pro.models.db.** { *; }
 
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable

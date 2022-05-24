@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.route.RouteInfoFragment">
 
-    <com.mobwal.home.ui.global.HorizontalProgressLayout
+    <com.mobwal.pro.ui.global.HorizontalProgressLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"

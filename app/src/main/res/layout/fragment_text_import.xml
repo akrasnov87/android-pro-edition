@@ -36,7 +36,7 @@
         app:srcCompat="@drawable/ic_baseline_save_alt_24"
         android:contentDescription="@string/menu_import_task" />
 
-    <com.mobwal.home.ui.global.HorizontalProgressLayout
+    <com.mobwal.pro.ui.global.HorizontalProgressLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"

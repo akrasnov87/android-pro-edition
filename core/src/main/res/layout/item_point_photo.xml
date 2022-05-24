@@ -1,0 +1,98 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="4dp"
+    android:padding="@dimen/indent_medium">
+
+    <ImageView
+        android:id="@+id/item_photo_thumb"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:contentDescription="@string/image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_broken_image_24"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/item_photo_loading"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/image"
+        app:layout_constraintBottom_toBottomOf="@id/item_photo_thumb"
+        app:layout_constraintEnd_toEndOf="@id/item_photo_thumb"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_photo_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/indent_medium"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="@dimen/medium_font_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_photo_thumb"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Тип акта" />
+
+    <TextView
+        android:id="@+id/item_photo_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/indent_medium"
+        android:layout_marginTop="@dimen/indent_small"
+        android:textColor="@color/colorHint"
+        android:textSize="@dimen/small_font_size"
+        app:layout_constraintEnd_toStartOf="@id/item_photo_location"
+        app:layout_constraintStart_toEndOf="@id/item_photo_thumb"
+        app:layout_constraintTop_toBottomOf="@id/item_photo_name"
+        tools:text="08:49:19" />
+
+    <TextView
+        android:id="@+id/item_photo_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/indent_small"
+        android:drawablePadding="@dimen/indent_medium"
+        android:textColor="@color/colorHintLight"
+        android:textSize="@dimen/little_font_size"
+        app:drawableStartCompat="@drawable/ic_place_14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_photo_name"
+        tools:text="-122,0840 : 37,4220" />
+
+    <TextView
+        android:id="@+id/item_photo_violation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/indent_medium"
+        android:layout_marginTop="@dimen/indent_small"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/colorHint"
+        android:textSize="@dimen/small_font_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_photo_thumb"
+        app:layout_constraintTop_toBottomOf="@id/item_photo_date"
+        tools:text="Текст примечания, скрытый если он слишком длинный" />
+
+    <TextView
+        android:id="@+id/item_photo_notice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/indent_medium"
+        android:layout_marginTop="@dimen/indent_small"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/colorHintLight"
+        android:textSize="@dimen/small_font_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_photo_thumb"
+        app:layout_constraintTop_toBottomOf="@id/item_photo_violation"
+        tools:text="Текст примечания, скрытый если он слишком длинный" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

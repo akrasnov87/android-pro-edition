@@ -14,7 +14,7 @@
         android:padding="@dimen/indent_16"
         android:orientation="vertical">
 
-        <com.mobwal.home.ui.GeoLocationLayout
+        <com.mobwal.pro.ui.GeoLocationLayout
             android:id="@+id/create_point_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
