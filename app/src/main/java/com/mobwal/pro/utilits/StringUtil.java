@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 import com.mobwal.pro.R;
@@ -173,5 +174,15 @@ public class StringUtil {
             len--;
         }
         return ((st > 0) || (len < data.length())) ? data.substring(st, len) : data;
+    }
+
+    public static String getRandomString(final int sizeOfRandomString) {
+        String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
+        final Random random = new Random();
+        final StringBuilder sb = new StringBuilder(sizeOfRandomString);
+        for(int i = 0;i < sizeOfRandomString; ++i) {
+            sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        }
+        return sb.toString();
     }
 }

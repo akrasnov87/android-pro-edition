@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class LogUtilTest {
     private Context appContext;
@@ -22,9 +23,9 @@ public class LogUtilTest {
     }
 
     @Test
-    public void write() throws IOException {
-        for(int i = 0; i < 100; i++) {
-            LogUtil.writeText(appContext, "Тест");
+    public void write() {
+        for(int i = 0; i < 1000; i++) {
+            LogUtil.writeText(appContext, i + ": " + StringUtil.getRandomString(1024));
         }
     }
 
