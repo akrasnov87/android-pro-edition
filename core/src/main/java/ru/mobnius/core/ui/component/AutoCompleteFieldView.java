@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.BaseSpinnerAdapter;
 import ru.mobnius.core.utils.LongUtil;
@@ -68,13 +68,13 @@ public class AutoCompleteFieldView extends LinearLayout {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 @SuppressWarnings("rawtypes")
                 HashMap map = (HashMap) parent.getItemAtPosition(position);
-                String text = (String)map.get(Names.NAME);
+                String text = (String)map.get(NamesCore.NAME);
 
                 actvFieldValue.setText(text);
-                if(map.get(Names.ID) instanceof Long) {
-                    mValue = Long.toString(LongUtil.convertToLong(map.get(Names.ID)));
+                if(map.get(NamesCore.ID) instanceof Long) {
+                    mValue = Long.toString(LongUtil.convertToLong(map.get(NamesCore.ID)));
                 } else {
-                    mValue = (String) map.get(Names.ID);
+                    mValue = (String) map.get(NamesCore.ID);
                 }
 
                 ibCancel.setVisibility(VISIBLE);
@@ -177,10 +177,10 @@ public class AutoCompleteFieldView extends LinearLayout {
             for(int i = 0; i < mAdapter.getCount(); i++) {
                 @SuppressWarnings("rawtypes")
                 HashMap m = (HashMap)mAdapter.getMaps().get(i);
-                String result = (String)m.get(Names.NAME);
+                String result = (String)m.get(NamesCore.NAME);
                 assert result != null;
                 if(result.equals(text)) {
-                    return (String) m.get(Names.ID);
+                    return (String) m.get(NamesCore.ID);
                 }
             }
         }
@@ -197,7 +197,7 @@ public class AutoCompleteFieldView extends LinearLayout {
 
     public static class AutoCompleteFieldAdapter extends BaseSpinnerAdapter implements Filterable {
 
-        private static String[] from = { Names.NAME };
+        private static String[] from = { NamesCore.NAME };
         private static int[] to = { R.id.simple_type_item_name };
 
         public AutoCompleteFieldAdapter(Context context) {
@@ -216,10 +216,10 @@ public class AutoCompleteFieldView extends LinearLayout {
                     @SuppressWarnings("rawtypes")
                     HashMap m = (HashMap) mMaps.get(i);
                     String resultId;
-                    if (m.get(Names.ID) instanceof Long) {
-                        resultId = Long.toString(LongUtil.convertToLong(m.get(Names.ID)));
+                    if (m.get(NamesCore.ID) instanceof Long) {
+                        resultId = Long.toString(LongUtil.convertToLong(m.get(NamesCore.ID)));
                     } else {
-                        resultId = (String) m.get(Names.ID);
+                        resultId = (String) m.get(NamesCore.ID);
                     }
                     assert resultId != null;
                     if (resultId.equals(id)) {

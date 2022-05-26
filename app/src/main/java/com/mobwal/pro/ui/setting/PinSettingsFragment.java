@@ -29,7 +29,6 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
     private SwitchPreferenceCompat mPinPreference;
     private EditTextPreference mPinCodePreference;
 
-
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.pin_pref, rootKey);
@@ -54,8 +53,7 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
         boolean pin = mSharedPreferences.getBoolean("pin", false);
         mPinPreference.setChecked(pin);
 
-        String pinCode = PrefUtil.getPinCode(requireContext());
-        mPinCodePreference.setText(pinCode);
+        mPinCodePreference.setText(mSharedPreferences.getString("pin_code", ""));
     }
 
     @Override
@@ -72,14 +70,14 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
             mSharedPreferences.edit().putBoolean("pin", pinPrefValue).apply();
 
             if(!pinPrefValue) {
-                PrefUtil.setPinCode(requireContext(), "");
+                mSharedPreferences.edit().putString("pin_code", "").apply();
                 updatePinCodeSummary();
             }
         }
 
         if(preference.getKey().equals("pin_code")) {
             String pinCodeValue = String.valueOf(newValue);
-            PrefUtil.setPinCode(requireContext(), pinCodeValue);
+            mSharedPreferences.edit().putString("pin_code", pinCodeValue).apply();
             updatePinCodeSummary();
         }
 
@@ -90,7 +88,7 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
      * обновление описания блока у кода
      */
     private void updatePinCodeSummary() {
-        String text = PrefUtil.getPinCode(requireContext());
+        String text = mSharedPreferences.getString("pin_code", "");
         if(TextUtils.isEmpty(text)) {
             mPinCodePreference.setSummary(R.string.pin_code_empty);
         } else {

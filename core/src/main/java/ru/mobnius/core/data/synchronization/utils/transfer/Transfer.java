@@ -2,8 +2,8 @@ package ru.mobnius.core.data.synchronization.utils.transfer;
 
 import android.app.Activity;
 
-import com.github.nkzawa.socketio.client.Socket;
 
+import io.socket.client.Socket;
 import ru.mobnius.core.data.socket.SocketManager;
 import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
 
@@ -102,8 +102,8 @@ public abstract class Transfer {
         transferDisconnectListener = new TransferDisconnectListener(context, tid, this, callback);
         transferRegistryListener = new TransferRegistryListener(context, tid, this, callback);
 
-        socket.on(Socket.EVENT_DISCONNECT, transferDisconnectListener);
-        socket.on(SocketManager.EVENT_REGISTRY, transferRegistryListener);
+        //socket.on(Socket.EVENT_DISCONNECT, transferDisconnectListener);
+        //socket.on(SocketManager.EVENT_REGISTRY, transferRegistryListener);
     }
 
     /**
@@ -112,12 +112,12 @@ public abstract class Transfer {
     private void removeDisconnectListener(){
         if(socket != null){
             if(transferRegistryListener != null){
-                socket.off(SocketManager.EVENT_REGISTRY, transferRegistryListener);
+                //socket.off(SocketManager.EVENT_REGISTRY, transferRegistryListener);
                 transferRegistryListener = null;
             }
 
             if(transferDisconnectListener != null){
-                socket.off(Socket.EVENT_DISCONNECT, transferDisconnectListener);
+                //socket.off(Socket.EVENT_DISCONNECT, transferDisconnectListener);
                 transferDisconnectListener = null;
             }
         }

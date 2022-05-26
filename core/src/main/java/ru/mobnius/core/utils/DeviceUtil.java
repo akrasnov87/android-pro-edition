@@ -38,9 +38,9 @@ public class DeviceUtil {
     };
 
     public static void checkDevices(Activity activity) {
-        if (DefaultPreferencesManager.getInstance().isNotifiedAboutBatterySave()) {
+        /*if (DefaultPreferencesManager.getInstance().isNotifiedAboutBatterySave()) {
             return;
-        }
+        }*/
         for (Intent intent : POWERMANAGER_INTENTS)
             if (activity.getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) != null) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(activity);
@@ -55,7 +55,7 @@ public class DeviceUtil {
                     catch (Exception e) {
                             Logger.error(e);
                         }
-                    DefaultPreferencesManager.getInstance().setNotifiedAboutBatterySave(true);
+                    //DefaultPreferencesManager.getInstance().setNotifiedAboutBatterySave(true);
                 });
                 AlertDialog alert = adb.create();
                 alert.setTitle("ВНИМАНИЕ");

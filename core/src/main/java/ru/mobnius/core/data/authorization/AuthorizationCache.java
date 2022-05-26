@@ -1,5 +1,7 @@
 package ru.mobnius.core.data.authorization;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 
 import org.json.JSONObject;
@@ -43,18 +45,17 @@ public class AuthorizationCache {
      * @return Возвращается true если все хорошо
      */
     public boolean write(BasicUser user) {
-        return saveUser(user, null, new Date());
+        return saveUser(user, new Date());
     }
 
     /**
      * Обновление информации об account
      * @param login логин
-     * @param pin пин-код
      * @param time время
      */
-    public void update(String login, String pin, Date time){
+    public void update(String login, Date time){
         BasicUser user = read(login);
-        saveUser(user, pin, time);
+        saveUser(user, time);
     }
 
     /**
@@ -62,7 +63,7 @@ public class AuthorizationCache {
      * @param login логин пользователя
      * @return Данные об авторизации
      */
-    public BasicUser read(String login){
+    public BasicUser read(String login) {
         BasicUser user = null;
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(login + PART_FILENAME)));
@@ -83,19 +84,6 @@ public class AuthorizationCache {
     }
 
     /**
-     * Чтение Пин-кода пользователя
-     * @param login логин пользователя
-     * @return пин-код
-     */
-    public String readPin(String login) {
-        Object result = getData(login, "pin");
-        if(result != null) {
-            return (String)result;
-        }
-        return "";
-    }
-
-    /**
      * Чтение последнего времени входа
      * @param login логин пользователя
      * @return Время последнего входа
@@ -112,7 +100,7 @@ public class AuthorizationCache {
      * Очистка кэшированных данных
      * @param all удалить все файлы безопасности или нет
      */
-    public boolean clear(boolean all){
+    public boolean clear(boolean all) {
         File dir = new File(context.getFilesDir().getPath());
         if(all){
             File[] files = dir.listFiles();
@@ -186,21 +174,17 @@ public class AuthorizationCache {
     /**
      * Сохранение информации о пользователе
      * @param user пользователь
-     * @param pin пин-код
      * @param time время записи
      * @return Возвращается true если все хорошо
      */
-    private boolean saveUser(BasicUser user, String pin, Date time) {
+    private boolean saveUser(BasicUser user, Date time) {
         boolean result = false;
         BasicCredentials credentials = user.getCredentials();
         try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(credentials.login + PART_FILENAME, Context.MODE_PRIVATE)));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(credentials.login + PART_FILENAME, MODE_PRIVATE)));
             JSONObject json = new JSONObject();
             json.put("userId", user.getUserId());
             json.put("claims", user.claims);
-            if(pin != null) {
-                json.put("pin", pin);
-            }
             json.put("time", DateUtil.convertDateToString(time));
             json.put("token", user.getCredentials().getToken());
 

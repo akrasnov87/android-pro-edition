@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.BaseSpinnerAdapter;
 import ru.mobnius.core.adapter.PhotoAdapter;
@@ -62,7 +62,7 @@ public abstract class BaseGalleryFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String resultId = requireArguments().getString(Names.RESULT_ID);
+        String resultId = requireArguments().getString(NamesCore.RESULT_ID);
         Objects.requireNonNull(getPhotoManager()).updatePictures(getPhotoDataManager().getImages(resultId));
         final List<ImageItem> imageItems = new ArrayList<>(Arrays.asList(getPhotoManager().getImages()));
 

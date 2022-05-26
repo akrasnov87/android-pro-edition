@@ -10,6 +10,7 @@ public class BasicCredentials {
      * Логин пользователя
      */
     public final String login;
+
     /**
      * Пароль пользователя
      */

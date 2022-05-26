@@ -55,7 +55,7 @@ public class AuthorizationCacheTest {
         cache.clear(true);
         assertTrue(cache.write(user));
 
-        cache.update(GlobalSettings.DEFAULT_USER_NAME, "0000", new Date());
+        //cache.update(GlobalSettings.DEFAULT_USER_NAME, "0000", new Date());
         assertNotNull(cache.readDate(GlobalSettings.DEFAULT_USER_NAME));
     }
 

@@ -1,4 +1,4 @@
-package com.mobwal.pro.utilits;
+package ru.mobnius.core.utils;
 
 import android.app.Activity;
 

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.data.DiffValueManager;
 import ru.mobnius.core.data.audit.AuditManager;
@@ -137,7 +137,7 @@ public abstract class CoreFormFragment extends BaseFragment
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // сбрасываем информацию
-                    if (!StringUtil.isEmptyOrNull(getPhotoValidation()) && getFormManager().existsValue(Names.RESULT_ID)) {
+                    if (!StringUtil.isEmptyOrNull(getPhotoValidation()) && getFormManager().existsValue(NamesCore.RESULT_ID)) {
                         Toast.makeText(requireActivity(), getPhotoValidation(), Toast.LENGTH_SHORT).show();
                         ((CoreActivity)requireActivity()).setBackPressed(false);
                         dialog.dismiss();
@@ -237,7 +237,7 @@ public abstract class CoreFormFragment extends BaseFragment
     @Override
     public void onGalleryChange(int type, ImageItem image) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Names.IMAGES, getOnGalleryListener().getPhotoManager().getImages());
+        bundle.putSerializable(NamesCore.IMAGES, getOnGalleryListener().getPhotoManager().getImages());
         getFormManager().addValues(bundle);
         isChangedDocument(getFormManager().isChanged());
     }

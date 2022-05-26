@@ -178,4 +178,14 @@
     <string name="demo_route_create_summary">Создание демонстрационного маршрута…</string>
     <string name="network_not_found">Сеть не найдена.</string>
     <string name="location_search">Поиск текущего местоположения…</string>
+
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="lose_pin">Забыли Пин-код?</string>
+    <string name="reset_pin">После сброса Пин-кода Вам нужно повторно вводить логин и пароль. Продолжить?</string>
+    <string name="exit">Выход</string>
+    <string name="confirm_exit">Вы уверены что хотите выйти?</string>
+    <string name="auth_empty">Логин или пароль не указаны</string>
+    <string name="without_auth">Доступ без авторизации запрещён.</string>
+    <string name="menu_synchronization">Синхронизация</string>
 </resources>

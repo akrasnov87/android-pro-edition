@@ -33,7 +33,7 @@ import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.FileManager;
 import com.mobwal.pro.utilits.ImportUtil;
-import com.mobwal.pro.utilits.NewThread;
+import ru.mobnius.core.utils.NewThread;
 import com.mobwal.pro.utilits.StreamUtil;
 import com.mobwal.pro.utilits.ZipManager;
 import com.mobwal.pro.utilits.ZipReader;

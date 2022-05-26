@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.task.ConfigurationAsyncTask;
 import ru.mobnius.core.data.GlobalSettings;
@@ -68,28 +68,28 @@ public class PinCodeFragment extends BaseFragment
         if (pin != null) {
             pinCodeFragment = new PinCodeFragment();
             Bundle args = new Bundle();
-            args.putString(Names.PIN, pin);
-            args.putString(Names.LOGIN, login);
+            args.putString(NamesCore.PIN, pin);
+            args.putString(NamesCore.LOGIN, login);
             pinCodeFragment.setArguments(args);
         } else {
             pinCodeFragment = new PinCodeFragment();
             Bundle args = new Bundle();
-            args.putString(Names.LOGIN, login);
+            args.putString(NamesCore.LOGIN, login);
             pinCodeFragment.setArguments(args);
         }
         return pinCodeFragment;
     }
 
     private boolean hasPin() {
-        return requireArguments().containsKey(Names.PIN);
+        return requireArguments().containsKey(NamesCore.PIN);
     }
 
     private String getPin() {
-        return requireArguments().getString(Names.PIN);
+        return requireArguments().getString(NamesCore.PIN);
     }
 
     private String getLogin() {
-        return requireArguments().getString(Names.LOGIN);
+        return requireArguments().getString(NamesCore.LOGIN);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class PinCodeFragment extends BaseFragment
                         public void onClick(DialogInterface dialog, int which) {
                             PreferencesManager.createInstance(requireContext(), getLogin());
                             PreferencesManager.getInstance().setPinAuth(false);
-                            cache.update(getLogin(), "", new Date());
+                            //cache.update(getLogin(), "", new Date());
                             Authorization.getInstance().reset();
 
                             ((OnLoginListeners)requireActivity()).onAuthorize();
@@ -232,7 +232,7 @@ public class PinCodeFragment extends BaseFragment
                 if (pinDigits.equals(tempPin)) {
                     PreferencesManager.getInstance().setPinAuth(true);
 
-                    cache.update(getLogin(), pinDigits, new Date());
+                    //cache.update(getLogin(), pinDigits, new Date());
                     Toast.makeText(getContext(), "Вход по пин-коду активирован", Toast.LENGTH_SHORT).show();
                     requireActivity().onBackPressed();
                 } else {
@@ -255,7 +255,7 @@ public class PinCodeFragment extends BaseFragment
     private void onAuthorize() {
         BasicUser user = cache.read(getLogin());
         Authorization.getInstance().setUser(user);
-        cache.update(user.getCredentials().login, getPin(), new Date());
+        //cache.update(user.getCredentials().login, getPin(), new Date());
 
         if(NetworkInfoUtil.isNetworkAvailable(requireContext())) {
             ((CoreActivity)requireActivity()).startProgress();

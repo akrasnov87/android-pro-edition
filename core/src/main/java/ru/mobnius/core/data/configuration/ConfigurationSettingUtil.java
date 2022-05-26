@@ -12,8 +12,8 @@ import ru.mobnius.core.data.rpc.RPCResult;
 import ru.mobnius.core.data.rpc.SingleItemQuery;
 
 public class ConfigurationSettingUtil {
-    public final static String ACTION = "setting";
-    public final static String METHOD = "getSettings";
+    public final static String ACTION = "shell";
+    public final static String METHOD = "mobilesettins";
 
     /**
      * Преобразование значения настройки в Integer
@@ -137,10 +137,8 @@ public class ConfigurationSettingUtil {
      * @return Возвращается список настроек
      */
     public static List<ConfigurationSetting> getSettings(String baseUrl,  BasicCredentials credentials) {
-        String[] params = new String[1];
-        params[0] = "MBL";
         try {
-            RPCResult[] results = RequestManager.rpc(baseUrl, credentials.getToken(), ConfigurationSettingUtil.ACTION, ConfigurationSettingUtil.METHOD, new SingleItemQuery(params));
+            RPCResult[] results = RequestManager.rpc(baseUrl, credentials.getToken(), ConfigurationSettingUtil.ACTION, ConfigurationSettingUtil.METHOD, new SingleItemQuery(new String[0]));
             if(results[0].isSuccess()) {
                 return getConfigurationSettings(results[0].result.records[0]);
             }

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -29,6 +30,16 @@ import com.mobwal.pro.databinding.ActivityMainBinding;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.PrefUtil;
 
+import java.util.List;
+
+import ru.mobnius.core.data.GlobalSettings;
+import ru.mobnius.core.data.authorization.Authorization;
+import ru.mobnius.core.data.configuration.ConfigurationSetting;
+import ru.mobnius.core.data.configuration.ConfigurationSettingUtil;
+import ru.mobnius.core.data.credentials.BasicCredentials;
+import ru.mobnius.core.data.logger.Logger;
+import ru.mobnius.core.utils.NewThread;
+
 public class MainActivity extends AppCompatActivity
      implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -39,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mSharedPreferences;
     private String pinCode;
     private DrawerLayout mDrawerLayout;
+    private NewThread mConfigThread;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -53,7 +65,15 @@ public class MainActivity extends AppCompatActivity
 
         WalkerApplication.Debug("Главный экран.");
 
-        pinCode = PrefUtil.getPinCode(this);
+        if(!Authorization.getInstance().isAuthorized()) {
+            Toast.makeText(this, R.string.without_auth, Toast.LENGTH_SHORT).show();
+
+            startActivity(SecurityActivity.getIntent(this));
+            finish();
+            return;
+        }
+
+        //pinCode = PrefUtil.getPinCode(this);
 
         mSharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, Context.MODE_PRIVATE);
 
@@ -69,7 +89,7 @@ public class MainActivity extends AppCompatActivity
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_route, R.id.nav_security)
+                R.id.nav_route)
                 .setOpenableLayout(mDrawerLayout)
                 .build();
 
@@ -78,12 +98,12 @@ public class MainActivity extends AppCompatActivity
             NavInflater inflater = navHostFragment.getNavController().getNavInflater();
             NavGraph graph = inflater.inflate(R.navigation.mobile_navigation);
 
-            if(isNeedAuthorized()) {
+            /*if(isNeedAuthorized()) {
                 WalkerApplication.Debug("Вывод экрана безопасности.");
 
-                graph.setStartDestination(R.id.nav_security);
+                graph.setStartDestination(R.id.nav_biometry);
                 navHostFragment.getNavController().setGraph(graph);
-            }
+            }*/
 
             navController = navHostFragment.getNavController();
 
@@ -92,6 +112,47 @@ public class MainActivity extends AppCompatActivity
 
             navigationView.setNavigationItemSelectedListener(this);
         }
+
+        mConfigThread = new NewThread(this) {
+            @Override
+            public void onBackgroundExecute() {
+                if(Authorization.getInstance().isAuthorized()) {
+                    BasicCredentials credentials = Authorization.getInstance().getUser().getCredentials();
+
+                    try {
+                        List<ConfigurationSetting> configurationSettings = ConfigurationSettingUtil.getSettings(GlobalSettings.getConnectUrl(), credentials);
+                        if (configurationSettings != null) {
+                            SharedPreferences sharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            for(ConfigurationSetting configurationSetting : configurationSettings) {
+                                try {
+                                    if (configurationSetting.type.equals(ConfigurationSetting.INTEGER)) {
+                                        editor.putInt(configurationSetting.key, Integer.parseInt(configurationSetting.value));
+                                    } else if (configurationSetting.type.equals(ConfigurationSetting.BOOLEAN)) {
+                                        editor.putBoolean(configurationSetting.key, Boolean.parseBoolean(configurationSetting.value));
+                                    } else {
+                                        editor.putString(configurationSetting.key, configurationSetting.value);
+                                    }
+                                }catch (Exception e) {
+                                    Logger.error("Ошибка применения настроек", e);
+                                }
+                            }
+                            editor.apply();
+                        }
+                    } catch (Exception ignore) {
+                        Logger.error("Ошибка чтения настроек", ignore);
+                    }
+                }
+            }
+
+            @Override
+            public void onPostExecute() {
+
+            }
+        };
+
+        mConfigThread.run();
     }
 
     @Override
@@ -145,8 +206,18 @@ public class MainActivity extends AppCompatActivity
         boolean handled = false;
         if(item.getItemId() == R.id.nav_home_page) {
             ActivityUtil.openWebPage(this, Names.HOME_PAGE);
-        } else if(item.getItemId() == R.id.nav_imports) {
-            ActivityUtil.openFileChooser(this, REQUEST_CODE_OPEN);
+        } else if(item.getItemId() == R.id.nav_synchronization) {
+            ActivityUtil.openSynchronization(this);
+        } else if(item.getItemId() == R.id.nav_exit) {
+            android.app.AlertDialog.Builder adb = new android.app.AlertDialog.Builder(this);
+            adb.setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                WalkerApplication.ExitToApp(this);
+                finish();
+            });
+            adb.setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss());
+            android.app.AlertDialog alert = adb.create();
+            alert.setTitle(getResources().getString(R.string.confirm_exit));
+            alert.show();
         } else {
             handled = NavigationUI.onNavDestinationSelected(item, navController);
         }
@@ -173,5 +244,15 @@ public class MainActivity extends AppCompatActivity
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mConfigThread != null) {
+            mConfigThread.destroy();
+            mConfigThread = null;
+        }
     }
 }

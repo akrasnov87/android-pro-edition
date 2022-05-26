@@ -118,7 +118,7 @@ public class SecurityActivity extends CoreActivity {
                     setPinCodeFragment((AppCompatActivity) requireActivity(), null, "Установка пин-кода");
                 } else {
                     BasicUser user = Authorization.getInstance().getLastAuthUser();
-                    new AuthorizationCache(requireActivity()).update(user.getCredentials().login, "", new Date());
+                    //new AuthorizationCache(requireActivity()).update(user.getCredentials().login, "", new Date());
                     PreferencesManager.getInstance().setPinAuth(false);
                 }
             }

@@ -1,7 +1,5 @@
 package ru.mobnius.core.ui.fragment;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +19,7 @@ import androidx.core.widget.ContentLoadingProgressBar;
 import java.io.File;
 import java.util.Objects;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.exception.IExceptionCode;
@@ -57,7 +54,7 @@ public class AboutUpdateDialogFragment extends BaseDialogFragment
 
                 buttonUpdate.setEnabled(false);
 
-                String url = GlobalSettings.getConnectUrl() + Names.UPDATE_URL;
+                String url = GlobalSettings.getConnectUrl() + NamesCore.UPDATE_URL;
                 Handler handler = new Handler(Looper.getMainLooper());
                 String packageName = requireActivity().getApplicationContext().getPackageName();
                 clpbDownloadProgress.setVisibility(View.VISIBLE);

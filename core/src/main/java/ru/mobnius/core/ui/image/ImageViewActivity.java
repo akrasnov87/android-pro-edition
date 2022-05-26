@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.configuration.PreferencesManager;
@@ -188,10 +188,10 @@ public class ImageViewActivity extends CoreActivity
                 if (imageName == null || imageName.isEmpty()) {
                     return;
                 }
-                File image = new File(dir, imageName.replace("." + PreferencesManager.getInstance().getImageFormat(), Names.VIDEO_EXTENSION));
+                File image = new File(dir, imageName.replace("." + PreferencesManager.getInstance().getImageFormat(), NamesCore.VIDEO_EXTENSION));
                 if (!image.exists()) {
                     dir = FileManager.getInstance().getAttachmentsFolder();
-                    image = new File(dir, imageName.replace("." + PreferencesManager.getInstance().getImageFormat(), Names.VIDEO_EXTENSION));
+                    image = new File(dir, imageName.replace("." + PreferencesManager.getInstance().getImageFormat(), NamesCore.VIDEO_EXTENSION));
                 }
                 MediaItem mediaItem = MediaItem.fromUri(image.getAbsolutePath());
                 player.setMediaItem(mediaItem);

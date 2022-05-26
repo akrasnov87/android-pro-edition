@@ -14,7 +14,7 @@ import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 import java.io.IOException;
 import java.util.Objects;
-import ru.mobnius.core.Names;
+
 import ru.mobnius.core.R;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.NotificationManager;

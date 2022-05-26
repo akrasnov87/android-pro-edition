@@ -3,12 +3,11 @@ package ru.mobnius.core.data.synchronization.utils.transfer;
 import android.app.Activity;
 import android.util.Log;
 
-import com.github.nkzawa.socketio.client.Socket;
-
 import org.json.JSONObject;
 
 import java.util.Date;
 
+import io.socket.client.Socket;
 import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
 
 public class DownloadTransfer extends Transfer {

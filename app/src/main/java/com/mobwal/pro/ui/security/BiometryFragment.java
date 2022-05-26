@@ -1,17 +1,23 @@
-package com.mobwal.pro.ui.global;
+package com.mobwal.pro.ui.security;
+
+import static android.content.Context.MODE_PRIVATE;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,20 +25,27 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
+import com.mobwal.pro.MainActivity;
+import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
-import com.mobwal.pro.databinding.FragmentSecurityBinding;
+import com.mobwal.pro.databinding.FragmentBiometryBinding;
 import com.mobwal.pro.ui.BaseFragment;
+import com.mobwal.pro.utilits.ImportUtil;
 import com.mobwal.pro.utilits.PrefUtil;
 
-public class SecurityFragment extends BaseFragment
+import ru.mobnius.core.data.authorization.Authorization;
+
+public class BiometryFragment extends BaseFragment
         implements View.OnClickListener, TextWatcher {
 
-    private FragmentSecurityBinding mBinding;
+    private FragmentBiometryBinding mBinding;
     private String pinCode;
+    private SharedPreferences sharedPreferences;
 
-    public SecurityFragment() {
+    public BiometryFragment() {
         // Required empty public constructor
     }
 
@@ -42,7 +55,8 @@ public class SecurityFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         WalkerApplication.Log("Безопасность. Пин-код.");
-        pinCode = PrefUtil.getPinCode(requireContext());
+        sharedPreferences = requireActivity().getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
+        pinCode = sharedPreferences.getString("pin_code", "");
     }
 
     @Override
@@ -54,10 +68,30 @@ public class SecurityFragment extends BaseFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentSecurityBinding.inflate(inflater, container, false);
+        mBinding = FragmentBiometryBinding.inflate(inflater, container, false);
         mBinding.securityPass.addTextChangedListener(this);
 
         mBinding.securityOk.setOnClickListener(this);
+        mBinding.securityReset.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle(R.string.attention);
+            builder.setMessage(R.string.reset_pin);
+
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                WalkerApplication.Log("Пользователь принудительно сбрасывает ПИН-код.");
+
+                sharedPreferences.edit().putBoolean("pin", false).apply();
+                sharedPreferences.edit().putString("pin_code", "").apply();
+
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_security);
+                navController.navigate(R.id.nav_login);
+            });
+            builder.setNegativeButton(R.string.no, null);
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        });
 
         mBinding.securityName.setOnClickListener(this);
 
@@ -142,16 +176,17 @@ public class SecurityFragment extends BaseFragment
         mBinding.securityPass.setError(null);
 
         // авторизация не требуется
-        WalkerApplication.setAuthorized(requireContext(), true);
+        //WalkerApplication.setAuthorized(requireContext(), true);
+        Authorization authorization = Authorization.getInstance();
+        authorization.setUser(authorization.getLastAuthUser());
 
-        if (requireActivity().getCurrentFocus() != null) {
+        /*if (requireActivity().getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(requireActivity().getCurrentFocus().getWindowToken(), 0);
-        }
+        }*/
 
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
-        navController.popBackStack();
-        navController.navigate(R.id.nav_route);
+        requireActivity().finish();
+        startActivity(MainActivity.getIntent(getContext()));
     }
 
     @Override

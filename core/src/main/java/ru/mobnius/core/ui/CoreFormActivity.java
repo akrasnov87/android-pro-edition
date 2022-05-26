@@ -2,34 +2,21 @@ package ru.mobnius.core.ui;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.telephony.CellInfoGsm;
-import android.telephony.CellSignalStrengthGsm;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,16 +25,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.io.InputStream;
-import java.security.KeyStore;
 import java.util.Date;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.BaseSpinnerAdapter;
 import ru.mobnius.core.data.FileManager;
@@ -59,11 +39,7 @@ import ru.mobnius.core.data.gallery.OnGalleryChangeListeners;
 import ru.mobnius.core.data.gallery.OnGalleryListener;
 import ru.mobnius.core.data.gallery.PhotoDataManager;
 import ru.mobnius.core.data.gallery.OnPhotoItemChangeListener;
-import ru.mobnius.core.data.synchronization.FinishStatus;
-import ru.mobnius.core.data.synchronization.IProgress;
 import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
-import ru.mobnius.core.data.synchronization.utils.transfer.Transfer;
-import ru.mobnius.core.data.synchronization.utils.transfer.TransferProgress;
 import ru.mobnius.core.ui.fragment.BaseGalleryFragment;
 import ru.mobnius.core.ui.fragment.PhotoChangeDialogFragment;
 import ru.mobnius.core.ui.image.ImageViewActivity;
@@ -147,15 +123,15 @@ public abstract class CoreFormActivity extends SingleFragmentActivity
     }
 
     public String getRouteId() {
-        return getIntent().getStringExtra(Names.ROUTE_ID);
+        return getIntent().getStringExtra(NamesCore.ROUTE_ID);
     }
 
     public String getPointId() {
-        return getIntent().getStringExtra(Names.POINT_ID);
+        return getIntent().getStringExtra(NamesCore.POINT_ID);
     }
 
     public String getResultd() {
-        return getIntent().getStringExtra(Names.RESULT_ID);
+        return getIntent().getStringExtra(NamesCore.RESULT_ID);
     }
 
     @Override
@@ -346,7 +322,7 @@ public abstract class CoreFormActivity extends SingleFragmentActivity
             ((BaseGalleryFragment) fragment).onUpdateGallery(imageItem);
         } else if (fragment instanceof CoreFormFragment) {
             CoreFormFragment coreFormFragment = (CoreFormFragment) fragment;
-            String mPointId = coreFormFragment.getFormManager().getValue(Names.POINT_ID);
+            String mPointId = coreFormFragment.getFormManager().getValue(NamesCore.POINT_ID);
             coreFormFragment.onPhotoGallery(mPointId, imageItem.getResultId());
         }
     }

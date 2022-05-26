@@ -10,7 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 
 public class StringUtil {
     private static final String NULL = "null";
@@ -149,7 +149,7 @@ public class StringUtil {
             case ".mp3":
                 return "audio/mpeg";
 
-            case Names.VIDEO_EXTENSION:
+            case NamesCore.VIDEO_EXTENSION:
                 return "video/mp4";
 
             default:

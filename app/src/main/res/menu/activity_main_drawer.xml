@@ -5,9 +5,9 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_imports"
-            android:icon="@drawable/ic_baseline_save_alt_24"
-            android:title="@string/import_name" />
+            android:id="@+id/nav_synchronization"
+            android:icon="@drawable/ic_baseline_sync_24"
+            android:title="@string/menu_synchronization" />
 
         <item
             android:id="@+id/nav_settings"
@@ -20,5 +20,10 @@
             android:id="@+id/nav_home_page"
             android:icon="@drawable/ic_baseline_open_in_browser_24"
             android:title="@string/web" />
+
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@drawable/ic_baseline_exit_to_app_24"
+            android:title="@string/exit" />
     </group>
 </menu>

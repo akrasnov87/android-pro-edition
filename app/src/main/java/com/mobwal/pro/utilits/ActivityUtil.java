@@ -156,6 +156,15 @@ public class ActivityUtil {
         navController.navigate(R.id.nav_route);
     }
 
+    /**
+     * Открыть экран синхронизации
+     * @param activity активность
+     */
+    public static void openSynchronization(@NotNull Activity activity) {
+        NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_main);
+        navController.navigate(R.id.nav_synchronization);
+    }
+
     public static void openFileChooser(@NotNull Activity activity, int code) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");

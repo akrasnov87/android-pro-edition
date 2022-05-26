@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="blueDark">#27632a</color>
-    <color name="blue">#388e3c</color>
-    <color name="blueLight">#81c784</color>
+    <color name="blueDark">#1769aa</color>
+    <color name="blue">#2196f3</color>
+    <color name="blueLight">#4dabf5</color>
 
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#FFFFFF</color>

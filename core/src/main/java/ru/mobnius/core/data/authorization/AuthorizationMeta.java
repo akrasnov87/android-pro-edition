@@ -17,10 +17,10 @@ public class AuthorizationMeta extends Meta {
     /**
      * идентификатор пользователя
      */
-    private final Integer mUserId;
+    private final Long mUserId;
     private final String mUserName;
 
-    public AuthorizationMeta(int status, String message, String token, String claims, Integer userId, String userName) {
+    public AuthorizationMeta(int status, String message, String token, String claims, Long userId, String userName) {
         super(status, message);
 
         mToken = token;
@@ -43,7 +43,7 @@ public class AuthorizationMeta extends Meta {
 
     public String getUserName() { return mUserName; }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return mUserId;
     }
 }

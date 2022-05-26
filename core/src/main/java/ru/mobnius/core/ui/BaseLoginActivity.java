@@ -42,7 +42,7 @@ public abstract class BaseLoginActivity extends CoreActivity
         String pin = "";
         if(basicUser != null) {
             AuthorizationCache cache = new AuthorizationCache(this);
-            pin = cache.readPin(basicUser.getCredentials().login);
+            //pin = cache.readPin(basicUser.getCredentials().login);
         }
         if (!pin.isEmpty()) {
             SecurityActivity.setPinCodeFragment(this, pin, "Авторизация по пин-кода");

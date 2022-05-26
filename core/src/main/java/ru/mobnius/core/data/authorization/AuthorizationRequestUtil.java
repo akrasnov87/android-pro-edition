@@ -49,8 +49,14 @@ public class AuthorizationRequestUtil {
                 urlConnection.setInstanceFollowRedirects(false);
                 urlConnection.setUseCaches(false);
                 urlConnection.getOutputStream().write(postData);
+                final InputStream stream;
+                if (urlConnection.getResponseCode() == Meta.OK) {
+                    stream = urlConnection.getInputStream();
+                } else {
+                    stream = urlConnection.getErrorStream();
+                }
 
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                InputStream in = new BufferedInputStream(stream);
                 Scanner s = new Scanner(in).useDelimiter("\\A");
                 String responseText = s.hasNext() ? s.next() : "";
                 try {
@@ -77,7 +83,7 @@ public class AuthorizationRequestUtil {
     AuthorizationMeta convertResponseToMeta(String response) {
         int status;
         String token = null;
-        Integer userId = null;
+        Long userId = null;
         String userName = null;
         String claims = null;
         String message;
@@ -91,9 +97,9 @@ public class AuthorizationRequestUtil {
                 status = Meta.OK;
                 message = "Пользователь авторизован.";
                 token = jsonObject.getString("token");
-                userId = jsonObject.getJSONObject("user").getInt("userId");
+                userId = jsonObject.getJSONObject("user").getLong("id");
                 claims = jsonObject.getJSONObject("user").getString("claims");
-                userName = jsonObject.getJSONObject("user").getString("userName");
+                userName = jsonObject.getJSONObject("user").getString("login");
             }
         } catch (Exception e) {
             status = Meta.ERROR_SERVER;
@@ -110,5 +116,4 @@ public class AuthorizationRequestUtil {
             return value;
         }
     }
-
 }

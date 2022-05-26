@@ -1,10 +1,7 @@
 package ru.mobnius.core.data.authorization;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
-
-import java.lang.ref.WeakReference;
 
 import ru.mobnius.core.data.Meta;
 import ru.mobnius.core.data.OnCallbackListener;
@@ -12,18 +9,19 @@ import ru.mobnius.core.data.credentials.BasicCredentials;
 import ru.mobnius.core.data.credentials.BasicUser;
 import ru.mobnius.core.ui.BaseLoginActivity;
 import ru.mobnius.core.utils.ClaimsUtil;
+import ru.mobnius.core.utils.NewThread;
 
 /**
  * Авторизация
  */
 public class Authorization {
-    private static final String INSPECTOR_CLAIM = "inspector";
+    private static final String INSPECTOR_CLAIM = "user";
 
     private final AuthorizationCache mAuthorizationCache;
     private final AuthorizationRequestUtil mRequestUtil;
 
     private OnCallbackListener mListener;
-    private AuthAsyncTask mAuthAsyncTask;
+    private NewThread mAuthThread;
 
     /**
      * Авторизация при наличии интернет соединения
@@ -98,17 +96,42 @@ public class Authorization {
      * @param mode     режим авторизации: Authorization.ONLINE или Authorization.OFFLINE
      * @param listener результат обратного вызова
      */
-    public void onSignIn(BaseLoginActivity context, String login, String password, int mode, OnCallbackListener listener) {
+    public void onSignIn(Activity context, String login, String password, int mode, OnCallbackListener listener) {
         mListener = listener;
 
-        if (mAuthAsyncTask != null) {
-            mAuthAsyncTask.cancel(true);
-            mAuthAsyncTask = null;
+        if (mAuthThread != null) {
+            mAuthThread.destroy();
+            mAuthThread = null;
         }
 
         if (mode == ONLINE) {
-            mAuthAsyncTask = new AuthAsyncTask(context);
-            mAuthAsyncTask.execute(login, password);
+            mAuthThread = new NewThread(context) {
+                private BasicCredentials mCredentials;
+
+                @Override
+                public void onBackgroundExecute() {
+                    mCredentials = new BasicCredentials(login, password);
+                    try {
+                        mAuthorizationMeta = mRequestUtil.request(context, mCredentials.login, mCredentials.password);
+                    } catch (Exception ignore) {
+                        mAuthorizationMeta = new AuthorizationMeta(Meta.ERROR_SERVER, "Ошибка авторизации");
+                    }
+                }
+
+                @Override
+                public void onPostExecute() {
+                    if (!mAuthorizationMeta.isSuccess()) {
+                        mListener.onResult(mAuthorizationMeta);
+                        reset();
+                    } else {
+                        BasicUser basicUser = new BasicUser(mCredentials, mAuthorizationMeta.getUserId(), mAuthorizationMeta.getClaims());
+                        setUser(basicUser);
+
+                        mListener.onResult(mAuthorizationMeta);
+                    }
+                }
+            };
+            mAuthThread.run();
         } else {
             BasicUser basicUser = mAuthorizationCache.read(login);
             if (basicUser != null) {
@@ -119,7 +142,7 @@ public class Authorization {
                             "Вы авторизованы",
                             basicUser.getCredentials().getToken(),
                             basicUser.claims,
-                            Integer.parseInt(String.valueOf(basicUser.getUserId())),
+                            Long.parseLong(String.valueOf(basicUser.getUserId())),
                             ""));
                 } else {
                     listener.onResult(new AuthorizationMeta(Meta.NOT_AUTHORIZATION, "Логин или пароль введены не верно.", null, null, null, null));
@@ -210,45 +233,8 @@ public class Authorization {
 
     public void destroy() {
         reset();
+
         mListener = null;
         mAuthorizationCache.clear(true);
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class AuthAsyncTask extends AsyncTask<String, Void, AuthorizationMeta> {
-        private final Context mContext;
-        private BasicCredentials mCredentials;
-        private final WeakReference<BaseLoginActivity> loginActivityWeakRef;
-
-        public AuthAsyncTask(BaseLoginActivity context) {
-            mContext = context;
-            this.loginActivityWeakRef = new WeakReference<>(context);
-        }
-
-        @Override
-        protected AuthorizationMeta doInBackground(String... strings) {
-            mCredentials = new BasicCredentials(strings[0], strings[1]);
-            try {
-                return mRequestUtil.request(mContext, mCredentials.login, mCredentials.password);
-            } catch (Exception ignore) {
-                return new AuthorizationMeta(Meta.ERROR_SERVER, "Ошибка авторизации");
-            }
-        }
-
-        @Override
-        protected void onPostExecute(AuthorizationMeta authorizationMeta) {
-            super.onPostExecute(authorizationMeta);
-
-            if (!authorizationMeta.isSuccess()) {
-                reset();
-            } else {
-                BasicUser basicUser = new BasicUser(mCredentials, authorizationMeta.getUserId(), authorizationMeta.getClaims());
-                setUser(basicUser);
-            }
-            if (loginActivityWeakRef.get() != null && !loginActivityWeakRef.get().isFinishing()) {
-                mAuthorizationMeta = authorizationMeta;
-                mListener.onResult(authorizationMeta);
-            }
-        }
     }
 }

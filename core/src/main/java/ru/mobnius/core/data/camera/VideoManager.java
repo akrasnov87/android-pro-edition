@@ -1,37 +1,18 @@
 package ru.mobnius.core.data.camera;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
 
-import androidx.core.content.FileProvider;
-
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
-import ru.mobnius.core.Names;
-import ru.mobnius.core.data.FileManager;
-import ru.mobnius.core.data.configuration.PreferencesManager;
-import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.utils.BitmapUtil;
-import ru.mobnius.core.utils.StreamUtil;
+import ru.mobnius.core.NamesCore;
 
 public class VideoManager {
     public static final int REQUEST_CODE_VIDEO = 145;
     private final Activity context;
     private String fileName;
     private String newFileName;
-    private VideoQuality quality;
+    //private VideoQuality quality;
     private File output;
     private Uri videoUri;
     private OnCameraListeners mListeners;
@@ -49,7 +30,7 @@ public class VideoManager {
     }
 
     public void open(String qualityStr) {
-        VideoQuality quality;
+        /*VideoQuality quality;
         switch (qualityStr) {
             case "VERY_HIGH":
                 quality = VideoQuality.VERY_HIGH;
@@ -103,7 +84,7 @@ public class VideoManager {
 
         if (i.resolveActivity(context.getPackageManager()) != null) {
             context.startActivityForResult(i, REQUEST_CODE_VIDEO);
-        }
+        }*/
     }
 
     /**
@@ -116,11 +97,11 @@ public class VideoManager {
     public void processing(int resultCode, OnCameraListeners callback) throws Exception {
         mListeners = callback;
         if (resultCode == Activity.RESULT_OK) {
-            newFileName = System.currentTimeMillis() + Names.VIDEO_EXTENSION;
+            newFileName = System.currentTimeMillis() + NamesCore.VIDEO_EXTENSION;
             final File newFile = new File(output.getParent() + "/" + newFileName);
 
             final Uri oneMoreUri = Uri.fromFile(newFile);
-            VideoCompressor.start(output.getAbsolutePath(), newFile.getAbsolutePath(), new CompressionListener() {
+            /*VideoCompressor.start(output.getAbsolutePath(), newFile.getAbsolutePath(), new CompressionListener() {
                 @Override
                 public void onStart() {
                     mListeners.onVideoCameraCompressStart();
@@ -167,7 +148,7 @@ public class VideoManager {
                 }
                 //тут можно менять параметры влияющие на качество видео
             }, quality, false, false);
-
+*/
         } else {
             throw new Exception("Вызов камеры был отменен. RequestCode=" + resultCode);
         }

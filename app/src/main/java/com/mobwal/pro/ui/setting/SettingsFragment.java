@@ -123,7 +123,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     Toast.makeText(getActivity(), R.string.layout_remove_error, Toast.LENGTH_LONG).show();
                 }
 
-                PrefUtil.setPinCode(requireContext(), "");
                 mSharedPreferences.edit().clear().apply();
                 Toast.makeText(getActivity(), R.string.reset_setting_success, Toast.LENGTH_SHORT).show();
                 setup();

@@ -89,7 +89,7 @@ public class NotificationManager {
         // отправляем текущее местоположение пользователя
         SocketManager socketManager = SocketManager.getInstance();
         if(socketManager != null && socketManager.isRegistered()) {
-            socketManager.getSocket().emit("notification", new StringMail(body, to, group).getBytes());
+            //socketManager.getSocket().emit("notification", new StringMail(body, to, group).getBytes());
         }
     }
 

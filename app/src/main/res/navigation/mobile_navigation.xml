@@ -6,10 +6,10 @@
     app:startDestination="@+id/nav_route">
 
     <fragment
-        android:id="@+id/nav_security"
-        android:name="com.mobwal.pro.ui.global.SecurityFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_security" />
+        android:id="@+id/nav_synchronization"
+        android:name="com.mobwal.pro.ui.global.SynchronizationFragment"
+        android:label="@string/menu_synchronization"
+        tools:layout="@layout/fragment_synchronization" />
 
     <fragment
         android:id="@+id/nav_route"

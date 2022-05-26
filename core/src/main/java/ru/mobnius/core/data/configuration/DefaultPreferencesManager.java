@@ -14,7 +14,6 @@ public class DefaultPreferencesManager extends AbstractPreferencesManager {
     public static final String BASE_URL = "BASE_URL";
     public static final String VIRTUAL_DIR_PATH = "VIRTUAL_DIR_PATH";
     public static final String ENVIRONMENT = "ENVIRONMENT";
-    public static final String IS_NOTIFIED_ABOUT_BATTERY_SAVE_MODE = "IS_NOTIFIED_ABOUT_BATTERY_SAVE_MODE";
 
     private static DefaultPreferencesManager preferencesManager;
 
@@ -22,7 +21,7 @@ public class DefaultPreferencesManager extends AbstractPreferencesManager {
         return preferencesManager;
     }
 
-    public static DefaultPreferencesManager createInstance(Context context, String preferenceName){
+    public static DefaultPreferencesManager createInstance(Context context, String preferenceName) {
         return preferencesManager = new DefaultPreferencesManager(context, preferenceName);
     }
 
@@ -46,12 +45,5 @@ public class DefaultPreferencesManager extends AbstractPreferencesManager {
         getSharedPreferences().edit().remove(BASE_URL).apply();
         getSharedPreferences().edit().remove(VIRTUAL_DIR_PATH).apply();
         getSharedPreferences().edit().remove(ENVIRONMENT).apply();
-    }
-
-    public boolean isNotifiedAboutBatterySave(){
-       return getBooleanValue(IS_NOTIFIED_ABOUT_BATTERY_SAVE_MODE, false);
-    }
-    public void setNotifiedAboutBatterySave(boolean value){
-        getSharedPreferences().edit().putBoolean(IS_NOTIFIED_ABOUT_BATTERY_SAVE_MODE, value).apply();
     }
 }

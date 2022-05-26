@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mobwal.pro.utilits.BitmapCache;
 
+import ru.mobnius.core.data.authorization.Authorization;
+import ru.mobnius.core.data.configuration.DefaultPreferencesManager;
+
 public class WalkerApplication extends Application {
 
     private boolean isAuthorized = false;
@@ -88,6 +91,8 @@ public class WalkerApplication extends Application {
             FirebaseCrashlytics.getInstance().setCustomKey("debug", Debug);
             FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
         }
+
+        Authorization.createInstance(this);
     }
 
     /**
@@ -132,5 +137,16 @@ public class WalkerApplication extends Application {
             }
             FirebaseCrashlytics.getInstance().log(message);
         }
+    }
+
+    /**
+     * Выход из приложения
+     * @param context контекст
+     */
+    public static void ExitToApp(@NotNull Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
+
+        Authorization.getInstance().destroy();
     }
 }

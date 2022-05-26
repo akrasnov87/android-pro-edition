@@ -2,7 +2,7 @@ package ru.mobnius.core;
 
 import ru.mobnius.core.data.configuration.PreferencesManager;
 
-public interface Names {
+public interface NamesCore {
     String TAG = "VOTE_LOG";
     String ID = "id";
     String NAME = "name";

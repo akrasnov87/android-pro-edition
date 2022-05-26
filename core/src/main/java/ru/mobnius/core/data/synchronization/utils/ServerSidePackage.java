@@ -13,7 +13,7 @@ import org.greenrobot.greendao.database.Database;
 import java.io.FileNotFoundException;
 import java.util.Objects;
 
-import ru.mobnius.core.Names;
+import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.logger.Logger;
@@ -227,7 +227,7 @@ public abstract class ServerSidePackage implements IServerSidePackage {
                                     String fileName = object.get(FieldNames.C_NAME).getAsString();
                                     FileBinary file = getFile(fileName);
                                     if (file != null && StringUtil.equalsIgnoreCase(tableName, FileManager.ATTACHMENTS)) {
-                                        fileManager.writeBytes(tableName, file.name.replace(Names.VIDEO_EXTENSION, "." + PreferencesManager.getInstance().getImageFormat()), file.bytes);
+                                        fileManager.writeBytes(tableName, file.name.replace(NamesCore.VIDEO_EXTENSION, "." + PreferencesManager.getInstance().getImageFormat()), file.bytes);
                                     } else {
                                         // Logger.error(new Exception("Включен механизм обработки вложений. В результате ответа не найден файл с именем " + fileName + "."));
                                     }

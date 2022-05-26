@@ -2,10 +2,9 @@ package ru.mobnius.core.data.synchronization.utils.transfer;
 
 import android.app.Activity;
 
-import com.github.nkzawa.emitter.Emitter;
-
 import java.util.Date;
 
+import io.socket.emitter.Emitter;
 import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
 
 /**

@@ -12,9 +12,9 @@ import ru.mobnius.core.data.logger.Logger;
 public abstract class AbstractPreferencesManager {
 
     protected SharedPreferences sharedPreferences;
-    private String mPreferenceName;
+    private final String mPreferenceName;
 
-    protected AbstractPreferencesManager(Context context, String preferenceName){
+    protected AbstractPreferencesManager(Context context, String preferenceName) {
         mPreferenceName = preferenceName;
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
     }
@@ -50,7 +50,7 @@ public abstract class AbstractPreferencesManager {
                         refresh = true;
                     }
                 }
-            }catch (Exception e){
+            }catch (Exception e) {
                 Logger.error("Ошибка применения настроек", e);
             }
         }

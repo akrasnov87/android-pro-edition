@@ -16,12 +16,12 @@ public class BasicUser {
     private final Object UserId;
     private final String[] roles;
 
-    public BasicUser(BasicCredentials credentials, Object userId, String claims){
+    public BasicUser(BasicCredentials credentials, Object userId, String claims) {
         this.credentials = credentials;
+        this.claims = claims;
         UserId = userId;
         String trimClaims = claims.replaceAll("^.", "").replaceAll(".$", "");
         roles = trimClaims.split("\\.");
-        this.claims = claims;
     }
 
     public boolean userInRole(String roleName) {
