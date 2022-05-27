@@ -3,6 +3,8 @@ package com.mobwal.pro.utilits;
 import android.content.Context;
 import android.util.Log;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +28,24 @@ public class LogUtil {
     public static int MAX_FILES = 3;
 
     static String TAG = "LOG_UTIL";
+
+    @Nullable
+    public static File getArchiveLog(Context context) {
+        File[] files = context.getCacheDir().listFiles(pathname -> {
+            if(pathname.isFile()) {
+                String extension = StringUtil.getFileExtension(pathname.getName());
+                return extension != null && extension.equals(".log");
+            } else {
+                return false;
+            }
+        });
+        if (files != null) {
+            File file = new File(context.getCacheDir(), "journal.zip");
+            ZipManager.zipFiles(context, files, file.getAbsolutePath(), null);
+            return file;
+        }
+        return null;
+    }
 
     /**
      * Запись текста в файл лога

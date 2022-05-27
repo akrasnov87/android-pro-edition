@@ -188,4 +188,9 @@
     <string name="auth_empty">Логин или пароль не указаны</string>
     <string name="without_auth">Доступ без авторизации запрещён.</string>
     <string name="menu_synchronization">Синхронизация</string>
+    <string name="send_mail">Отправка сообщений</string>
+    <string name="send_mail_placeholder">Ваш текст для отправки сообщения</string>
+    <string name="send_mail_journal">Прикрепить системный журнал</string>
+    <string name="send_mail_subject">Сообщение с MOBWAL PRO</string>
+    <string name="send_mail_title">Отправка сообщения…</string>
 </resources>

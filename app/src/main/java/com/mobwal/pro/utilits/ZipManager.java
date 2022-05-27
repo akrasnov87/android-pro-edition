@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +52,50 @@ public class ZipManager {
             }
 
             return files.toArray(new File[0]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Сжатие файлов
+     * @param files файлы для сжатия
+     * @param outputFile выходной результат
+     * @return Если пустая строка, то результат обработки прошел без ошибок
+     */
+    @Nullable
+    public static String zipFiles(@NotNull Context context, @NotNull File[] files, String outputFile, @Nullable ZipListeners listeners) {
+        int total = files.length;
+        int current = 0;
+
+        BufferedInputStream origin;
+
+        try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)))) {
+
+            for (File f : files) {
+                FileInputStream fi = new FileInputStream(f);
+                origin = new BufferedInputStream(fi, BUFFER_SIZE);
+                try {
+                    ZipEntry entry = new ZipEntry(f.getName());
+                    out.putNextEntry(entry);
+                    int count;
+                    byte[] data = new byte[BUFFER_SIZE];
+                    while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                } finally {
+                    origin.close();
+                }
+
+                current++;
+
+                if(listeners != null) {
+                    listeners.onZipPack(total, current);
+                }
+            }
+        } catch (IOException e) {
+            WalkerApplication.Log("Ошибка упаковки файлов в архив", e);
+            return context.getString(R.string.unknown_error) + " ZIP1";
         }
 
         return null;
