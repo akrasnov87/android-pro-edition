@@ -50,7 +50,7 @@ public class ImportUtil {
                 Template template = new Template();
                 template.c_name = row[0];
                 template.c_template = row[1];
-                template.f_route = f_route;
+                //template.f_route = f_route;
                 template.n_order = i + 1;
 
                 templates.add(template);
@@ -123,7 +123,7 @@ public class ImportUtil {
                     continue;
                 }
 
-                point.f_route = f_route;
+                //point.f_route = f_route;
                 point.n_order = i + 1;
 
                 if (row.length > 5) {
@@ -171,7 +171,7 @@ public class ImportUtil {
                     point.c_comment = row[7];
                 }
 
-                point.f_route = f_route;
+                //point.f_route = f_route;
                 point.n_order = i + 1;
 
                 if (row.length > 7) {
@@ -220,7 +220,7 @@ public class ImportUtil {
             }
 
             if (row.length > 4) {
-                point.c_imp_id = row[4];
+                //point.c_imp_id = row[4];
             }
 
             return point;
@@ -308,17 +308,17 @@ public class ImportUtil {
         }
 
         Route route = new Route();
-        route.c_catalog = "demo";
+        //route.c_catalog = "demo";
         route.c_name = routeName;
-        route.b_export = true;
-        route.d_export = new Date();
-        route.c_readme = MessageFormat.format(context.getString(R.string.create_route_docs), Names.ROUTE_DOCS);
+        //route.b_export = true;
+        //route.d_export = new Date();
+        //route.c_readme = MessageFormat.format(context.getString(R.string.create_route_docs), Names.ROUTE_DOCS);
 
         List<Point> list = new ArrayList<>();
         int i = 0;
         for (DemoPlaceItem item: places) {
             Point point = new Point();
-            point.f_route = route.id;
+            //point.f_route = route.id;
             point.c_address = item.name;
             //point.c_description = item.kinds;
             point.n_latitude = item.latitude;
@@ -366,7 +366,7 @@ public class ImportUtil {
     public static String generateRouteFromZip(@NotNull Context context, @NotNull ZipReader reader, @NotNull String routeName, @NotNull String catalog) {
         Route route = new Route();
         route.c_name = routeName;
-        route.c_catalog = catalog;
+        //route.c_catalog = catalog;
         route.b_check = reader.isCheckMode();
 
         String routeID = reader.getId(route.b_check);
@@ -378,7 +378,7 @@ public class ImportUtil {
 
         String readme = reader.getReadme(route.b_check);
         if(!TextUtils.isEmpty(readme)) {
-            route.c_readme = readme;
+            //route.c_readme = readme;
         }
 
         String[][] pointRows = reader.getPoints(route.b_check);
@@ -449,14 +449,14 @@ public class ImportUtil {
                                                 }
 
                                                 Result result = new Result();
-                                                result.f_route = route.id;
-                                                result.f_point = pointOrderFilter.get(0).id;
-                                                result.c_template = template.c_template;
+                                                //result.f_route = route.id;
+                                                //result.f_point = pointOrderFilter.get(0).id;
+                                                //result.c_template = template.c_template;
                                                 result.d_date = DateUtil.convertStringToSystemDate(rows[i][7]);
                                                 if (result.d_date == null) {
                                                     continue;
                                                 }
-                                                result.n_date = result.d_date.getTime();
+                                                //result.n_date = result.d_date.getTime();
 
                                                 result.n_distance = TextUtils.isEmpty(rows[i][10]) ? -1 : Double.parseDouble(rows[i][10]);
                                                 result.n_latitude = TextUtils.isEmpty(rows[i][8]) ? 0.0 : Double.parseDouble(rows[i][8]);
@@ -492,10 +492,10 @@ public class ImportUtil {
                                                             fileManager.copy(attUrl, new File(fileManager.getRootCatalog(route.id), attItem[1]));
 
                                                             Attachment attachmentItem = new Attachment();
-                                                            attachmentItem.f_point = result.f_point;
-                                                            attachmentItem.f_route = route.id;
-                                                            attachmentItem.f_result = result.id;
-                                                            attachmentItem.c_name = attItem[1];
+                                                            //attachmentItem.fn_point = result.f_point;
+                                                            //attachmentItem.fn_route = route.id;
+                                                            //attachmentItem.fn_result = result.id;
+                                                            //attachmentItem.c_name = attItem[1];
 
                                                             attachmentItem.n_latitude = TextUtils.isEmpty(attItem[2]) ? 0.0 : Double.parseDouble(attItem[2]);
                                                             attachmentItem.n_longitude = TextUtils.isEmpty(attItem[3]) ? 0.0 : Double.parseDouble(attItem[3]);
@@ -503,7 +503,6 @@ public class ImportUtil {
                                                             if (attachmentItem.d_date == null) {
                                                                 continue;
                                                             }
-                                                            attachmentItem.n_date = attachmentItem.d_date.getTime();
                                                             attachmentItem.n_distance = TextUtils.isEmpty(attItem[5]) ? -1 : Double.parseDouble(attItem[5]);
 
                                                             attachmentItems.add(attachmentItem);

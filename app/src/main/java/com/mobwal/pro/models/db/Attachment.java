@@ -13,19 +13,16 @@ public class Attachment implements Serializable {
         d_date = new Date();
         n_latitude = null;
         n_longitude = null;
-        n_date = new Date().getTime();
         n_distance = null;
     }
 
     public String id;
 
-    public String f_route;
+    public String fn_route;
 
-    public String f_point;
+    public String fn_point;
 
-    public String f_result;
-
-    public String c_name;
+    public String fn_result;
 
     @Nullable
     public Double n_latitude;
@@ -35,8 +32,18 @@ public class Attachment implements Serializable {
 
     public Date d_date;
 
-    public Long n_date;
+    public String c_path;
+
+    public int n_size;
+
+    public String c_extension;
+
+    public String c_mime;
+
+    public String jb_data;
 
     @Nullable
     public Double n_distance;
+
+    public String fn_storage;
 }

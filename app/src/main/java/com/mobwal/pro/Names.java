@@ -9,4 +9,8 @@ public class Names {
     public static final float SWIPE_THRESHOLD = 0.7f;
 
     public static final String SUPPORT_EMAIL = "vonsark87@yandex.ru";
+
+    public static final int SECURITY_ACTIVITY = 0;
+    public static final int MAIN_ACTIVITY = 1;
+    public static final int MAIL_ACTIVITY = 2;
 }

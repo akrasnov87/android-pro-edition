@@ -14,8 +14,10 @@ import com.mobwal.pro.utilits.BitmapCache;
 
 import ru.mobnius.core.data.authorization.Authorization;
 import ru.mobnius.core.data.configuration.DefaultPreferencesManager;
+import ru.mobnius.core.data.exception.IExceptionIntercept;
+import ru.mobnius.core.data.exception.MyUncaughtExceptionHandler;
 
-public class WalkerApplication extends Application {
+public class WalkerApplication extends Application implements IExceptionIntercept {
 
     private boolean isAuthorized = false;
     private static boolean ReportSending = false;
@@ -148,5 +150,20 @@ public class WalkerApplication extends Application {
         sharedPreferences.edit().clear().apply();
 
         Authorization.getInstance().destroy();
+    }
+
+    @Override
+    public void onExceptionIntercept() {
+        Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler(), getExceptionGroup(), getExceptionCode(), this));
+    }
+
+    @Override
+    public String getExceptionGroup() {
+        return "APP";
+    }
+
+    @Override
+    public int getExceptionCode() {
+        return 0;
     }
 }

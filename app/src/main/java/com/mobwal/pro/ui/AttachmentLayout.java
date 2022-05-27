@@ -313,11 +313,11 @@ public class AttachmentLayout extends LinearLayout
         }
         Attachment attachment = new Attachment();
         attachment.id = id;
-        attachment.f_point = mPointBundle.f_point;
-        attachment.f_route = mPointBundle.f_route;
-        attachment.f_result = mPointBundle.f_result;
+        //attachment.f_point = mPointBundle.f_point;
+        //attachment.f_route = mPointBundle.f_route;
+        //attachment.f_result = mPointBundle.f_result;
 
-        attachment.c_name = id + ".jpg";
+        //attachment.c_name = id + ".jpg";
         attachment.d_date = new Date();
 
         if(mLocationInfo != null) {
@@ -325,8 +325,6 @@ public class AttachmentLayout extends LinearLayout
             attachment.n_longitude = mLocationInfo.myLongitude;
             attachment.n_latitude = mLocationInfo.myLatitude;
         }
-
-        attachment.n_date = new Date().getTime();
 
         mItemAdapter.add(attachment);
 
@@ -342,7 +340,7 @@ public class AttachmentLayout extends LinearLayout
     public void onViewItemClick(String id) {
         for (Attachment attach: mItemAdapter.getData()) {
             if(attach.id.equals(id)) {
-                ActivityUtil.openGallery(getContext(), new File(mFileManager.getRootCatalog(mPointBundle.f_route), attach.c_name));
+                //ActivityUtil.openGallery(getContext(), new File(mFileManager.getRootCatalog(mPointBundle.f_route), attach.c_name));
                 return;
             }
         }

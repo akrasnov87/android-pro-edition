@@ -13,12 +13,12 @@ import com.mobwal.pro.utilits.SQLContext;
 
 public class WalkerSQLContext extends SQLContext {
 
-    private Context mContext;
-
     public WalkerSQLContext(Context context) {
         super(context);
+    }
 
-        mContext = context;
+    public WalkerSQLContext(Context context, String dbName) {
+        super(context, dbName);
     }
 
     @Override

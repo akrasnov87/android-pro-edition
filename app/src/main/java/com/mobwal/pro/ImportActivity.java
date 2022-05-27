@@ -24,10 +24,12 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import pw.appcode.mimic.SimpleFormLayout;
+import ru.mobnius.core.ui.ExceptionInterceptActivity;
+
 import com.mobwal.pro.databinding.ActivityImportBinding;
 import com.mobwal.pro.utilits.StreamUtil;
 
-public class ImportActivity extends AppCompatActivity {
+public class ImportActivity extends ExceptionInterceptActivity {
 
     public static Intent getIntent(Context context, Uri uri) {
         Intent intent = new Intent(context, ImportActivity.class);
@@ -114,5 +116,10 @@ public class ImportActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public int getExceptionCode() {
+        return 2;
     }
 }

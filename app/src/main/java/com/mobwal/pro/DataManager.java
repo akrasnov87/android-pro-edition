@@ -110,17 +110,17 @@ public class DataManager {
                 items.add(new RouteInfo(mContext, mContext.getString(R.string.in_work), DateUtil.toDateTimeString(routes[0].d_date)));
             }
 
-            if(routes[0].d_export != null) {
+            /*if(routes[0].d_export != null) {
                 items.add(new RouteInfo(mContext, mContext.getString(R.string.exported), DateUtil.toDateTimeString(routes[0].d_export)));
-            }
+            }*/
 
             results[0] = items.toArray(new RouteInfo[0]);
 
             items.clear();
 
-            if(routes[0].c_readme != null) {
+            /*if(routes[0].c_readme != null) {
                 items.add(new RouteInfo(mContext, mContext.getString(R.string.description), routes[0].c_readme));
-            }
+            }*/
         }
 
         Collection<Setting> settingCollection = sqlContext.select("select * from Setting as s where s.f_route = ? order by s.c_key", new String[] { f_route }, Setting.class);
@@ -177,7 +177,7 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
         Point point = new Point();
-        point.f_route = f_route;
+        //point.f_route = f_route;
         point.c_address = name;
         point.c_description = desc;
         if(location != null) {
@@ -272,7 +272,7 @@ public class DataManager {
 
 
             WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-            Collection<ResultTemplate> collection = sqlContext.select("select t.id as F_TEMPLATE, t.C_NAME as C_TEMPLATE, t.C_TEMPLATE as C_CONST, r.id as F_RESULT, r.d_date as D_DATE from RESULT as r left join TEMPLATE as t on r.c_template = t.c_template where t.f_route = ? and r.f_point = ? and r.id is not null", new String[] { point.f_route, f_point }, ResultTemplate.class);
+            Collection<ResultTemplate> collection =  sqlContext.select("select t.id as F_TEMPLATE, t.C_NAME as C_TEMPLATE, t.C_TEMPLATE as C_CONST, r.id as F_RESULT, r.d_date as D_DATE from RESULT as r left join TEMPLATE as t on r.c_template = t.c_template where t.f_route = ? and r.f_point = ? and r.id is not null", new String[] { point.fn_route, f_point }, ResultTemplate.class);
 
             if(collection != null && !collection.isEmpty()) {
                 ResultTemplate[] templates = collection.toArray(new ResultTemplate[0]);
@@ -398,8 +398,8 @@ public class DataManager {
     public boolean exportRoute(@NotNull String f_route) {
         Route route = getRoute(f_route);
         if(route != null) {
-            route.b_export = true;
-            route.d_export = new Date();
+            //route.b_export = true;
+            //route.d_export = new Date();
 
             WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
             return sqlContext.insertMany(new Route[] { route });
@@ -441,12 +441,12 @@ public class DataManager {
         if(collection != null) {
             for (Attachment attachment:
                  collection) {
-                mFileManager.deleteFile(attachment.f_route, attachment.c_name + ".jpg");
+                //mFileManager.deleteFile(attachment.f_route, attachment.c_name + ".jpg");
             }
         }
 
         for (Attachment attachment : attachments) {
-            attachment.f_result = f_result;
+            //attachment.f_result = f_result;
         }
 
         return sqlContext.exec("delete from ATTACHMENT where f_result = ?;", new String[] { f_result }) &&
@@ -473,11 +473,11 @@ public class DataManager {
         if(collection != null) {
             Attachment[] array = collection.toArray(new Attachment[0]);
             if(array.length > 0) {
-                String f_route = array[0].f_route;
+                /*String f_route = array[0].f_route;
                 FileManager fileManager = new FileManager(mContext.getFilesDir());
                 for (Attachment item: array) {
                     fileManager.deleteFile(f_route, item.c_name);
-                }
+                }*/
             }
         }
 
@@ -497,11 +497,11 @@ public class DataManager {
         if(collection != null) {
             Attachment[] array = collection.toArray(new Attachment[0]);
             if(array.length > 0) {
-                String f_route = array[0].f_route;
+                /*String f_route = array[0].f_route;
                 FileManager fileManager = new FileManager(mContext.getFilesDir());
                 for (Attachment item: array) {
                     fileManager.deleteFile(f_route, item.c_name);
-                }
+                }*/
             }
         }
 

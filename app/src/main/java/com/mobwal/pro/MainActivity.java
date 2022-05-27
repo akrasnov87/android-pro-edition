@@ -38,9 +38,10 @@ import ru.mobnius.core.data.configuration.ConfigurationSetting;
 import ru.mobnius.core.data.configuration.ConfigurationSettingUtil;
 import ru.mobnius.core.data.credentials.BasicCredentials;
 import ru.mobnius.core.data.logger.Logger;
+import ru.mobnius.core.ui.ExceptionInterceptActivity;
 import ru.mobnius.core.utils.NewThread;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends ExceptionInterceptActivity
      implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int REQUEST_CODE_OPEN = 777;
@@ -254,5 +255,10 @@ public class MainActivity extends AppCompatActivity
             mConfigThread.destroy();
             mConfigThread = null;
         }
+    }
+
+    @Override
+    public int getExceptionCode() {
+        return Names.MAIN_ACTIVITY;
     }
 }

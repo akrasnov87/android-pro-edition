@@ -53,7 +53,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
     public void bind(@NotNull Attachment item) {
         mAttachment = item;
 
-        try {
+        /*try {
             byte[] bytes = mFileManager.readPath(item.f_route, item.c_name);
             if(bytes != null) {
                 Bitmap bitmap = BitmapCache.getBitmap(item.c_name, bytes, 80);
@@ -63,6 +63,6 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
             }
         } catch (IOException e) {
             WalkerApplication.Log("Ошибка сжатия изображения для галереи.", e);
-        }
+        }*/
     }
 }

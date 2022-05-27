@@ -14,9 +14,8 @@ import androidx.fragment.app.Fragment;
 import java.util.Objects;
 
 import ru.mobnius.core.R;
-import ru.mobnius.core.data.synchronization.utils.transfer.TransferListener;
-import ru.mobnius.core.data.synchronization.utils.transfer.TransferProgress;
-import ru.mobnius.core.utils.ColorUtil;
+//import com.mobwal.pro.data.utils.transfer.TransferListener;
+//import com.mobwal.pro.data.utils.transfer.TransferProgress;
 
 public class SynchronizationPartFragment extends Fragment {
 
@@ -48,7 +47,7 @@ public class SynchronizationPartFragment extends Fragment {
         Bundle arguments = getArguments();
         tvDescription.setText(Objects.requireNonNull(arguments).getString(DATA_TYPE));
 
-        updateProgressBarColor(TransferListener.START);
+        //updateProgressBarColor(TransferListener.START);
     }
 
     /**
@@ -67,14 +66,14 @@ public class SynchronizationPartFragment extends Fragment {
      *
      * @param progress прогресс
      */
-    public void updateStatus(TransferProgress progress) {
+    /*public void updateStatus(TransferProgress progress) {
         tvStatus.setText(progress.toString());
         Bundle arguments = getArguments();
         if (arguments != null) {
             String text = arguments.getString(DATA_TYPE) + " (" + progress.getTransferData().toString() + ")";
             tvDescription.setText(text);
         }
-    }
+    }*/
 
     /**
      * Обновление логов
@@ -98,10 +97,10 @@ public class SynchronizationPartFragment extends Fragment {
         if (!requireActivity().isFinishing()) {
             ColorStateList colorStateList;
             switch (type) {
-                case TransferListener.STOP:
+                /*case TransferListener.STOP:
                 case TransferListener.ERROR:
                     colorStateList = AppCompatResources.getColorStateList(requireContext(), R.color.colorSecondary);
-                    break;
+                    break;*/
 
                 default:
                     colorStateList = AppCompatResources.getColorStateList(requireContext(), R.color.colorSuccess);

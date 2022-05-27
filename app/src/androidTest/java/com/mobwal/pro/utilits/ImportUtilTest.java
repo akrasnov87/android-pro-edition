@@ -67,7 +67,7 @@ public class ImportUtilTest {
         Assert.assertEquals(data, "{\"{5}\":\"test1\",\"{6}\":\"test2\"}");
     }
 
-    @Test
+    /*@Test
     public void generateRouteFromZip() throws IOException {
         String folder = "zip-reader";
         FileManager fileManager = new FileManager(new File(mContext.getCacheDir(), folder));
@@ -132,7 +132,7 @@ public class ImportUtilTest {
         }
 
         fileManager.deleteFolder(folder);
-    }
+    }*/
 
     @After
     public void tearDown() {

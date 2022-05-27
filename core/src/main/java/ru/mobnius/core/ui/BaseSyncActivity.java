@@ -22,15 +22,15 @@ import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.exception.IExceptionCode;
 import ru.mobnius.core.data.exception.IExceptionGroup;
 import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.data.synchronization.Entity;
+/*import ru.mobnius.core.data.synchronization.Entity;
 import ru.mobnius.core.data.synchronization.IProgress;
 import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
-import ru.mobnius.core.data.synchronization.utils.SocketStatusReader;
-import ru.mobnius.core.data.synchronization.utils.transfer.DownloadTransfer;
-import ru.mobnius.core.data.synchronization.utils.transfer.Transfer;
-import ru.mobnius.core.data.synchronization.utils.transfer.TransferListener;
-import ru.mobnius.core.data.synchronization.utils.transfer.TransferProgress;
-import ru.mobnius.core.data.synchronization.utils.transfer.UploadTransfer;
+import com.mobwal.pro.data.utils.SocketStatusReader;
+import com.mobwal.pro.data.utils.transfer.DownloadTransfer;
+import com.mobwal.pro.data.utils.transfer.Transfer;
+import com.mobwal.pro.data.utils.transfer.TransferListener;
+import com.mobwal.pro.data.utils.transfer.TransferProgress;
+import com.mobwal.pro.data.utils.transfer.UploadTransfer;*/
 import ru.mobnius.core.model.LogItemModel;
 import ru.mobnius.core.ui.fragment.SynchronizationPartFragment;
 import ru.mobnius.core.utils.NetworkInfoUtil;
@@ -117,7 +117,7 @@ public abstract class BaseSyncActivity extends CoreActivity
         }
     }
 
-    public abstract OnSynchronizationListeners getSynchronization();
+    //public abstract OnSynchronizationListeners getSynchronization();
 
     /**
      * остановка выполнения синхронизации
@@ -127,7 +127,7 @@ public abstract class BaseSyncActivity extends CoreActivity
             removeSynchronizationPart(tid);
         }
         transferFragments.clear();
-        getSynchronization().stop();
+        //getSynchronization().stop();
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class BaseSyncActivity extends CoreActivity
             stop();
             final List<Boolean> success = new ArrayList<>();
 
-            getSynchronization().start(this, new IProgress() {
+            /*getSynchronization().start(this, new IProgress() {
                 @Override
                 public void onStartTransfer(String tid, Transfer transfer) {
                     if (transfer instanceof UploadTransfer) {
@@ -218,6 +218,7 @@ public abstract class BaseSyncActivity extends CoreActivity
                     setLogMessage(message, true);
                 }
             });
+            */
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -233,7 +234,7 @@ public abstract class BaseSyncActivity extends CoreActivity
 
     private void addSynchronizationPart(String tid) {
 
-        Entity[] entities = getSynchronization().getEntities(tid);
+        /*Entity[] entities = getSynchronization().getEntities(tid);
         String name;
         if (entities.length > 0) {
             name = entities[0].nameEntity;
@@ -250,10 +251,10 @@ public abstract class BaseSyncActivity extends CoreActivity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.sync_progress, synchronizationPartFragment);
         fragmentTransaction.commit();
-        transferFragments.put(tid, synchronizationPartFragment);
+        transferFragments.put(tid, synchronizationPartFragment);*/
     }
 
-    private void updateSynchronizationPart(String tid, double progress, double secondProgress, TransferProgress transferProgress) {
+    /*private void updateSynchronizationPart(String tid, double progress, double secondProgress, TransferProgress transferProgress) {
         SynchronizationPartFragment fragment = transferFragments.get(tid);
         if (fragment != null) {
             fragment.updatePercent(progress, secondProgress);
@@ -278,7 +279,7 @@ public abstract class BaseSyncActivity extends CoreActivity
                 fragment.updateLogs(reader.getParams()[0]);
             }
         }
-    }
+    }*/
 
     /**
      * удаление фрагмента для вывода progressbar

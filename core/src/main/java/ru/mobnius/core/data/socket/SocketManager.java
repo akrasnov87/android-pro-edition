@@ -5,6 +5,9 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import ru.mobnius.core.data.credentials.BasicCredentials;
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.packager.MetaSize;
@@ -30,7 +33,7 @@ public class SocketManager {
     public final static String EVENT_GROUP_MAIL_FROM = "mailer-group-from";
     private static SocketManager socketManager;
 
-    //private Socket socket;
+    private Socket socket;
     private boolean isRegistry;
 
     /**
@@ -46,7 +49,7 @@ public class SocketManager {
         String[] transports = new String[1];
         transports[0] = "websocket";
 
-        /*try {
+        try {
             IO.Options opts = new IO.Options();
             opts.forceNew = true;
             opts.path = UrlUtil.getPathUrl(url) + "/socket.io";
@@ -67,7 +70,7 @@ public class SocketManager {
 
         } catch (URISyntaxException e) {
             Logger.error(e);
-        }*/
+        }
     }
 
     /**
@@ -98,7 +101,7 @@ public class SocketManager {
      * @param listeners обработчик уведомлений
      */
     public void open(final OnSocketListeners listeners) {
-        /*socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 listeners.onConnect();
@@ -149,24 +152,24 @@ public class SocketManager {
             }
         });
 
-        socket.connect();*/
+        socket.connect();
     }
 
     /**
      * текущее сокет подключение
      * @return сокет соединение
      */
-    /*public Socket getSocket() {
+    public Socket getSocket() {
         return null;
-    }*/
+    }
 
     /**
      * зарегистрирован ли пользователь на сервере
      * @return true - пользователь был зарегистрирован ранее
      */
     public boolean isRegistered() {
-        //if(socket!= null)
-        //    return isRegistry && socket.connected();
+        if(socket!= null)
+            return isRegistry && socket.connected();
         return false;
     }
 
@@ -175,8 +178,8 @@ public class SocketManager {
      * @return true - подключение доступно
      */
     public boolean isConnected() {
-        //if(socket!= null)
-        //    return socket.connected();
+        if(socket!= null)
+            return socket.connected();
         return false;
     }
 
@@ -201,16 +204,16 @@ public class SocketManager {
      * Закрытие подключения
      */
     public void close(){
-        //if(socket != null) {
-        //    socket.off();
-        //    socket.close();
-        //}
+        if(socket != null) {
+            socket.off();
+            socket.close();
+        }
         isRegistry = false;
     }
 
     public void destroy() {
         close();
-        //socket = null;
+        socket = null;
         socketManager = null;
     }
 }

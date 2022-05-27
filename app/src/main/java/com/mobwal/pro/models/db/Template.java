@@ -23,8 +23,6 @@ public class Template {
 
     public String c_layout;
 
-    public String f_route;
-
     public int n_order;
 
     public void setDefault(@NotNull Context context, @NotNull String f_route) {
@@ -33,7 +31,6 @@ public class Template {
         CustomLayoutManager customLayoutManager = new CustomLayoutManager(context);
 
         c_template = customLayoutManager.getDefaultLayoutName();
-        this.f_route = f_route;
         n_order = 1;
 
         c_layout = customLayoutManager.getDefaultLayout();
@@ -42,7 +39,6 @@ public class Template {
     public void setDemo(@NotNull Context context, @NotNull String f_route) {
         c_name = context.getString(R.string.profile);
         c_template = "PROFILE";
-        this.f_route = f_route;
         n_order = 1;
         c_layout = "layout 'vbox'\n" +
                 "\ttextfield name 'Name'\n" +

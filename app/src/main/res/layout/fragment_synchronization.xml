@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.global.SynchronizationFragment"
-    android:padding="@dimen/indent_medium">
+    tools:context=".ui.global.SynchronizationFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sync_logs"
@@ -24,8 +23,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/indent_medium"
-        android:layout_marginBottom="@dimen/indent_medium"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_baseline_play_arrow_24"
         android:contentDescription="@string/menu_synchronization" />
 

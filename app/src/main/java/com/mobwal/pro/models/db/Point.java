@@ -34,11 +34,9 @@ public class Point {
 
     public boolean b_anomaly;
 
-    public String f_route;
+    public String fn_route;
 
     public int n_order;
-
-    public String c_imp_id;
 
     @Nullable
     public String jb_data;

@@ -96,4 +96,11 @@ public class MailFragment extends Fragment
 
         WalkerApplication.Log("Сообщение отправлено.");
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mBinding = null;
+    }
 }

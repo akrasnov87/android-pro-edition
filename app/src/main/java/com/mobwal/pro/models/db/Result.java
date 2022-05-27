@@ -19,30 +19,27 @@ public class Result {
         n_latitude = null;
         n_longitude = null;
         d_date = new Date();
-        n_date = d_date.getTime();
-        c_template = "DEFAULT";
 
-        this.f_point = f_point;
+        this.fn_point = f_point;
     }
 
-    public Result(String id, String f_route, String f_point, String c_template, @Nullable Location location, @Nullable Point point) {
+    public Result(String id, String f_route, String f_point, String fn_template, @Nullable Location location, @Nullable Point point) {
         this.id = id;
 
-        this.f_route = f_route;
-        this.f_point = f_point;
-        this.c_template = c_template;
+        this.fn_route = f_route;
+        this.fn_point = f_point;
+        this.fn_template = fn_template;
         setLocation(location);
         setDistance(point, location);
 
         d_date = new Date();
-        n_date = d_date.getTime();
     }
 
     public String id;
 
-    public String f_route;
+    public String fn_route;
 
-    public String f_point;
+    public String fn_point;
 
     @Nullable
     public Double n_latitude;
@@ -55,9 +52,7 @@ public class Result {
 
     public Date d_date;
 
-    public long n_date;
-
-    public String c_template;
+    public String fn_template;
 
     @Nullable
     public Double n_distance;

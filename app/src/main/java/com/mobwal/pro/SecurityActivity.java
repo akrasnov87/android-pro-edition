@@ -15,7 +15,9 @@ import android.os.Bundle;
 
 import com.mobwal.pro.databinding.ActivitySecurityBinding;
 
-public class SecurityActivity extends AppCompatActivity {
+import ru.mobnius.core.ui.ExceptionInterceptActivity;
+
+public class SecurityActivity extends ExceptionInterceptActivity {
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, SecurityActivity.class);
@@ -28,10 +30,7 @@ public class SecurityActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        startActivity(MailActivity.getIntent(this));
-        finish();
-
-        /*ActivitySecurityBinding binding = ActivitySecurityBinding.inflate(getLayoutInflater());
+        ActivitySecurityBinding binding = ActivitySecurityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarSecurity.toolbar);
@@ -58,6 +57,11 @@ public class SecurityActivity extends AppCompatActivity {
 
             NavController navController = navHostFragment.getNavController();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        }*/
+        }
+    }
+
+    @Override
+    public int getExceptionCode() {
+        return Names.SECURITY_ACTIVITY;
     }
 }

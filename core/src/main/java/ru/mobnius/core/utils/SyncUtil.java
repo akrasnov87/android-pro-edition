@@ -5,9 +5,9 @@ import org.greenrobot.greendao.database.Database;
 
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.storage.FieldNames;
-import ru.mobnius.core.data.synchronization.Entity;
+/*import ru.mobnius.core.data.synchronization.Entity;
 import ru.mobnius.core.data.synchronization.IProgressStep;
-import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
+import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;*/
 
 
 public class SyncUtil {
@@ -35,7 +35,7 @@ public class SyncUtil {
      * @param context объект синхронизации
      * @return false - информация не была сброшена
      */
-    public static boolean resetTid(OnSynchronizationListeners context) {
+    /*public static boolean resetTid(OnSynchronizationListeners context) {
         boolean result;
         AbstractDaoSession daoSession = context.getDaoSession();
         Database db = daoSession.getDatabase();
@@ -56,7 +56,7 @@ public class SyncUtil {
         }
 
         return result;
-    }
+    }*/
 
     /**
      * обновление идентификатора транзакции для записи
@@ -65,7 +65,7 @@ public class SyncUtil {
      * @param tid идентификатор транзакции
      * @return возвращается результат обработки
      */
-    public static boolean updateTid(OnSynchronizationListeners context, String tableName, String tid) {
+    /*public static boolean updateTid(OnSynchronizationListeners context, String tableName, String tid) {
         boolean result = false;
         AbstractDaoSession daoSession = context.getDaoSession();
         Database db = daoSession.getDatabase();
@@ -80,7 +80,7 @@ public class SyncUtil {
             context.onError(IProgressStep.START, e, tid);
         }
         return result;
-    }
+    }*/
 
     /**
      * обновление идентификатора блока для записи
@@ -92,7 +92,7 @@ public class SyncUtil {
      * @param linkValue значение первичного ключа
      * @return возвращается результат обработки
      */
-    public static boolean updateBlockTid(OnSynchronizationListeners context, String tableName, String tid, String blockTid, String linkName, Object linkValue) {
+    /*public static boolean updateBlockTid(OnSynchronizationListeners context, String tableName, String tid, String blockTid, String linkName, Object linkValue) {
         boolean result = false;
         AbstractDaoSession daoSession = context.getDaoSession();
         Database db = daoSession.getDatabase();
@@ -107,7 +107,7 @@ public class SyncUtil {
             context.onError(IProgressStep.START, e, tid);
         }
         return result;
-    }
+    }*/
 
     /**
      * обновление идентификатора блока для записи
@@ -118,7 +118,7 @@ public class SyncUtil {
      * @param operationType тип операции
      * @return возвращается результат обработки
      */
-    public static boolean updateBlockTid(OnSynchronizationListeners context, String tableName, String tid, String blockTid, String operationType) {
+    /*public static boolean updateBlockTid(OnSynchronizationListeners context, String tableName, String tid, String blockTid, String operationType) {
         boolean result = false;
         AbstractDaoSession daoSession = context.getDaoSession();
         Database db = daoSession.getDatabase();
@@ -134,7 +134,7 @@ public class SyncUtil {
             context.onError(IProgressStep.START, e, tid);
         }
         return result;
-    }
+    }*/
 
     /**
      * обновление идентификатора блока для записи
@@ -143,7 +143,7 @@ public class SyncUtil {
      * @param tid идентификатор транзакции
      * @return возвращается результат обработки
      */
-    public static boolean updateBlockTid(OnSynchronizationListeners context, String tableName, String tid) {
+    /*public static boolean updateBlockTid(OnSynchronizationListeners context, String tableName, String tid) {
         boolean result = false;
         AbstractDaoSession daoSession = context.getDaoSession();
         Database db = daoSession.getDatabase();
@@ -160,7 +160,7 @@ public class SyncUtil {
             context.onError(IProgressStep.STOP, e, tid);
         }
         return result;
-    }
+    }*/
 
     /**
      * обновление идентификатора транзакции во всех связанных таблицах
@@ -168,7 +168,7 @@ public class SyncUtil {
      * @param tid идентификатор транзакции
      * @return возвращается результат обработки
      */
-    public static boolean updateTid(OnSynchronizationListeners context, String tid){
+    /*public static boolean updateTid(OnSynchronizationListeners context, String tid){
         boolean result;
         AbstractDaoSession daoSession = context.getDaoSession();
         Database db = daoSession.getDatabase();
@@ -189,5 +189,5 @@ public class SyncUtil {
             db.endTransaction();
         }
         return result;
-    }
+    }*/
 }

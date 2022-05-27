@@ -64,7 +64,7 @@ public class ExportToShared {
             String routeName = StringUtil.getNameWithOutExtension(route.c_name);
             // оборачиваем еще в одну папку
 
-            String exportName = route.c_catalog == null ? routeName : route.c_catalog;
+            String exportName = ""; // route.c_catalog == null ? routeName : route.c_catalog;
 
             File exportFolder = new File(fileManager.getRootCatalog("export"), exportName);
             File rootDir = new File(exportFolder, exportName);
@@ -79,14 +79,14 @@ public class ExportToShared {
                 File dataFile = new File(rootDir, "data");
 
                 if (dataFile.mkdir()) {
-                    if (route.c_readme != null) {
+                    /*if (route.c_readme != null) {
                         try {
                             fileManager.writeBytes(dataFile, "readme.txt", route.c_readme.getBytes(StandardCharsets.UTF_8));
                         } catch (IOException e) {
                             WalkerApplication.Log("Экспорт. Ошибка создания readme.txt", e);
                             return context.getString(R.string.export_route_error_readme);
                         }
-                    }
+                    }*/
 
                     try {
                         fileManager.writeBytes(dataFile, "name.txt", route.c_name.getBytes(StandardCharsets.UTF_8));
@@ -171,7 +171,7 @@ public class ExportToShared {
                             pointItem.add(normalCsvString(item.n_latitude));
                             pointItem.add(normalCsvString(item.n_longitude));
                             pointItem.add(normalCsvString(item.c_description));
-                            pointItem.add(normalCsvString(item.c_imp_id));
+                            //pointItem.add(normalCsvString(item.c_imp_id));
 
                             pointItem.add(normalCsvString(item.b_anomaly));
                             pointItem.add(normalCsvString(!route.b_check || item.b_check));
@@ -341,9 +341,9 @@ public class ExportToShared {
                                 List<Attachment> filterAttachments = new ArrayList<>();
                                 for (Attachment attachment :
                                         attachments) {
-                                    if (attachment.f_result.equals(resultItem.f_result)) {
+                                    /*if (attachment.f_result.equals(resultItem.f_result)) {
                                         filterAttachments.add(attachment);
-                                    }
+                                    }*/
                                 }
 
                                 for (int j = 0; j < filterAttachments.size(); j++) {
@@ -352,7 +352,7 @@ public class ExportToShared {
                                     Attachment attachment = filterAttachments.get(j);
 
                                     fileItem.add(resultItem.getId());
-                                    String picName = resultItem.getId() + "-" + (j + 1) + StringUtil.getFileExtension(attachment.c_name);
+                                    /*String picName = resultItem.getId() + "-" + (j + 1) + StringUtil.getFileExtension(attachment.c_name);
                                     fileItem.add(picName);
                                     fileItem.add(normalCsvString(attachment.n_latitude));
                                     fileItem.add(normalCsvString(attachment.n_longitude));
@@ -367,7 +367,7 @@ public class ExportToShared {
 
                                         fileItem.add(ActivityUtil.getMimeType(context, Uri.fromFile(url)));
                                         fileItem.add(String.valueOf(url.length()));
-                                    }
+                                    }*/
 
                                     files.add(fileItem.toArray(new String[0]));
                                 }

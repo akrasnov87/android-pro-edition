@@ -16,7 +16,9 @@ import android.os.Bundle;
 import com.mobwal.pro.databinding.ActivityMailBinding;
 import com.mobwal.pro.databinding.ActivitySecurityBinding;
 
-public class MailActivity extends AppCompatActivity {
+import ru.mobnius.core.ui.ExceptionInterceptActivity;
+
+public class MailActivity extends ExceptionInterceptActivity {
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MailActivity.class);
@@ -47,5 +49,10 @@ public class MailActivity extends AppCompatActivity {
             NavController navController = navHostFragment.getNavController();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         }
+    }
+
+    @Override
+    public int getExceptionCode() {
+        return Names.MAIL_ACTIVITY;
     }
 }

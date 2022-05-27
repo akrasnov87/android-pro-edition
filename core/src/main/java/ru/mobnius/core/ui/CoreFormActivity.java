@@ -39,7 +39,7 @@ import ru.mobnius.core.data.gallery.OnGalleryChangeListeners;
 import ru.mobnius.core.data.gallery.OnGalleryListener;
 import ru.mobnius.core.data.gallery.PhotoDataManager;
 import ru.mobnius.core.data.gallery.OnPhotoItemChangeListener;
-import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
+//import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;
 import ru.mobnius.core.ui.fragment.BaseGalleryFragment;
 import ru.mobnius.core.ui.fragment.PhotoChangeDialogFragment;
 import ru.mobnius.core.ui.image.ImageViewActivity;
@@ -77,7 +77,7 @@ public abstract class CoreFormActivity extends SingleFragmentActivity
      * Для лайт синхронизации
      */
     @Deprecated
-    public abstract OnSynchronizationListeners getSynchronization();
+    //public abstract OnSynchronizationListeners getSynchronization();
 
     public abstract PhotoDataManager getPhotoData();
 

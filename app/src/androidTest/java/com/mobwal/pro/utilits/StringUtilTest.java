@@ -1,4 +1,4 @@
-package com.mobwal.pro.utilits;
+/*package com.mobwal.pro.utilits;
 
 import android.content.Context;
 
@@ -29,3 +29,4 @@ public class StringUtilTest {
         Assert.assertEquals(formatText, content);
     }
 }
+*/

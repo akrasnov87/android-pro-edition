@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
@@ -23,13 +24,29 @@ public abstract class SQLContext extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "walker.db";
+    private static String DATABASE_NAME = "walker.db";
 
     // путь к БД
     private final File databasePath;
 
-    public SQLContext(Context context) {
+    @NonNull
+    private final Context mContext;
+
+    @NonNull
+    public Context getContext() {
+        return mContext;
+    }
+
+    public SQLContext(@NonNull Context context, String dbName) {
+        super(context, dbName, null, DATABASE_VERSION);
+        mContext = context;
+        DATABASE_NAME = dbName;
+        databasePath = context.getDatabasePath(DATABASE_NAME);
+    }
+
+    public SQLContext(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
         databasePath = context.getDatabasePath(DATABASE_NAME);
     }
 

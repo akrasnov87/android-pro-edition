@@ -169,7 +169,7 @@ public class RouteInfoFragment extends Fragment {
                     if (TextUtils.isEmpty(mResult)) {
                         ShareCompat.IntentBuilder intentBuilder = new ShareCompat.IntentBuilder(requireActivity());
                         if (mRoute != null) {
-                            intentBuilder.setSubject(mRoute.toExportTitle(requireContext()));
+                            //intentBuilder.setSubject(mRoute.toExportTitle(requireContext()));
                         }
 
                         Uri fileUri = FileProvider.getUriForFile(
