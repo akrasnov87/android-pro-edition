@@ -11,7 +11,7 @@ public class AuthorizationRequestUtilTest {
 
     @Test
     public void SuccessReadTest() {
-        String successResult = "{\"token\": \"cm9vdDpyb290MA==\",\"user\": {\"userId\": 1,\"claims\": \".master.admin.filer.\", \"userName\":\"\"}}";
+        String successResult = "{\"token\": \"cm9vdDpyb290MA==\",\"user\": {\"id\": 1,\"claims\": \".master.admin.filer.\", \"login\":\"\"}}";
         AuthorizationRequestUtil util = new AuthorizationRequestUtil();
         AuthorizationMeta meta = util.convertResponseToMeta(successResult);
         assertEquals("cm9vdDpyb290MA==", meta.getToken());

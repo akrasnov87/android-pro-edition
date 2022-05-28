@@ -24,8 +24,8 @@ public class GlobalSettings {
     public static final String DEFAULT_USER_NAME = "inspector";
     public static final String DEFAULT_USER_PASSWORD = "inspector0";
     public static final Object DEFAULT_USER_ID = 4;
-    public static String BASE_URL = "http://10.10.6.100:5000";
-    public static String VIRTUAL_DIR_PATH = "/dev";
+    public static String BASE_URL = "http://192.168.1.69:5006";
+    public static String VIRTUAL_DIR_PATH = "/release";
 
     /**
      * Адрес соединения с сервером

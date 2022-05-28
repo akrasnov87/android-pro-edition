@@ -46,9 +46,9 @@ public class AuthorizationTest {
 
     @Test
     public void isInspector() {
-        mAuthorization.setUser(new BasicUser(new BasicCredentials(GlobalSettings.DEFAULT_USER_NAME, GlobalSettings.DEFAULT_USER_PASSWORD), 1, ".user.inspector."));
+        mAuthorization.setUser(new BasicUser(new BasicCredentials(GlobalSettings.DEFAULT_USER_NAME, GlobalSettings.DEFAULT_USER_PASSWORD), 1, ".user.master."));
         assertTrue(mAuthorization.isInspector());
-        mAuthorization.setUser(new BasicUser(new BasicCredentials(GlobalSettings.DEFAULT_USER_NAME, GlobalSettings.DEFAULT_USER_PASSWORD), 1, ".user.admin."));
+        mAuthorization.setUser(new BasicUser(new BasicCredentials(GlobalSettings.DEFAULT_USER_NAME, GlobalSettings.DEFAULT_USER_PASSWORD), 1, ".admin.manager."));
         assertFalse(mAuthorization.isInspector());
     }
 

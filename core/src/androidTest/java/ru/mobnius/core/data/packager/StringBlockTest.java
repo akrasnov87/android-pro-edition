@@ -30,6 +30,6 @@ public class StringBlockTest {
 
         block = new StringBlock(to, from);
         str = block.toJsonString();
-        assertEquals(str, "{\"from\":[{\"action\":\"shell\",\"change\":null,\"data\":[[{\"filter\":null,\"limit\":10000,\"params\":[]}]],\"method\":\"getServerTime\",\"tid\":"+from[0].tid+",\"type\":\"rpc\"}],\"to\":[{\"action\":\"shell\",\"change\":null,\"data\":[[null]],\"method\":\"getServerTime\",\"tid\":"+to[0].tid+",\"type\":\"rpc\"},{\"action\":\"setting\",\"change\":null,\"data\":[[null]],\"method\":\"getMobileSettings\",\"tid\":"+to[1].tid+",\"type\":\"rpc\"}]}");
+        assertEquals(str, "{\"from\":[{\"action\":\"shell\",\"change\":null,\"data\":[[{\"filter\":null,\"limit\":100000,\"params\":[]}]],\"method\":\"getServerTime\",\"tid\":"+from[0].tid+",\"type\":\"rpc\"}],\"to\":[{\"action\":\"shell\",\"change\":null,\"data\":[[null]],\"method\":\"getServerTime\",\"tid\":"+to[0].tid+",\"type\":\"rpc\"},{\"action\":\"setting\",\"change\":null,\"data\":[[null]],\"method\":\"getMobileSettings\",\"tid\":"+to[1].tid+",\"type\":\"rpc\"}]}");
     }
 }

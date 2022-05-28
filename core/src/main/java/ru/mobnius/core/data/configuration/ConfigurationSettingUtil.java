@@ -13,7 +13,7 @@ import ru.mobnius.core.data.rpc.SingleItemQuery;
 
 public class ConfigurationSettingUtil {
     public final static String ACTION = "shell";
-    public final static String METHOD = "mobilesettins";
+    public final static String METHOD = "getServerTime";
 
     /**
      * Преобразование значения настройки в Integer
