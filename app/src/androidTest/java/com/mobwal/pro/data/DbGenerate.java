@@ -6,6 +6,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.mobwal.pro.WalkerSQLContext;
 
+import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.credentials.BasicCredentials;
 import ru.mobnius.core.data.credentials.BasicUser;
@@ -16,11 +17,18 @@ import ru.mobnius.core.data.credentials.BasicUser;
 public abstract class DbGenerate {
     private final Context mContext;
     private final WalkerSQLContext mSQLContext;
+    private final FileManager mFileManager;
 
     public DbGenerate() {
         String dbName = getClass().getName();
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mSQLContext = new WalkerSQLContext(mContext, dbName);
+        BasicCredentials credentials = getCredentials();
+        mFileManager = FileManager.createInstance(credentials, getContext());
+    }
+
+    public FileManager getFileManager() {
+        return mFileManager;
     }
 
     /**
@@ -40,7 +48,7 @@ public abstract class DbGenerate {
     }
 
     public static BasicCredentials getCredentials() {
-        return new BasicCredentials("iserv", "qwe-123+");
+        return new BasicCredentials("test", "qwe-123+");
     }
 
     public static BasicUser getBasicUser() {

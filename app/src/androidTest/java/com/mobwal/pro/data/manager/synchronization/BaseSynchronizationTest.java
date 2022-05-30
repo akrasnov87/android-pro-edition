@@ -1,6 +1,8 @@
-/*package ru.mobnius.cic.data.manager.synchronization;
+/*package com.mobwal.pro.data.manager.synchronization;
 
 import android.content.Context;
+
+import com.mobwal.pro.data.DbGenerate;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,21 +16,10 @@ import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.synchronization.Entity;
-import ru.mobnius.core.data.synchronization.MultipartUtility;
 import ru.mobnius.core.utils.DateUtil;
-import ru.mobnius.core.utils.SyncUtil;
-import ru.mobnius.cic.ManagerGenerate;
-import ru.mobnius.cic.data.AuditListeners;
-import ru.mobnius.cic.data.storage.models.Audits;
-import ru.mobnius.cic.data.storage.models.AuditsDao;
-import ru.mobnius.cic.data.storage.models.DaoSession;
-import ru.mobnius.cic.data.storage.models.Tracking;
-import ru.mobnius.cic.data.storage.models.TrackingDao;
+import com.mobwal.pro.utilits.SyncUtil;
 
-import static ru.mobnius.core.utils.SyncUtil.resetTid;
-
-public class BaseSynchronizationTest extends ManagerGenerate {
+public class BaseSynchronizationTest extends DbGenerate {
     private MySynchronization synchronization;
 
     private ArrayList<Tracking> trackings;

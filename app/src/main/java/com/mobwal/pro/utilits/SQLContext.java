@@ -11,18 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 
 import com.mobwal.pro.Names;
 import com.mobwal.pro.WalkerApplication;
-
-import dalvik.system.DexFile;
-import ru.mobnius.core.utils.SyncUtil;
 
 public abstract class SQLContext extends SQLiteOpenHelper {
 

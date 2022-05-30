@@ -2,6 +2,8 @@ package com.mobwal.pro.data;
 
 import android.app.Activity;
 
+import com.mobwal.pro.WalkerSQLContext;
+
 import java.util.List;
 
 /**
@@ -72,4 +74,6 @@ public interface OnSynchronizationListeners {
      * @param tid идентификатор транзакции
      */
     void onError(int step, String message, String tid);
+
+    WalkerSQLContext getContext();
 }

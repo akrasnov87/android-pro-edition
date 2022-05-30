@@ -7,8 +7,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 
-import ru.mobnius.core.utils.SyncUtil;
-
 /**
  * Дополнительный класс для массовой вставки данных в базу данных SQLite
  * @param <T> тип сущности

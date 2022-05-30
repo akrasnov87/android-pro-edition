@@ -3,6 +3,10 @@ package com.mobwal.pro.data;
 import android.app.Activity;
 
 import com.mobwal.pro.WalkerSQLContext;
+import com.mobwal.pro.data.meta.TableQuery;
+import com.mobwal.pro.data.utils.FullServerSidePackage;
+import com.mobwal.pro.data.utils.PackageResult;
+import com.mobwal.pro.models.db.cd_attachments;
 
 import java.io.IOException;
 
@@ -41,7 +45,6 @@ public abstract class FileTransferWebSocketSynchronization
     /**
      * конструктор
      *
-     * @param session     сессия для подключения к БД
      * @param name        имя
      * @param fileManager файловый менеджер
      */
@@ -95,21 +98,21 @@ public abstract class FileTransferWebSocketSynchronization
                                     onError(IProgressStep.PACKAGE_CREATE, "При обработке файла " + file.getC_name() + " возникла ошибка", tid);
                                 }
                             }
-                                /*
+
                             if (record instanceof OnAttachmentListeners) {
-                                OnAttachmentListeners attachment = (OnAttachmentListeners) record;
-                                if (attachment.getIsDelete()) {
+                                cd_attachments attachment = (cd_attachments) record;
+                                if (attachment.__IS_DELETE) {
                                     continue;
                                 }
                                 try {
-                                    byte[] bytes = manager.readPath(FileManager.PHOTOS, attachment.getC_name());
-                                    if(bytes != null) {
-                                        utils.addFile(attachment.getId(), attachment.getId(), bytes);
+                                    byte[] bytes = manager.readPath(FileManager.PHOTOS, attachment.c_path);
+                                    if (bytes != null) {
+                                        utils.addFile(attachment.id, attachment.id, bytes);
                                     }
                                 } catch (IOException e) {
-                                    onError(IProgressStep.PACKAGE_CREATE, "При обработке вложения " + attachment.getC_name() + " возникла ошибка", tid);
+                                    onError(IProgressStep.PACKAGE_CREATE, "При обработке вложения " + attachment.c_path + " возникла ошибка", tid);
                                 }
-                                  */
+                            }
                         }
                     }
                 }
@@ -117,14 +120,14 @@ public abstract class FileTransferWebSocketSynchronization
                     processingPackageTo(utils, entity.tableName, tid);
                 }
                 if (entity.from) {
-                    /*TableQuery tableQuery = new TableQuery(entity.tableName, entity.change, entity.select);
+                    TableQuery tableQuery = new TableQuery(entity.tableName, entity.change, entity.select);
                     RPCItem rpcItem;
                     if (entity.useCFunction) {
                         rpcItem = tableQuery.toRPCSelect(entity.params);
                     } else {
                         rpcItem = tableQuery.toRPCQuery(MAX_COUNT_IN_QUERY, entity.filters);
                     }
-                    utils.addFrom(rpcItem);*/
+                    utils.addFrom(rpcItem);
                 }
             }
         }
@@ -141,13 +144,13 @@ public abstract class FileTransferWebSocketSynchronization
             for (RPCResult result : utils.getToResult()) { // при добавление информации была ошибка на сервере.
                 Entity entity = getEntity(result.action);
 
-                /*PackageResult packageResult = serverSidePackage.to(getDaoSession(), result, tid, entity.clearable);
+                PackageResult packageResult = serverSidePackage.to(getContext(), result, tid, entity.clearable);
                 if (!packageResult.success) {
                     onError(IProgressStep.RESTORE, packageResult.message, tid);
                 }
                 if (success && !packageResult.success) {
                     success = false;
-                }*/
+                }
             }
         } catch (Exception e) {
             Logger.error(e);
@@ -160,7 +163,7 @@ public abstract class FileTransferWebSocketSynchronization
         }
 
         try {
-            /*FullServerSidePackage fullServerSidePackage = (FullServerSidePackage) serverSidePackage;
+            FullServerSidePackage fullServerSidePackage = (FullServerSidePackage) serverSidePackage;
             if (useAttachments) {
                 fullServerSidePackage.attachmentBy(getFileManager());
             }
@@ -175,9 +178,9 @@ public abstract class FileTransferWebSocketSynchronization
                 Entity entity = getEntity(tableName);
                 PackageResult packageResult;
                 if (tid.equals(fileTid) && useAttachments) {
-                    packageResult = serverSidePackage.from(getDaoSession(), result, tid, entity.to, true);
+                    packageResult = serverSidePackage.from(getContext(), result, tid, entity.to, true);
                 } else {
-                    packageResult = serverSidePackage.from(getDaoSession(), result, tid, entity.to, false);
+                    packageResult = serverSidePackage.from(getContext(), result, tid, entity.to, false);
                 }
 
                 if (!packageResult.success) {
@@ -187,7 +190,7 @@ public abstract class FileTransferWebSocketSynchronization
                         Logger.error((Exception) packageResult.result);
                     }
                 }
-            }*/
+            }
         } catch (Exception e) {
             Logger.error(e);
             onError(IProgressStep.PACKAGE_CREATE, e, tid);

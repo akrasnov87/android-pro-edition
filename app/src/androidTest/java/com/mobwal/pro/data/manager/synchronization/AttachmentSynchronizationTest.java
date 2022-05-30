@@ -1,4 +1,4 @@
-/*package ru.mobnius.cic.data.manager.synchronization;
+/*package com.mobwal.pro.data.manager.synchronization;
 
 import android.content.Context;
 
@@ -17,6 +17,8 @@ import ru.mobnius.core.utils.LongUtil;
 import ru.mobnius.core.utils.PackageReadUtils;
 
 import static org.junit.Assert.assertTrue;
+
+import com.mobwal.pro.data.DbGenerate;
 
 public class AttachmentSynchronizationTest extends DbGenerate {
     private AttachmentSynchronizationTest.MySynchronization synchronization;

@@ -18,7 +18,6 @@ import com.mobwal.pro.data.utils.transfer.Transfer;
 import com.mobwal.pro.data.utils.transfer.TransferListener;
 import com.mobwal.pro.data.utils.transfer.TransferProgress;
 import ru.mobnius.core.utils.DoubleUtil;
-import ru.mobnius.core.utils.SyncUtil;
 
 /**
  * Механизм обработки синхронизации через websocket
@@ -38,7 +37,6 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
 
     /**
      * конструктор
-     * @param session ессия для подключения к БД
      * @param name имя
      */
     public WebSocketSynchronization(WalkerSQLContext context, String name, boolean zip) {

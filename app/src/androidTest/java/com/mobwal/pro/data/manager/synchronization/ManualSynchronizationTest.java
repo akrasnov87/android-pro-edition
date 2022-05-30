@@ -23,7 +23,7 @@ import ru.mobnius.core.data.synchronization.MultipartUtility;
 import ru.mobnius.core.utils.LocationUtil;
 import ru.mobnius.core.utils.LongUtil;
 import ru.mobnius.core.utils.PackageReadUtils;
-import ru.mobnius.core.utils.SyncUtil;
+import com.mobwal.pro.utilits.SyncUtil;
 import ru.mobnius.cic.ManagerGenerate;
 import ru.mobnius.cic.data.storage.models.DaoSession;
 

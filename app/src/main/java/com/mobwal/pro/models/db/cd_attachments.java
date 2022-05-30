@@ -3,12 +3,13 @@ package com.mobwal.pro.models.db;
 import androidx.annotation.Nullable;
 
 import com.mobwal.pro.MetaTableName;
+import com.mobwal.pro.data.OnAttachmentListeners;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public class cd_attachments implements Serializable {
+public class cd_attachments implements Serializable, OnAttachmentListeners {
 
     public static MetaTableName Meta = new MetaTableName("dbo", "cd_attachments");
 

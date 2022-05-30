@@ -17,12 +17,14 @@ import ru.mobnius.core.data.storage.FieldNames;
 import com.mobwal.pro.data.utils.IServerSidePackage;
 import ru.mobnius.core.utils.PackageCreateUtils;
 import ru.mobnius.core.utils.PackageReadUtils;
+import ru.mobnius.core.utils.ReflectionUtil;
 import ru.mobnius.core.utils.VersionUtil;
 
-//import static ru.mobnius.core.utils.SyncUtil.resetTid;
-//import static ru.mobnius.core.utils.SyncUtil.updateBlockTid;
+//import static com.mobwal.pro.utilits.SyncUtil.resetTid;
+//import static com.mobwal.pro.utilits.SyncUtil.updateBlockTid;
 
 import com.mobwal.pro.WalkerSQLContext;
+import com.mobwal.pro.utilits.SyncUtil;
 
 /**
  * Базовый абстрактный класс синхронизации
@@ -86,6 +88,10 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
 
     private boolean zip;
     private WalkerSQLContext mContext;
+
+    public WalkerSQLContext getContext() {
+        return mContext;
+    }
 
     public boolean isZip() {
         return zip;
@@ -227,7 +233,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param tid       иднтификатор транзакции
      * @return возвращается массив данных
      */
-    public List getRecords(String tableName, String tid) {
+    public Collection getRecords(String tableName, String tid) {
         return getRecords(tableName, tid, null);
     }
 
@@ -239,23 +245,21 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param operationType тип операции
      * @return возвращается массив данных
      */
-    protected List getRecords(String tableName, String tid, String operationType) {
-        /*Collection<AbstractDao<?, ?>> collections = getDaoSession().getAllDaos();
-        for (AbstractDao<?, ?> abstractDao : collections) {
-            if (abstractDao.getTablename().equals(tableName)) {
-                QueryBuilder queryBuilder = abstractDao.queryBuilder();
-                if (tid.isEmpty()) {
-                    return queryBuilder.list();
-                } else {
-                    if (operationType != null) {
-                        return queryBuilder.where(new WhereCondition.StringCondition(FieldNames.IS_SYNCHRONIZATION + " = 0 AND " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " = ?", tid, operationType)).list();
-                    } else {
-                        return queryBuilder.where(new WhereCondition.StringCondition(FieldNames.IS_SYNCHRONIZATION + " = 0 AND " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " is not null AND " + FieldNames.OBJECT_OPERATION_TYPE + " != ?", tid, "")).list();
-                    }
-                }
+    protected Collection getRecords(String tableName, String tid, String operationType) {
+        Class<?> objectClass = ReflectionUtil.getClassFromName(mContext.getContext(), tableName);
+
+        if (tid.isEmpty()) {
+            return mContext.select("select * from " + tableName, new String[0], objectClass);
+        } else {
+            if (operationType != null) {
+                return mContext.select("select * from " + tableName + " where " + FieldNames.IS_SYNCHRONIZATION + " = 0 AND " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " = ?", new String[] { tid, operationType }, objectClass);
+                //return queryBuilder.where(new WhereCondition.StringCondition(FieldNames.IS_SYNCHRONIZATION + " = 0 AND " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " = ?", tid, operationType)).list();
+            } else {
+                return mContext.select("select * from " + tableName + " where " + FieldNames.IS_SYNCHRONIZATION + " = 0 AND " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " is not null AND " + FieldNames.OBJECT_OPERATION_TYPE + " != ?", new String[] { tid, "" }, objectClass);
+                //return queryBuilder.where(new WhereCondition.StringCondition(FieldNames.IS_SYNCHRONIZATION + " = 0 AND " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " is not null AND " + FieldNames.OBJECT_OPERATION_TYPE + " != ?", tid, "")).list();
             }
-        }*/
-        return null;
+        }
+        //return null;
     }
 
     /**
@@ -320,8 +324,8 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         Object[] createRecords = getRecords(tableName, tid, DbOperationType.CREATED).toArray();
         Object[] updateRecords = getRecords(tableName, tid, DbOperationType.UPDATED).toArray();
         Object[] removeRecords = getRecords(tableName, tid, DbOperationType.REMOVED).toArray();
-        //AbstractDao abstractDao = null;
-        /*for (AbstractDao ad : session.getAllDaos()) {
+        /*AbstractDao abstractDao = null;
+        for (AbstractDao ad : session.getAllDaos()) {
             if (ad.getTablename().equals(tableName)) {
                 abstractDao = ad;
                 break;
@@ -329,9 +333,9 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         }
         if (abstractDao == null) {
             return;
-        }
+        }*/
 
-        String linkName = abstractDao.getPkProperty().name;
+        String linkName = "id";
 
         if (createRecords.length > 0 || updateRecords.length > 0 || removeRecords.length > 0) {
             if (oneOnlyMode && !getEntity(tableName).many) {
@@ -343,7 +347,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                         }
                         RPCItem rpc = RPCItem.addItem(tableName, o);
                         utils.addTo(rpc);
-                        updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
+                        SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
                     }
                 }
 
@@ -355,8 +359,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                         }
                         RPCItem rpc = RPCItem.addItem(tableName, o);
                         utils.addTo(rpc);
-                        updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
-                        ;
+                        SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
                     }
                 }
 
@@ -368,27 +371,27 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                         }
                         RPCItem rpc = RPCItem.deleteItem(tableName, o);
                         utils.addTo(rpc);
-                        updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
+                        SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
                     }
                 }
             } else {
                 if (createRecords.length > 0) {
                     RPCItem rpc = RPCItem.addItems(tableName, createRecords);
                     utils.addTo(rpc);
-                    updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.CREATED);
+                    SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.CREATED);
                 }
                 if (updateRecords.length > 0) {
                     RPCItem rpc = RPCItem.updateItems(tableName, updateRecords);
                     utils.addTo(rpc);
-                    updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.UPDATED);
+                    SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.UPDATED);
                 }
                 if (removeRecords.length > 0) {
                     RPCItem rpc = RPCItem.deleteItems(tableName, removeRecords);
                     utils.addTo(rpc);
-                    updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.REMOVED);
+                    SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.REMOVED);
                 }
             }
-        }*/
+        }
     }
 
     private Object getLinkValue(Object o) {
@@ -555,7 +558,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         }
         onProgress(IProgressStep.STOP, "Синхронизация завершена.", null);
 
-        //resetTid(this);
+        SyncUtil.resetTid(this);
         entities.clear();
         if (activity != null) {
             activity = null;
@@ -586,7 +589,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     }
 
     protected String getAppVersion() {
-        return "" ; // VersionUtil.getVersionName(mContext);
+        return VersionUtil.getVersionName(mContext.getContext());
     }
 
     /**

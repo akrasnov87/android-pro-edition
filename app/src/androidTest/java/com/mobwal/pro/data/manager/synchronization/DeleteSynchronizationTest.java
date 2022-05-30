@@ -1,14 +1,22 @@
-/*package ru.mobnius.cic.data.manager.synchronization;
+package com.mobwal.pro.data.manager.synchronization;
 
-import android.content.Context;
+import com.mobwal.pro.WalkerSQLContext;
+import com.mobwal.pro.data.DbGenerate;
+import com.mobwal.pro.data.EntityAttachment;
+import com.mobwal.pro.data.FileTransferWebSocketSynchronization;
+import com.mobwal.pro.data.MultipartUtility;
+import com.mobwal.pro.data.utils.FullServerSidePackage;
+import com.mobwal.pro.models.db.cd_attachments;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
+import java.util.Collection;
 import java.util.UUID;
 
 import ru.mobnius.core.data.DbOperationType;
@@ -16,89 +24,77 @@ import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicCredentials;
 import ru.mobnius.core.data.rpc.FilterItem;
-import ru.mobnius.core.data.synchronization.EntityAttachment;
-import ru.mobnius.core.data.synchronization.FileTransferWebSocketSynchronization;
-import ru.mobnius.core.data.synchronization.MultipartUtility;
-import ru.mobnius.core.data.synchronization.utils.FullServerSidePackage;
-import ru.mobnius.core.utils.DateUtil;
 import ru.mobnius.core.utils.PackageReadUtils;
-import ru.mobnius.core.utils.SyncUtil;
-import ru.mobnius.cic.ManagerGenerate;
-import ru.mobnius.cic.data.manager.DataManager;
-import ru.mobnius.cic.data.storage.models.DaoSession;
-import ru.mobnius.cic.data.storage.models.Files;
-import ru.mobnius.cic.data.storage.models.FilesDao;
 
-public class DeleteSynchronizationTest extends ManagerGenerate {
-    private DataManager dataManager;
+import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.utilits.SyncUtil;
+
+public class DeleteSynchronizationTest extends DbGenerate {
     private DeleteSynchronizationTest.MySynchronization synchronization;
     private String fileId = "";
 
     @Before
     public void setUp() {
+        getSQLContext().exec("DELETE FROM " + cd_attachments.Meta.table, new Object[0]);
         fileId = UUID.randomUUID().toString();
-        synchronization = new DeleteSynchronizationTest.MySynchronization(getContext(), getDaoSession(), getFileManager(), getCredentials(), getBaseUrl());
-        dataManager = DataManager.createInstance(getDaoSession());
+        synchronization = new DeleteSynchronizationTest.MySynchronization(getSQLContext(), getFileManager(), getCredentials(), getBaseUrl());
         synchronization.initEntities();
     }
 
     @After
     public void tearDown() {
-        getDaoSession().getFilesDao().deleteAll();
+        getSQLContext().trash();
     }
 
     @Test
     public void deleteFile() throws IOException {
-        Files file = new Files();
+        cd_attachments file = new cd_attachments();
         file.id = fileId;
-        file.c_name = "readme.txt";
+        file.c_path = "readme.txt";
 
         byte[] fileBytes = "Hello World!!!".getBytes();
 
         FileManager fileManager = synchronization.getFileManager();
-        fileManager.writeBytes(FileManager.FILES, file.c_name, fileBytes);
+        fileManager.writeBytes(FileManager.FILES, file.c_path, fileBytes);
 
         file.c_mime = "text/plain";
         file.c_extension = ".txt";
-        file.folder = FileManager.FILES;
-        file.d_date = DateUtil.convertDateToString(new Date());
-        file.objectOperationType = DbOperationType.CREATED;
+        file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
-        getDaoSession().getFilesDao().insert(file);
-        SyncUtil.updateTid(synchronization, FilesDao.TABLENAME, synchronization.fileTid);
+        getSQLContext().insert(file);
+        SyncUtil.updateTid(synchronization, cd_attachments.Meta.table, synchronization.fileTid);
 
         byte[] bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        Object[] array = synchronization.getRecords(FilesDao.TABLENAME, "").toArray();
+        Object[] array = synchronization.getRecords(cd_attachments.Meta.table, "").toArray();
 
-        Files resultFile = getFile(array, file.c_name);
+        cd_attachments resultFile = getFile(array, file.c_path);
 
         Assert.assertNotNull(resultFile);
         utils.destroy();
-        getDaoSession().getFilesDao().detachAll();
 
-        dataManager.removeFile(file.id);
+        removeFile(file.id);
 
-        SyncUtil.updateTid(synchronization, FilesDao.TABLENAME, synchronization.fileTid);
-        getDaoSession().getFilesDao().detachAll();
+        SyncUtil.updateTid(synchronization, cd_attachments.Meta.table, synchronization.fileTid);
+
         bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        array = synchronization.getRecords(FilesDao.TABLENAME, "").toArray();
+        array = synchronization.getRecords(cd_attachments.Meta.table, "").toArray();
 
-        resultFile = getFile(array, file.c_name);
+        resultFile = getFile(array, file.c_path);
         Assert.assertNull(resultFile);
     }
 
-    private Files getFile(Object[] array, String fileName) {
-        Files resultFile = null;
+    private cd_attachments getFile(Object[] array, String fileName) {
+        cd_attachments resultFile = null;
         for (Object obj : array) {
-            if (obj instanceof Files) {
-                resultFile = (Files) obj;
-                if (resultFile.c_name.equals(fileName)) {
+            if (obj instanceof cd_attachments) {
+                resultFile = (cd_attachments) obj;
+                if (resultFile.c_path.equals(fileName)) {
                     break;
                 } else {
                     resultFile = null;
@@ -108,13 +104,41 @@ public class DeleteSynchronizationTest extends ManagerGenerate {
         return resultFile;
     }
 
+    /**
+     * Удаление файла по идентификтаору
+     *
+     * @param fileId идентификтаор
+     */
+    public void removeFile(String fileId) {
+        Collection<cd_attachments> files = getSQLContext().select("select * from " + cd_attachments.Meta.table + " where id = ?", new String[] { fileId }, cd_attachments.class);
+        if (files != null) {
+            cd_attachments file = files.iterator().next();
+            if (file.__IS_SYNCHRONIZATION) {
+                file.__OBJECT_OPERATION_TYPE = DbOperationType.REMOVED;
+                file.__IS_DELETE = true;
+                file.__IS_SYNCHRONIZATION = false;
+
+                getSQLContext().insert(file);
+                //daoSession.getFilesDao().update(files);
+            } else {
+                getSQLContext().exec("delete from " + cd_attachments.Meta.table + " where id = ?", new Object[] { fileId });
+            }
+            FileManager fileManager = FileManager.getInstance();
+            try {
+                fileManager.deleteFile(FileManager.FILES, file.c_path);
+            } catch (FileNotFoundException ignore) {
+                // это нормально
+            }
+        }
+    }
+
     public class MySynchronization extends FileTransferWebSocketSynchronization {
 
         private final BasicCredentials mCredentials;
         private final String mBaseUrl;
 
-        public MySynchronization(Context context, DaoSession daoSession, FileManager fileManager, BasicCredentials credentials, String baseUrl) {
-            super(context, daoSession, "test", fileManager, false);
+        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredentials credentials, String baseUrl) {
+            super(context, "test", fileManager, false);
             useAttachments = true;
             oneOnlyMode = true;
             serverSidePackage = new FullServerSidePackage();
@@ -138,12 +162,11 @@ public class DeleteSynchronizationTest extends ManagerGenerate {
         @Override
         protected void initEntities() {
             fileTid = UUID.randomUUID().toString();
-            addEntity(new EntityAttachment(FilesDao.TABLENAME, true, true)
-                    .setSelect("id", "c_name", "d_date", "c_mime", "c_extension", "n_size", "'files' as folder", "ba_data")
+            addEntity(new EntityAttachment(cd_attachments.Meta.table, true, true)
+                    .setSelect("id", "c_path", "fn_user", "fn_result", "fn_point", "fn_route", "n_longitude", "n_latitude", "d_date", "c_mime", "c_extension", "jb_data", "n_distance", "fn_storage")
                     .setFilter(new FilterItem("id", fileId))
                     .setTid(fileTid)
                     .setParam(null, "null"));
         }
     }
 }
-*/
