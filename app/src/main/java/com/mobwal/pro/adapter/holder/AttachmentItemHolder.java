@@ -1,25 +1,19 @@
 package com.mobwal.pro.adapter.holder;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 import com.mobwal.pro.R;
-import com.mobwal.pro.WalkerApplication;
-import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.cd_attachments;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
-import com.mobwal.pro.utilits.BitmapCache;
 import com.mobwal.pro.utilits.FileManager;
 
 /**
@@ -30,7 +24,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
     private final ImageView mImage;
     private final FileManager mFileManager;
     private final Context mContext;
-    private Attachment mAttachment;
+    private cd_attachments mAttachment;
     private final RecycleViewItemListeners mListeners;
 
     public AttachmentItemHolder(@NonNull View itemView, @Nullable RecycleViewItemListeners listeners) {
@@ -50,7 +44,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bind(@NotNull Attachment item) {
+    public void bind(@NotNull cd_attachments item) {
         mAttachment = item;
 
         /*try {

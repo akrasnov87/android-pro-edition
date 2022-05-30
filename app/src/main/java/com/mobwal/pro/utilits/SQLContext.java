@@ -11,12 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.List;
 
 import com.mobwal.pro.Names;
 import com.mobwal.pro.WalkerApplication;
+
+import dalvik.system.DexFile;
+import ru.mobnius.core.utils.SyncUtil;
 
 public abstract class SQLContext extends SQLiteOpenHelper {
 
@@ -24,7 +30,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static String DATABASE_NAME = "walker.db";
+    private static String DATABASE_NAME = "walker";
 
     // путь к БД
     private final File databasePath;
@@ -38,9 +44,9 @@ public abstract class SQLContext extends SQLiteOpenHelper {
     }
 
     public SQLContext(@NonNull Context context, String dbName) {
-        super(context, dbName, null, DATABASE_VERSION);
+        super(context, dbName + ".db", null, DATABASE_VERSION);
         mContext = context;
-        DATABASE_NAME = dbName;
+        DATABASE_NAME = dbName + ".db";
         databasePath = context.getDatabasePath(DATABASE_NAME);
     }
 
@@ -73,7 +79,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
 
         Collection<T> results = new ArrayList<>();
 
-        Field[] fields = itemClass.getDeclaredFields();
+        Field[] fields = SyncUtil.getNormalFields(itemClass.getDeclaredFields());
         if(cursor.moveToFirst()) {
             do {
                 T item;
@@ -138,6 +144,13 @@ public abstract class SQLContext extends SQLiteOpenHelper {
         return results;
     }
 
+    public <T> boolean insert(T item) {
+        List<T> array = new ArrayList<>();
+        array.add(item);
+
+        return insertMany(array.toArray());
+    }
+
     /**
      * Добавление записей в таблицу
      * @param array массив данных для добавления
@@ -155,7 +168,6 @@ public abstract class SQLContext extends SQLiteOpenHelper {
                     db.beginTransaction();
 
                     SQLStatementInsert sqlStatementInsert = new SQLStatementInsert(entity, db);
-
                     for (T item: array) {
                         sqlStatementInsert.bind(item);
                     }
@@ -166,7 +178,6 @@ public abstract class SQLContext extends SQLiteOpenHelper {
                     Log.d(Names.LOG_ERROR, e.toString());
                 } finally {
                     db.endTransaction();
-                    db.close();
                 }
             }
         }
@@ -202,7 +213,6 @@ public abstract class SQLContext extends SQLiteOpenHelper {
     public Long count(String query, String[] selectionArgs) {
         try (SQLiteDatabase db = getReadableDatabase(); Cursor cursor = db.rawQuery(query, selectionArgs)) {
             cursor.moveToFirst();
-
             return cursor.getLong(0);
         } catch (Exception e) {
             WalkerApplication.Log("Ошибка вычисления количества в запросе " + query, e);
@@ -214,7 +224,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
      * Выполнение запроса
      * @param query SQL - запрос
      */
-    public boolean exec(String query, @Nullable String[] args) {
+    public boolean exec(String query, @Nullable Object[] args) {
         try (SQLiteDatabase db = getReadableDatabase()) {
             db.execSQL(query, args);
             return true;
@@ -247,7 +257,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
 
         String tableName = getTableName(entity);
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
-        Field[] fields = entity.getClass().getDeclaredFields();
+        Field[] fields = SyncUtil.getNormalFields(entity.getClass().getDeclaredFields());
         int count = fields.length;
 
         for (Field field: fields) {
@@ -270,6 +280,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
      * В рабочем коде не должно использоваться, так как приведет к удалению базы данных
      */
     @Deprecated
+    // TODO: нужно найти другой способ
     public void trash() {
         close();
 

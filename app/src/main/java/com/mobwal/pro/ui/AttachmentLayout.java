@@ -48,7 +48,7 @@ import com.mobwal.pro.adapter.AttachmentItemAdapter;
 import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
-import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.cd_attachments;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.FileManager;
 import com.mobwal.pro.utilits.ImageUtil;
@@ -64,7 +64,7 @@ public class AttachmentLayout extends LinearLayout
     private final RecyclerView mAttachList;
 
     private AttachmentItemAdapter mItemAdapter;
-    private List<Attachment> mAttachmentList;
+    private List<cd_attachments> mAttachmentList;
     private PointBundle mPointBundle;
     public String FileName;
     private LocationInfo mLocationInfo;
@@ -123,8 +123,8 @@ public class AttachmentLayout extends LinearLayout
      * Получение информации о текущей привязке
      * @return список вложений
      */
-    public Attachment[] getData() {
-        return mAttachmentList.toArray(new Attachment[0]);
+    public cd_attachments[] getData() {
+        return mAttachmentList.toArray(new cd_attachments[0]);
     }
 
     /**
@@ -140,7 +140,7 @@ public class AttachmentLayout extends LinearLayout
         mPointBundle = bundle;
 
         if (mAttachmentList == null) {
-            Collection<Attachment> attachments = mDataManager.getAttachments(bundle.f_route);
+            Collection<cd_attachments> attachments = mDataManager.getAttachments(bundle.f_route);
             if(attachments != null) {
                 mAttachmentList = new ArrayList<>(attachments);
             } else {
@@ -156,7 +156,7 @@ public class AttachmentLayout extends LinearLayout
      * установка данных
      * @param items список вложений
      */
-    public void setData(@Nullable Collection<Attachment> items) {
+    public void setData(@Nullable Collection<cd_attachments> items) {
         if(items != null) {
             mAttachmentList = new ArrayList<>();
             mAttachmentList.addAll(items);
@@ -311,7 +311,7 @@ public class AttachmentLayout extends LinearLayout
         if(uri == null) {
             return;
         }
-        Attachment attachment = new Attachment();
+        cd_attachments attachment = new cd_attachments();
         attachment.id = id;
         //attachment.f_point = mPointBundle.f_point;
         //attachment.f_route = mPointBundle.f_route;
@@ -338,7 +338,7 @@ public class AttachmentLayout extends LinearLayout
      */
     @Override
     public void onViewItemClick(String id) {
-        for (Attachment attach: mItemAdapter.getData()) {
+        for (cd_attachments attach: mItemAdapter.getData()) {
             if(attach.id.equals(id)) {
                 //ActivityUtil.openGallery(getContext(), new File(mFileManager.getRootCatalog(mPointBundle.f_route), attach.c_name));
                 return;
@@ -385,7 +385,7 @@ public class AttachmentLayout extends LinearLayout
      */
     public boolean saveData(@Nullable String f_result) {
         if(f_result != null) {
-            Attachment[] attachments = getData();
+            cd_attachments[] attachments = getData();
             if (attachments.length > 0) {
                 return mDataManager.updateAttachments(f_result, attachments);
             } else {

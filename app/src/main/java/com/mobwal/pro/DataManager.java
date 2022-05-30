@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -20,9 +19,9 @@ import com.mobwal.pro.models.db.complex.ResultExportItem;
 import com.mobwal.pro.models.db.complex.ResultTemplate;
 import com.mobwal.pro.models.RouteInfo;
 import com.mobwal.pro.models.db.complex.RouteItem;
-import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.cd_attachments;
 import com.mobwal.pro.models.db.Point;
-import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.models.db.Template;
@@ -298,13 +297,13 @@ public class DataManager {
      * @return результат по точке
      */
     @Nullable
-    public Result[] getResults(@NotNull String f_point) {
+    public cd_results[] getResults(@NotNull String f_point) {
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Result> collection = sqlContext.select("SELECT * from Result as r where r.f_point = ? order by r.n_date", new String[] { f_point }, Result.class);
+        Collection<cd_results> collection = sqlContext.select("SELECT * from Result as r where r.f_point = ? order by r.n_date", new String[] { f_point }, cd_results.class);
 
         if(collection != null) {
-            return collection.toArray(new Result[0]);
+            return collection.toArray(new cd_results[0]);
         } else {
             return null;
         }
@@ -358,17 +357,17 @@ public class DataManager {
      * @return результат
      */
     @Nullable
-    public Result getResult(@Nullable String f_result) {
+    public cd_results getResult(@Nullable String f_result) {
 
         if(f_result == null) {
             return null;
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Result> resultCollection = sqlContext.select("SELECT * from Result as r where r.id = ?", new String[] { f_result }, Result.class);
+        Collection<cd_results> resultCollection = sqlContext.select("SELECT * from Result as r where r.id = ?", new String[] { f_result }, cd_results.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
-            return resultCollection.toArray(new Result[0])[0];
+            return resultCollection.toArray(new cd_results[0])[0];
         }
 
         return null;
@@ -408,21 +407,21 @@ public class DataManager {
     }
 
     @Nullable
-    public Collection<Attachment> getAttachments(@Nullable String f_result) {
+    public Collection<cd_attachments> getAttachments(@Nullable String f_result) {
         if(f_result == null) {
             return null;
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        return sqlContext.select("SELECT * from ATTACHMENT as a where a.f_result = ? order by a.n_date asc", new String[] { f_result }, Attachment.class);
+        return sqlContext.select("SELECT * from ATTACHMENT as a where a.f_result = ? order by a.n_date asc", new String[] { f_result }, cd_attachments.class);
     }
 
     @Nullable
-    public Collection<Attachment> getRouteAttachments(@NotNull String f_route) {
+    public Collection<cd_attachments> getRouteAttachments(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        return sqlContext.select("SELECT * from ATTACHMENT as a where a.f_route = ? order by a.n_date asc", new String[] { f_route }, Attachment.class);
+        return sqlContext.select("SELECT * from ATTACHMENT as a where a.f_route = ? order by a.n_date asc", new String[] { f_route }, cd_attachments.class);
     }
 
     /**
@@ -431,21 +430,21 @@ public class DataManager {
      * @param attachments вложения
      * @return true - добавление прошло успешно
      */
-    public boolean updateAttachments(@NotNull String f_result, @NotNull Attachment[] attachments) {
+    public boolean updateAttachments(@NotNull String f_result, @NotNull cd_attachments[] attachments) {
         // тут вначале удалем все вложения с f_result
         // потом сожаем текущие в БД
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        Collection<Attachment> collection = getAttachments(f_result);
+        Collection<cd_attachments> collection = getAttachments(f_result);
         FileManager mFileManager = new FileManager(mContext.getFilesDir());
         if(collection != null) {
-            for (Attachment attachment:
+            for (cd_attachments attachment:
                  collection) {
                 //mFileManager.deleteFile(attachment.f_route, attachment.c_name + ".jpg");
             }
         }
 
-        for (Attachment attachment : attachments) {
+        for (cd_attachments attachment : attachments) {
             //attachment.f_result = f_result;
         }
 
@@ -468,10 +467,10 @@ public class DataManager {
 
     public boolean delPoint(@NotNull String f_point) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Attachment> collection = sqlContext.select("select * from ATTACHMENT where f_point = ?;", new String[] { f_point }, Attachment.class);
+        Collection<cd_attachments> collection = sqlContext.select("select * from ATTACHMENT where f_point = ?;", new String[] { f_point }, cd_attachments.class);
 
         if(collection != null) {
-            Attachment[] array = collection.toArray(new Attachment[0]);
+            cd_attachments[] array = collection.toArray(new cd_attachments[0]);
             if(array.length > 0) {
                 /*String f_route = array[0].f_route;
                 FileManager fileManager = new FileManager(mContext.getFilesDir());
@@ -492,10 +491,10 @@ public class DataManager {
 
     public boolean delResult(@NotNull String f_result) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Attachment> collection = sqlContext.select("select * from ATTACHMENT where f_result = ?;", new String[] { f_result }, Attachment.class);
+        Collection<cd_attachments> collection = sqlContext.select("select * from ATTACHMENT where f_result = ?;", new String[] { f_result }, cd_attachments.class);
 
         if(collection != null) {
-            Attachment[] array = collection.toArray(new Attachment[0]);
+            cd_attachments[] array = collection.toArray(new cd_attachments[0]);
             if(array.length > 0) {
                 /*String f_route = array[0].f_route;
                 FileManager fileManager = new FileManager(mContext.getFilesDir());
@@ -557,9 +556,9 @@ public class DataManager {
      * @param item результат
      * @return true - результат вставки
      */
-    public boolean addResult(@NotNull Result item) {
+    public boolean addResult(@NotNull cd_results item) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        return sqlContext.insertMany(new Result[] { item });
+        return sqlContext.insertMany(new cd_results[] { item });
     }
 
     /**

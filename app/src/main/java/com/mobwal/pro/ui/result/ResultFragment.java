@@ -32,9 +32,9 @@ import com.mobwal.pro.databinding.FragmentResultBinding;
 import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
-import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.cd_attachments;
 import com.mobwal.pro.models.db.Point;
-import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.BaseFragment;
@@ -46,7 +46,7 @@ import com.mobwal.pro.utilits.JsonUtil;
 public class ResultFragment extends BaseFragment
         implements WalkerLocationListeners, View.OnClickListener {
 
-    private Attachment[] mItems;
+    private cd_attachments[] mItems;
 
     private ActivityResultLauncher<Intent> mChoiceActivityResultLauncher;
     private final ActivityResultLauncher<String[]> mPermissionGalleryActivityResultLauncher;
@@ -72,7 +72,7 @@ public class ResultFragment extends BaseFragment
     private String f_result;
 
     @Nullable
-    private Result mResult;
+    private cd_results mResult;
 
     private String c_template;
     @Nullable
@@ -110,7 +110,7 @@ public class ResultFragment extends BaseFragment
 
         if(savedInstanceState != null) {
             mLocation = savedInstanceState.getParcelable("location");
-            mItems = (Attachment[]) savedInstanceState.getSerializable("items");
+            mItems = (cd_attachments[]) savedInstanceState.getSerializable("items");
             mAttachmentFileName = savedInstanceState.getString("fileName");
         }
 
@@ -260,8 +260,8 @@ public class ResultFragment extends BaseFragment
         // получение данных с формы
         String jb_data = JsonUtil.toString(binding.createResultForm.getValues());
 
-        Result item = mResult == null
-                ? new Result(id, f_route, f_point, c_template, mLocation, mPoint)
+        cd_results item = mResult == null
+                ? new cd_results(id, f_route, f_point, c_template, mLocation, mPoint)
                 : mResult;
 
         item.jb_data = jb_data;

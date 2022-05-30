@@ -21,8 +21,8 @@ public class GlobalSettings {
     public static String ENVIRONMENT_DEV = "dev";
     public static String ENVIRONMENT_DEMO = "demo";
 
-    public static final String DEFAULT_USER_NAME = "inspector";
-    public static final String DEFAULT_USER_PASSWORD = "inspector0";
+    public static final String DEFAULT_USER_NAME = "test";
+    public static final String DEFAULT_USER_PASSWORD = "qwe-123+";
     public static final Object DEFAULT_USER_ID = 4;
     public static String BASE_URL = "http://192.168.1.69:5006";
     public static String VIRTUAL_DIR_PATH = "/release";

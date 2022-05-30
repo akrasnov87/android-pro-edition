@@ -9,23 +9,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import com.mobwal.pro.DataManager;
-import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.models.DemoPlaceItem;
 import com.mobwal.pro.models.db.complex.PointItem;
-import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.cd_attachments;
 import com.mobwal.pro.models.db.Point;
-import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.models.db.Template;
@@ -421,8 +418,8 @@ public class ImportUtil {
                         String[][] attachmentRows = reader.getArrayFromCSV("attachments.csv");
                         if(attachmentRows != null && attachmentRows.length > 0) {
 
-                            List<Attachment> attachmentItems = new ArrayList<>();
-                            List<Result> results = new ArrayList<>();
+                            List<cd_attachments> attachmentItems = new ArrayList<>();
+                            List<cd_results> results = new ArrayList<>();
 
                             Collection<Template> templateCollection = db.select("select * from TEMPLATE as t where t.f_route = ?;", new String[] { route.id }, Template.class);
                             if(templateCollection != null) {
@@ -448,7 +445,7 @@ public class ImportUtil {
                                                     continue;
                                                 }
 
-                                                Result result = new Result();
+                                                cd_results result = new cd_results();
                                                 //result.f_route = route.id;
                                                 //result.f_point = pointOrderFilter.get(0).id;
                                                 //result.c_template = template.c_template;
@@ -491,7 +488,7 @@ public class ImportUtil {
                                                         if (attUrl != null) {
                                                             fileManager.copy(attUrl, new File(fileManager.getRootCatalog(route.id), attItem[1]));
 
-                                                            Attachment attachmentItem = new Attachment();
+                                                            cd_attachments attachmentItem = new cd_attachments();
                                                             //attachmentItem.fn_point = result.f_point;
                                                             //attachmentItem.fn_route = route.id;
                                                             //attachmentItem.fn_result = result.id;
@@ -517,11 +514,11 @@ public class ImportUtil {
                                 }
                             }
 
-                            if(results.size() > 0 && !db.insertMany(results.toArray(new Result[0]))) {
+                            if(results.size() > 0 && !db.insertMany(results.toArray(new cd_results[0]))) {
                                 return context.getString(R.string.unknown_error) + "ZIP3";
                             }
 
-                            if(attachmentItems.size() > 0 && !db.insertMany(attachmentItems.toArray(new Attachment[0]))) {
+                            if(attachmentItems.size() > 0 && !db.insertMany(attachmentItems.toArray(new cd_attachments[0]))) {
                                 return context.getString(R.string.unknown_error) + "ZIP2";
                             }
 

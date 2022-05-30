@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ru.mobnius.core.utils.SyncUtil;
+
 /**
  * Дополнительный класс для массовой вставки данных в базу данных SQLite
  * @param <T> тип сущности
@@ -23,11 +25,10 @@ public class SQLStatementInsert<T> {
         StringBuilder builder = new StringBuilder();
         ArrayList<String> tempFields = new ArrayList<>();
 
-        Field[] fields = entity.getClass().getDeclaredFields();
+        Field[] fields = SyncUtil.getNormalFields(entity.getClass().getDeclaredFields());
 
         for (Field field: fields) {
             String fieldName = field.getName();
-
             builder.append("?,");
             tempFields.add(fieldName);
         }

@@ -3,6 +3,10 @@ package ru.mobnius.core.utils;
 import org.greenrobot.greendao.AbstractDaoSession;
 import org.greenrobot.greendao.database.Database;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.storage.FieldNames;
 /*import ru.mobnius.core.data.synchronization.Entity;
@@ -11,6 +15,19 @@ import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;*/
 
 
 public class SyncUtil {
+
+    public static Field[] getNormalFields(Field[] fields) {
+        List<Field> array = new ArrayList<>();
+
+        for (Field field: fields) {
+            if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                array.add(field);
+            }
+        }
+
+        return array.toArray(new Field[0]);
+    }
+
     /**
      * объект для сброса параметров транзакции
      */

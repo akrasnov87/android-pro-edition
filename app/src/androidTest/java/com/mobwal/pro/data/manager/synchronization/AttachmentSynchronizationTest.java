@@ -13,19 +13,12 @@ import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.synchronization.EntityAttachment;
-import ru.mobnius.core.data.synchronization.MultipartUtility;
 import ru.mobnius.core.utils.LongUtil;
 import ru.mobnius.core.utils.PackageReadUtils;
-import ru.mobnius.cic.ManagerGenerate;
-import ru.mobnius.cic.data.storage.models.Attachments;
-import ru.mobnius.cic.data.storage.models.AttachmentsDao;
-import ru.mobnius.cic.data.storage.models.DaoSession;
-import ru.mobnius.cic.data.storage.models.FilesDao;
 
 import static org.junit.Assert.assertTrue;
 
-public class AttachmentSynchronizationTest extends ManagerGenerate {
+public class AttachmentSynchronizationTest extends DbGenerate {
     private AttachmentSynchronizationTest.MySynchronization synchronization;
 
     @Before
@@ -82,5 +75,4 @@ public class AttachmentSynchronizationTest extends ManagerGenerate {
             return LongUtil.convertToLong(GlobalSettings.DEFAULT_USER_ID);
         }
     }
-}
-*/
+}*/

@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.mobwal.pro.WalkerSQLContext;
 
@@ -12,6 +13,9 @@ import com.mobwal.pro.WalkerSQLContext;
 //import org.greenrobot.greendao.database.Database;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ru.mobnius.core.NamesCore;
@@ -21,6 +25,7 @@ import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.packager.FileBinary;
 import ru.mobnius.core.data.rpc.RPCResult;
 import ru.mobnius.core.data.storage.FieldNames;
+import ru.mobnius.core.utils.ReflectionUtil;
 import ru.mobnius.core.utils.SqlStatementInsertFromJSONObject;
 import ru.mobnius.core.utils.SqlUpdateFromJSONObject;
 import ru.mobnius.core.utils.StringUtil;
@@ -107,43 +112,41 @@ public abstract class ServerSidePackage implements IServerSidePackage {
      * @return результат
      */
     public PackageResult to(WalkerSQLContext session, RPCResult rpcResult, String packageTid) {
-        //Database db = session.getDatabase();
         // если все хорошо обновляем запись в локальной БД
         String sqlQuery = "";
         Object[] values;
         try {
             // TODO: тут нужно переделать
-            if (!rpcResult.meta.success) {
-                sqlQuery = "UPDATE " + rpcResult.action + " set " + FieldNames.IS_SYNCHRONIZATION + " = ?, " + FieldNames.TID + " = ?, " + FieldNames.BLOCK_TID + " = ? where " + FieldNames.TID + " = ? and " + FieldNames.BLOCK_TID + " = ?;";
-                values = new Object[5];
-                values[0] = false;
-                values[1] = null;
-                values[2] = null;
-                values[3] = packageTid;
-                values[4] = String.valueOf(rpcResult.tid);
-
-                //db.execSQL(sqlQuery, values);
-                Logger.error(new Exception(rpcResult.meta.msg));
-                return null; //PackageResult.fail("Ошибка обработки блока на сервере. " + rpcResult.meta.msg, null);
-            } else {
+            if (rpcResult.meta.success) {
                 sqlQuery = "UPDATE " + rpcResult.action + " set " + FieldNames.IS_SYNCHRONIZATION + " = ?, " + FieldNames.OBJECT_OPERATION_TYPE + " = ?, " + FieldNames.TID + " = ?, " + FieldNames.BLOCK_TID + " = ? where " + FieldNames.TID + " = ? and " + FieldNames.BLOCK_TID + " = ?;";
                 values = new Object[6];
-                values[0] = true;
+                values[0] = 1;
                 values[1] = null;
                 values[2] = null;
                 values[3] = null;
                 values[4] = packageTid;
                 values[5] = String.valueOf(rpcResult.tid);
 
-                //db.execSQL(sqlQuery, values);
+                session.exec(sqlQuery, values);
 
-                return null; //PackageResult.success(null);
+                return PackageResult.success(null);
+            } else {
+                sqlQuery = "UPDATE " + rpcResult.action + " set " + FieldNames.IS_SYNCHRONIZATION + " = ?, " + FieldNames.TID + " = ?, " + FieldNames.BLOCK_TID + " = ? where " + FieldNames.TID + " = ? and " + FieldNames.BLOCK_TID + " = ?;";
+                values = new Object[5];
+                values[0] = 0;
+                values[1] = null;
+                values[2] = null;
+                values[3] = packageTid;
+                values[4] = String.valueOf(rpcResult.tid);
+                session.exec(sqlQuery, values);
+                Logger.error(new Exception(rpcResult.meta.msg));
+                return PackageResult.fail("Ошибка обработки блока на сервере. " + rpcResult.meta.msg, null);
             }
         } catch (Exception e) {
             Logger.error(e);
             Logger.error(new Exception(new Gson().toJson(rpcResult)));
 
-            return null; //PackageResult.fail("Ошибка обновление положительного результат в БД. Запрос: " + sqlQuery + ". " + new Gson().toJson(rpcResult), e);
+            return PackageResult.fail("Ошибка обновление положительного результат в БД. Запрос: " + sqlQuery + ". " + new Gson().toJson(rpcResult), e);
         }
     }
 
@@ -174,18 +177,12 @@ public abstract class ServerSidePackage implements IServerSidePackage {
      */
     public PackageResult from(WalkerSQLContext session, RPCResult rpcResult, String packageTid, boolean isRequestToServer, boolean attachmentUse) {
         boolean attachmentProcessing = attachmentUse && fileManager != null;
-        //if (rpcResult.meta.success) {
-            /*Database db = session.getDatabase();
-            AbstractDao abstractDao = null;
+        if (rpcResult.meta.success) {
             String tableName = rpcResult.action;
-            for (AbstractDao ad : session.getAllDaos()) {
-                if (ad.getTablename().equals(tableName)) {
-                    abstractDao = ad;
-                    break;
-                }
-            }
+            // TODO: нужно заменить на более выстрый вариант
+            Class<?> classObject = ReflectionUtil.getClassFromName(session.getContext(), tableName);
 
-            if (abstractDao == null) {
+            if (classObject == null) {
                 return PackageResult.fail("Имя сущности не найдено в локальной БД. " + tableName + ".", new NullPointerException("AbstractDao not found."));
             }
 
@@ -195,12 +192,8 @@ public abstract class ServerSidePackage implements IServerSidePackage {
                 return PackageResult.fail("Метод результата " + tableName + " должен быть Query. Текущее значение " + rpcResult.method, null);
             }
 
-            db.beginTransaction();
-
             if (getDeleteRecordBeforeAppend() && rpcResult.code != RPCResult.PERMATENT) {
-                db.execSQL("delete from " + tableName);
-                // таким образом очищаем кэш http://greenrobot.org/greendao/documentation/sessions/
-                abstractDao.detachAll();
+                session.exec("delete from " + tableName, new Object[0]);
                 if (attachmentProcessing) {
                     try {
                         fileManager.deleteFolder(tableName);
@@ -220,42 +213,22 @@ public abstract class ServerSidePackage implements IServerSidePackage {
                 // тут нужно подумать а если массив будет очень большой, то вставка не произойдет
                 JsonObject firstObject = rpcResult.result.records[0];
                 if (!firstObject.has("__error")) {
-                    SqlStatementInsertFromJSONObject sqlInsert = new SqlStatementInsertFromJSONObject(firstObject, tableName, isRequestToServer, abstractDao);
-                    try {
-                        for (JsonObject object : rpcResult.result.records) {
-                            try {
-                                if (attachmentProcessing) {
-                                    String fileName = object.get(FieldNames.C_NAME).getAsString();
-                                    FileBinary file = getFile(fileName);
-                                    if (file != null && StringUtil.equalsIgnoreCase(tableName, FileManager.ATTACHMENTS)) {
-                                        fileManager.writeBytes(tableName, file.name.replace(NamesCore.VIDEO_EXTENSION, "." + PreferencesManager.getInstance().getImageFormat()), file.bytes);
-                                    } else {
-                                        // Logger.error(new Exception("Включен механизм обработки вложений. В результате ответа не найден файл с именем " + fileName + "."));
-                                    }
-                                }
-                                sqlInsert.bind(object);
-                            } catch (SQLiteConstraintException e) {
-                                Log.e("SYNC_ERROR", Objects.requireNonNull(e.getMessage()));
 
-                                // тут нужно обновить запись
-                                String pkColumnName = "";
-                                for (AbstractDao a : session.getAllDaos()) {
-                                    if (a.getTablename().equals(tableName)) {
-                                        pkColumnName = a.getPkProperty().columnName;
-                                        break;
-                                    }
-                                }
-                                if (pkColumnName.isEmpty()) {
-                                    throw new Exception("Колонка для первичного ключа, таблицы " + tableName + " не найден.");
-                                } else {
-                                    // тут обновление будет только у тех записей у которых не было изменений.
-                                    SqlUpdateFromJSONObject sqlUpdate = new SqlUpdateFromJSONObject(firstObject, tableName, pkColumnName, abstractDao);
-                                    db.execSQL(sqlUpdate.convertToQuery(isRequestToServer), sqlUpdate.getValues(object, isRequestToServer));
-                                }
-                            }
+                    //SqlStatementInsertFromJSONObject sqlInsert = new SqlStatementInsertFromJSONObject(firstObject, tableName, isRequestToServer, abstractDao);
+                    try {
+                        List<Object> objects = new ArrayList<>();
+                        for (JsonObject object : rpcResult.result.records) {
+
+                            Object objectResponse = new Gson().fromJson(object, classObject);
+                            objects.add(objectResponse);
                         }
-                        db.setTransactionSuccessful();
-                        packageResult = PackageResult.success(null);
+
+                        boolean result = session.insertMany(objects.toArray(new Object[0]));
+                        if (result) {
+                            return PackageResult.success(null);
+                        } else {
+                            return PackageResult.fail("Ошибка вставки записей в таблицу " + tableName + ". ", new Exception());
+                        }
                     } catch (Exception e) {
                         packageResult = PackageResult.fail("Ошибка вставки записей в таблицу " + tableName + ".", e);
                     }
@@ -263,18 +236,15 @@ public abstract class ServerSidePackage implements IServerSidePackage {
                     String error = firstObject.get("__error").getAsString();
                     packageResult = PackageResult.fail("Ошибка вставки записей в таблицу " + tableName + ".", new Exception(error));
                 }
-                db.endTransaction();
+                //db.endTransaction();
                 return packageResult;
-            } else {
-                db.setTransactionSuccessful();
-                db.endTransaction();
             }
             return PackageResult.success(null);
         } else {
             Logger.error(new Exception(rpcResult.meta.msg));
             return PackageResult.fail("Ошибка обработки блока на сервере. " + rpcResult.meta.msg, null);
-        }*/
-        return null;
+        }
+        //return null;
     }
 
     /**
@@ -283,7 +253,7 @@ public abstract class ServerSidePackage implements IServerSidePackage {
      * @param name имя
      * @return возарщается файл
      */
-    /*protected FileBinary getFile(String name) {
+    protected FileBinary getFile(String name) {
         if (mFileBinary != null) {
             for (FileBinary file : mFileBinary) {
                 if (file.name.equals(name)) {
@@ -292,5 +262,5 @@ public abstract class ServerSidePackage implements IServerSidePackage {
             }
         }
         return null;
-    }*/
+    }
 }
