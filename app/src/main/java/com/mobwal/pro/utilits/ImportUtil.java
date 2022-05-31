@@ -20,7 +20,7 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.models.DemoPlaceItem;
 import com.mobwal.pro.models.db.complex.PointItem;
-import com.mobwal.pro.models.db.cd_attachments;
+import com.mobwal.pro.models.db.attachments;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.models.db.Route;
@@ -418,7 +418,7 @@ public class ImportUtil {
                         String[][] attachmentRows = reader.getArrayFromCSV("attachments.csv");
                         if(attachmentRows != null && attachmentRows.length > 0) {
 
-                            List<cd_attachments> attachmentItems = new ArrayList<>();
+                            List<attachments> attachmentItems = new ArrayList<>();
                             List<cd_results> results = new ArrayList<>();
 
                             Collection<Template> templateCollection = db.select("select * from TEMPLATE as t where t.f_route = ?;", new String[] { route.id }, Template.class);
@@ -488,7 +488,7 @@ public class ImportUtil {
                                                         if (attUrl != null) {
                                                             fileManager.copy(attUrl, new File(fileManager.getRootCatalog(route.id), attItem[1]));
 
-                                                            cd_attachments attachmentItem = new cd_attachments();
+                                                            attachments attachmentItem = new attachments();
                                                             //attachmentItem.fn_point = result.f_point;
                                                             //attachmentItem.fn_route = route.id;
                                                             //attachmentItem.fn_result = result.id;
@@ -500,7 +500,7 @@ public class ImportUtil {
                                                             if (attachmentItem.d_date == null) {
                                                                 continue;
                                                             }
-                                                            attachmentItem.n_distance = TextUtils.isEmpty(attItem[5]) ? -1 : Double.parseDouble(attItem[5]);
+                                                            //attachmentItem.n_distance = TextUtils.isEmpty(attItem[5]) ? -1 : Double.parseDouble(attItem[5]);
 
                                                             attachmentItems.add(attachmentItem);
                                                         }
@@ -518,7 +518,7 @@ public class ImportUtil {
                                 return context.getString(R.string.unknown_error) + "ZIP3";
                             }
 
-                            if(attachmentItems.size() > 0 && !db.insertMany(attachmentItems.toArray(new cd_attachments[0]))) {
+                            if(attachmentItems.size() > 0 && !db.insertMany(attachmentItems.toArray(new attachments[0]))) {
                                 return context.getString(R.string.unknown_error) + "ZIP2";
                             }
 

@@ -338,7 +338,8 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         String linkName = "id";
 
         if (createRecords.length > 0 || updateRecords.length > 0 || removeRecords.length > 0) {
-            if (oneOnlyMode && !getEntity(tableName).many) {
+            Entity entity = getEntity(tableName);
+            if (oneOnlyMode && !entity.many) {
                 if (createRecords.length > 0) {
                     for (Object o : createRecords) {
                         Object linkValue = getLinkValue(o);
@@ -346,6 +347,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                             continue;
                         }
                         RPCItem rpc = RPCItem.addItem(tableName, o);
+                        rpc.schema = entity.schema;
                         utils.addTo(rpc);
                         SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
                     }
@@ -358,6 +360,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                             continue;
                         }
                         RPCItem rpc = RPCItem.addItem(tableName, o);
+                        rpc.schema = entity.schema;
                         utils.addTo(rpc);
                         SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
                     }
@@ -370,6 +373,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                             continue;
                         }
                         RPCItem rpc = RPCItem.deleteItem(tableName, o);
+                        rpc.schema = entity.schema;
                         utils.addTo(rpc);
                         SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), linkName, linkValue);
                     }
@@ -377,16 +381,19 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
             } else {
                 if (createRecords.length > 0) {
                     RPCItem rpc = RPCItem.addItems(tableName, createRecords);
+                    rpc.schema = entity.schema;
                     utils.addTo(rpc);
                     SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.CREATED);
                 }
                 if (updateRecords.length > 0) {
                     RPCItem rpc = RPCItem.updateItems(tableName, updateRecords);
+                    rpc.schema = entity.schema;
                     utils.addTo(rpc);
                     SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.UPDATED);
                 }
                 if (removeRecords.length > 0) {
                     RPCItem rpc = RPCItem.deleteItems(tableName, removeRecords);
+                    rpc.schema = entity.schema;
                     utils.addTo(rpc);
                     SyncUtil.updateBlockTid(this, tableName, tid, String.valueOf(rpc.tid), DbOperationType.REMOVED);
                 }

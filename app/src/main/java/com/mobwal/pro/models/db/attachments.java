@@ -2,6 +2,7 @@ package com.mobwal.pro.models.db;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.Expose;
 import com.mobwal.pro.MetaTableName;
 import com.mobwal.pro.data.OnAttachmentListeners;
 
@@ -9,11 +10,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public class cd_attachments implements Serializable, OnAttachmentListeners {
+public class attachments implements Serializable, OnAttachmentListeners {
 
-    public static MetaTableName Meta = new MetaTableName("dbo", "cd_attachments");
+    public static MetaTableName Meta = new MetaTableName("dbo", "attachments");
 
-    public cd_attachments() {
+    public attachments() {
         id = UUID.randomUUID().toString();
         d_date = new Date();
         n_latitude = null;
@@ -21,35 +22,46 @@ public class cd_attachments implements Serializable, OnAttachmentListeners {
         n_distance = null;
     }
 
+    @Expose
     public String id;
 
+    @Expose
     public String fn_route;
 
+    @Expose
     public String fn_point;
 
+    @Expose
     public String fn_result;
 
+    @Expose
     @Nullable
     public Double n_latitude;
 
+    @Expose
     @Nullable
     public Double n_longitude;
 
+    @Expose
     public Date d_date;
 
+    @Expose
     public String c_path;
 
+    @Expose
     public int n_size;
 
+    @Expose
     public String c_extension;
 
+    @Expose
     public String c_mime;
 
-    public String jb_data;
-
+    @Expose
     @Nullable
-    public Double n_distance;
+    public Long n_distance;
 
+    @Expose
     public String fn_storage;
 
     /**

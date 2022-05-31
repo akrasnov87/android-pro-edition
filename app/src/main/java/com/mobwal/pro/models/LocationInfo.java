@@ -45,7 +45,7 @@ public class LocationInfo
     public Double taskLatitude;
 
     @Nullable
-    public Double getDistance() {
+    public Long getDistance() {
         if(myLongitude != null && myLatitude != null && taskLongitude != null && taskLatitude != null) {
             Location attachLocation = new Location(LocationManager.PASSIVE_PROVIDER);
             attachLocation.setLongitude(myLongitude);
@@ -55,7 +55,7 @@ public class LocationInfo
             myLocation.setLongitude(taskLongitude);
             myLocation.setLatitude(taskLatitude);
 
-            return Double.valueOf(String.valueOf(myLocation.distanceTo(attachLocation)));
+            return Long.valueOf(String.valueOf(myLocation.distanceTo(attachLocation)));
         }
 
         return null;

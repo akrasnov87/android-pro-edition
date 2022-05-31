@@ -42,6 +42,9 @@ public class RPCItem {
         this.data[0] = queryData;
     }
 
+    @Expose
+    public String schema;
+
     /**
      * Действие
      */

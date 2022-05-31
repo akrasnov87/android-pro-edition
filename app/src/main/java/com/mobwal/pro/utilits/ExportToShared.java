@@ -25,7 +25,7 @@ import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.complex.ResultExportItem;
-import com.mobwal.pro.models.db.cd_attachments;
+import com.mobwal.pro.models.db.attachments;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Template;
@@ -313,10 +313,10 @@ public class ExportToShared {
                     }
 
                     // Обработка вложений
-                    Collection<cd_attachments> attachmentCollections = dataManager.getRouteAttachments(mRouteID);
+                    Collection<attachments> attachmentCollections = dataManager.getRouteAttachments(mRouteID);
 
                     if (attachmentCollections != null) {
-                        cd_attachments[] attachments = attachmentCollections.toArray(new cd_attachments[0]);
+                        attachments[] attachments = attachmentCollections.toArray(new attachments[0]);
                         if (attachments.length > 0) {
                             // создать csv
                             List<String[]> files = new ArrayList<>();
@@ -337,8 +337,8 @@ public class ExportToShared {
                             }
 
                             for (ResultExportItem resultItem : resultItems) {
-                                List<cd_attachments> filterAttachments = new ArrayList<>();
-                                for (cd_attachments attachment :
+                                List<com.mobwal.pro.models.db.attachments> filterAttachments = new ArrayList<>();
+                                for (com.mobwal.pro.models.db.attachments attachment :
                                         attachments) {
                                     /*if (attachment.f_result.equals(resultItem.f_result)) {
                                         filterAttachments.add(attachment);
@@ -348,7 +348,7 @@ public class ExportToShared {
                                 for (int j = 0; j < filterAttachments.size(); j++) {
                                     List<String> fileItem = new ArrayList<>();
 
-                                    cd_attachments attachment = filterAttachments.get(j);
+                                    com.mobwal.pro.models.db.attachments attachment = filterAttachments.get(j);
 
                                     fileItem.add(resultItem.getId());
                                     /*String picName = resultItem.getId() + "-" + (j + 1) + StringUtil.getFileExtension(attachment.c_name);

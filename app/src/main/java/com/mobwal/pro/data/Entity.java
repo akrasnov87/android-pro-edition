@@ -34,6 +34,8 @@ public class Entity implements IEntity {
      */
     public String select = "";
 
+    public String schema = "dbo";
+
     /**
      * Передача данных на сервер
      */
@@ -113,6 +115,11 @@ public class Entity implements IEntity {
      */
     public Entity setTid(String tid){
         this.tid = tid;
+        return this;
+    }
+
+    public Entity setSchema(String schema) {
+        this.schema = schema;
         return this;
     }
 

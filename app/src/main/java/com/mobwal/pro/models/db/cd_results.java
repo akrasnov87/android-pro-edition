@@ -5,6 +5,7 @@ import android.location.Location;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.annotations.Expose;
 import com.mobwal.pro.MetaTableName;
 
 import java.util.Date;
@@ -39,25 +40,34 @@ public class cd_results {
         d_date = new Date();
     }
 
+    @Expose
     public String id;
 
+    @Expose
     public String fn_route;
 
+    @Expose
     public String fn_point;
 
+    @Expose
     @Nullable
     public Double n_latitude;
 
+    @Expose
     @Nullable
     public Double n_longitude;
 
+    @Expose
     @Nullable
     public String jb_data;
 
+    @Expose
     public Date d_date;
 
+    @Expose
     public String fn_template;
 
+    @Expose
     @Nullable
     public Double n_distance;
 

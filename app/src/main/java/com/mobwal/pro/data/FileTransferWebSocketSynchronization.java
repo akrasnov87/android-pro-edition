@@ -6,7 +6,7 @@ import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.data.meta.TableQuery;
 import com.mobwal.pro.data.utils.FullServerSidePackage;
 import com.mobwal.pro.data.utils.PackageResult;
-import com.mobwal.pro.models.db.cd_attachments;
+import com.mobwal.pro.models.db.attachments;
 
 import java.io.IOException;
 
@@ -100,7 +100,7 @@ public abstract class FileTransferWebSocketSynchronization
                             }
 
                             if (record instanceof OnAttachmentListeners) {
-                                cd_attachments attachment = (cd_attachments) record;
+                                attachments attachment = (attachments) record;
                                 if (attachment.__IS_DELETE) {
                                     continue;
                                 }
@@ -127,6 +127,7 @@ public abstract class FileTransferWebSocketSynchronization
                     } else {
                         rpcItem = tableQuery.toRPCQuery(MAX_COUNT_IN_QUERY, entity.filters);
                     }
+                    rpcItem.schema = entity.schema;
                     utils.addFrom(rpcItem);
                 }
             }

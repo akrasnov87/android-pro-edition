@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.pro.data.utils.PackageResult;
 import com.mobwal.pro.data.utils.ServerSidePackage;
-import com.mobwal.pro.models.db.cd_attachments;
+import com.mobwal.pro.models.db.attachments;
 import com.mobwal.pro.models.db.cd_results;
 
 import org.junit.After;
@@ -15,10 +15,8 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
-import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
@@ -35,7 +33,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
     @Before
     public void setUp() {
         getSQLContext().exec("DELETE FROM " + cd_results.Meta.table, new Object[0]);
-        getSQLContext().exec("DELETE FROM " + cd_attachments.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + attachments.Meta.table, new Object[0]);
     }
 
     @After
@@ -194,7 +192,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
         fileManager.writeBytes(FileManager.ATTACHMENTS, "file1.tmp", "attachmentsToTest".getBytes());
 
-        cd_attachments attachment = new cd_attachments();
+        attachments attachment = new attachments();
         attachment.id = LINK;
         attachment.c_path = "file1.tmp";
         attachment.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
@@ -208,7 +206,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = cd_attachments.Meta.table;
+        result.action = attachments.Meta.table;
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;

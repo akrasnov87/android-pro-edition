@@ -3,7 +3,7 @@ package com.mobwal.pro;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.mobwal.pro.models.db.cd_attachments;
+import com.mobwal.pro.models.db.attachments;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.models.db.Route;
@@ -31,7 +31,7 @@ public class WalkerSQLContext extends SQLContext {
             db.execSQL(getCreateQuery(new Route(), "id"));
             db.execSQL(getCreateQuery(new Point(), "id"));
             db.execSQL(getCreateQuery(new cd_results(), "id"));
-            db.execSQL(getCreateQuery(new cd_attachments(), "id"));
+            db.execSQL(getCreateQuery(new attachments(), "id"));
 
             db.setTransactionSuccessful();
         } catch (Exception ignored) {

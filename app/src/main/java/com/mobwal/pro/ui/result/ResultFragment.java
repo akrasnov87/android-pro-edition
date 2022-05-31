@@ -32,7 +32,7 @@ import com.mobwal.pro.databinding.FragmentResultBinding;
 import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
-import com.mobwal.pro.models.db.cd_attachments;
+import com.mobwal.pro.models.db.attachments;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.models.db.Route;
@@ -46,7 +46,7 @@ import com.mobwal.pro.utilits.JsonUtil;
 public class ResultFragment extends BaseFragment
         implements WalkerLocationListeners, View.OnClickListener {
 
-    private cd_attachments[] mItems;
+    private attachments[] mItems;
 
     private ActivityResultLauncher<Intent> mChoiceActivityResultLauncher;
     private final ActivityResultLauncher<String[]> mPermissionGalleryActivityResultLauncher;
@@ -110,7 +110,7 @@ public class ResultFragment extends BaseFragment
 
         if(savedInstanceState != null) {
             mLocation = savedInstanceState.getParcelable("location");
-            mItems = (cd_attachments[]) savedInstanceState.getSerializable("items");
+            mItems = (attachments[]) savedInstanceState.getSerializable("items");
             mAttachmentFileName = savedInstanceState.getString("fileName");
         }
 

@@ -48,7 +48,7 @@ public abstract class DbGenerate {
     }
 
     public static BasicCredentials getCredentials() {
-        return new BasicCredentials("test", "qwe-123+");
+        return new BasicCredentials("test", "1234");
     }
 
     public static BasicUser getBasicUser() {

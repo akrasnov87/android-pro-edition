@@ -1,6 +1,4 @@
-/*package ru.mobnius.cic.data.manager.synchronization;
-
-import android.content.Context;
+package com.mobwal.pro.data.manager.synchronization;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -9,27 +7,30 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Date;
 import java.util.UUID;
 
-import ru.mobnius.cic.data.storage.models.Points;
-import ru.mobnius.cic.data.storage.models.Results;
-import ru.mobnius.cic.data.storage.models.RouteStatusesDao;
+import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.synchronization.MultipartUtility;
-import ru.mobnius.core.utils.LocationUtil;
 import ru.mobnius.core.utils.LongUtil;
 import ru.mobnius.core.utils.PackageReadUtils;
+import ru.mobnius.core.utils.StringUtil;
+
+import com.mobwal.pro.ManualSynchronization;
+import com.mobwal.pro.WalkerSQLContext;
+import com.mobwal.pro.data.DbGenerate;
+import com.mobwal.pro.data.MultipartUtility;
+import com.mobwal.pro.models.db.attachments;
+import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.utilits.SyncUtil;
-import ru.mobnius.cic.ManagerGenerate;
-import ru.mobnius.cic.data.storage.models.DaoSession;
 
 import static org.junit.Assert.assertEquals;
 
-public class ManualSynchronizationTest extends ManagerGenerate {
+public class ManualSynchronizationTest extends DbGenerate {
     private ManualSynchronizationTest.MySynchronization synchronization;
 
     private String mResultId;
@@ -38,30 +39,21 @@ public class ManualSynchronizationTest extends ManagerGenerate {
     @Before
     public void setUp() {
 
-        Points point = new Points();
-        point.id = mPointId = UUID.randomUUID().toString();
-        getDaoSession().getPointsDao().insert(point);
+        cd_results point = new cd_results();
+        getSQLContext().insert(point);
 
-        Results result = new Results();
-        result.fn_point = mPointId;
-        result.id = mResultId = UUID.randomUUID().toString();
-        getDaoSession().getResultsDao().insert(result);
-
-        synchronization = new MySynchronization(getContext(), getDaoSession(), getFileManager(), getCredentials());
+        synchronization = new MySynchronization(getSQLContext(), getFileManager(), getCredentials());
         synchronization.initEntities();
 
         // без этого фильтрации не будет работать
         // TODO 09/01/2020 нужно добавить проверку в метод start у синхронизации на передачу идентификатора пользователя, что null не было
-        synchronization.getEntity(getDaoSession().getAttachmentsDao().getTablename()).setParam("null", "1000.0.0.0");
-        synchronization.getEntity(getDaoSession().getFilesDao().getTablename()).setParam("null", "1000.0.0.0");
+        synchronization.getEntity(attachments.Meta.table).setSchema("dbo").setParam("null", "1000.0.0.0");
+        //synchronization.getEntity(getDaoSession().getFilesDao().getTablename()).setParam("null", "1000.0.0.0");
     }
 
     @After
     public void tearDown() {
-        getDaoSession().getFilesDao().deleteAll();
-        getDaoSession().getAttachmentsDao().deleteAll();
-        getDaoSession().getResultsDao().deleteAll();
-        getDaoSession().getPointsDao().deleteAll();
+        getSQLContext().trash();
     }
 
     @Test
@@ -70,7 +62,7 @@ public class ManualSynchronizationTest extends ManagerGenerate {
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.dictionaryTid, bytes);
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.dictionaryTid);
-        int length = synchronization.getRecords(RouteStatusesDao.TABLENAME, "").toArray().length;
+        int length = synchronization.getRecords(cd_results.Meta.table, "").toArray().length;
         Assert.assertTrue(length > 0);
         synchronization.destroy();
         utils.destroy();
@@ -86,18 +78,17 @@ public class ManualSynchronizationTest extends ManagerGenerate {
         }
 
         // создаем записи о вложениях
-        DaoSession session = getDaoSession();
 
         for(int i = 0; i < 2; i++) {
             byte[] bytes = ("file number " + i).getBytes();
-            getDataManager().saveAttachment("file" + i + ".tmp", 1, mResultId, mPointId, UUID.randomUUID().toString(), "", LocationUtil.getLocation(0, 0), bytes);
+            saveFile("file" + i + ".tmp", bytes, FileManager.FILES);
         }
 
-        boolean updateTid = SyncUtil.updateTid(synchronization, session.getAttachmentsDao().getTablename(), synchronization.fileTid);
+        boolean updateTid = SyncUtil.updateTid(synchronization, attachments.Meta.table, synchronization.fileTid);
         Assert.assertTrue(updateTid);
 
-        updateTid = SyncUtil.updateTid(synchronization, session.getFilesDao().getTablename(), synchronization.fileTid);
-        Assert.assertTrue(updateTid);
+        //updateTid = SyncUtil.updateTid(synchronization, session.getFilesDao().getTablename(), synchronization.fileTid);
+        //Assert.assertTrue(updateTid);
 
         byte[] bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
@@ -108,8 +99,9 @@ public class ManualSynchronizationTest extends ManagerGenerate {
 
         }
 
-        getDaoSession().getAttachmentsDao().deleteAll();
-        getDaoSession().getFilesDao().deleteAll();
+        getSQLContext().exec("delete from " + attachments.Meta.table, new Object[0]);
+        //getDaoSession().getAttachmentsDao().deleteAll();
+        //getDaoSession().getFilesDao().deleteAll();
 
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
@@ -117,11 +109,11 @@ public class ManualSynchronizationTest extends ManagerGenerate {
         Assert.assertNotNull(fileBytes);
         assertEquals(new String(fileBytes), "file number 0");
 
-        @SuppressWarnings("rawtypes") List records = synchronization.getRecords(session.getAttachmentsDao().getTablename(), "");
+        @SuppressWarnings("rawtypes") Collection records = synchronization.getRecords(attachments.Meta.table, "");
         Assert.assertTrue(records.size() >= 2);
 
-        records = synchronization.getRecords(session.getFilesDao().getTablename(), "");
-        Assert.assertTrue(records.size() >= 2);
+        //records = synchronization.getRecords(session.getFilesDao().getTablename(), "");
+        //Assert.assertTrue(records.size() >= 2);
 
         synchronization.destroy();
         try {
@@ -132,10 +124,35 @@ public class ManualSynchronizationTest extends ManagerGenerate {
         utils.destroy();
     }
 
+    /**
+     * Сохранение файла
+     *
+     * @param c_name имя файла
+     * @param bytes  массив байтов
+     * @param folder каталог
+     * @return файл
+     * @throws IOException исключение
+     */
+    public attachments saveFile(String c_name, byte[] bytes, String folder) throws IOException {
+        FileManager fileManager = FileManager.getInstance();
+        fileManager.writeBytes(folder, c_name, bytes);
+
+        attachments file = new attachments();
+        file.c_path = c_name;
+        file.c_mime = StringUtil.getMimeByName(c_name);
+        file.c_extension = StringUtil.getExtension(c_name);
+        file.d_date = new Date();
+        //file.folder = folder;
+        file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
+
+        getSQLContext().insert(file);
+        return file;
+    }
+
     public static class MySynchronization extends ManualSynchronization {
         private final BasicCredentials mCredentials;
-        public MySynchronization(Context context, DaoSession daoSession, FileManager fileManager, BasicCredentials credentials) {
-            super(context, daoSession, fileManager, false);
+        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredentials credentials) {
+            super(context, fileManager, false);
             dictionaryTid = UUID.randomUUID().toString();
             mCredentials = credentials;
         }
@@ -145,7 +162,7 @@ public class ManualSynchronizationTest extends ManagerGenerate {
             super.sendBytes(tid, bytes);
 
             try {
-                MultipartUtility multipartUtility = new MultipartUtility(ManagerGenerate.getBaseUrl() + "/synchronization/" + PreferencesManager.SYNC_PROTOCOL_v2, mCredentials);
+                MultipartUtility multipartUtility = new MultipartUtility(getBaseUrl() + "/synchronization/" + PreferencesManager.SYNC_PROTOCOL_v2, mCredentials);
                 multipartUtility.addFilePart("synchronization", bytes);
                 return multipartUtility.finish();
             }catch (Exception exc){
@@ -159,4 +176,3 @@ public class ManualSynchronizationTest extends ManagerGenerate {
         }
     }
 }
-*/
