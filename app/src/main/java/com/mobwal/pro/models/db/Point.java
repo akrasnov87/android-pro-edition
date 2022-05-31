@@ -6,11 +6,13 @@ import android.location.LocationManager;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.mobwal.pro.annotation.TableMetaData;
 
 import java.util.UUID;
 
-public class cd_points {
-    public cd_points() {
+@TableMetaData(name = "cd_points")
+public class Point {
+    public Point() {
         id = UUID.randomUUID().toString();
         n_latitude = null;
         n_longitude = null;

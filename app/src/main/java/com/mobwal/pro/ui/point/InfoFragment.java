@@ -44,8 +44,8 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.PointInfoItemAdapter;
 import com.mobwal.pro.databinding.FragmentPointInfoBinding;
 import com.mobwal.pro.models.PointInfo;
-import com.mobwal.pro.models.db.cd_points;
-import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 
 /**
@@ -68,7 +68,7 @@ public class InfoFragment extends Fragment
     private MenuItem mDeleteMenuItem;
 
     @Nullable
-    private cd_results[] mResults;
+    private Result[] mResults;
 
     public InfoFragment() {
         // Required empty public constructor
@@ -152,7 +152,7 @@ public class InfoFragment extends Fragment
                 // ДА
                 if(mResults != null) {
                     boolean b = true;
-                    for (cd_results result : mResults) {
+                    for (Result result : mResults) {
                         if (mDataManager.delResult(result.id)) {
                             List<PointInfo> items = mPointInfoItemAdapter.getData();
                             int i = 0;
@@ -256,7 +256,7 @@ public class InfoFragment extends Fragment
             mMarkers.clear();
         }
 
-        cd_points pointItem = mDataManager.getPoint(f_point);
+        Point pointItem = mDataManager.getPoint(f_point);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         if(pointItem != null) {
             LatLng point = pointItem.convertToLatLng();
@@ -270,9 +270,9 @@ public class InfoFragment extends Fragment
             }
         }
 
-        cd_results[] results = mDataManager.getResults(f_point);
+        Result[] results = mDataManager.getResults(f_point);
         if(results != null && results.length > 0) {
-            for (cd_results result: results) {
+            for (Result result: results) {
                 LatLng point = result.convertToLatLng();
 
                 if(point != null) {
@@ -312,7 +312,7 @@ public class InfoFragment extends Fragment
      */
     @Override
     public void onViewItemClick(String id) {
-        cd_results result = mDataManager.getResult(id);
+        Result result = mDataManager.getResult(id);
         if(result != null && mMap != null) {
             LatLng point = result.convertToLatLng();
             if(point != null) {

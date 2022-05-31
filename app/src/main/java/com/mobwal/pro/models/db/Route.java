@@ -9,10 +9,12 @@ import java.util.Date;
 import java.util.UUID;
 
 import com.mobwal.pro.R;
+import com.mobwal.pro.annotation.TableMetaData;
 import com.mobwal.pro.utilits.DateUtil;
 
-public class cd_routes {
-    public cd_routes() {
+@TableMetaData(name = "cd_routes")
+public class Route {
+    public Route() {
         id = UUID.randomUUID().toString();
         d_date = new Date();
         b_check = false;

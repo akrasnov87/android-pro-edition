@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.pro.data.utils.PackageResult;
 import com.mobwal.pro.data.utils.ServerSidePackage;
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Result;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -32,8 +32,8 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
     @Before
     public void setUp() {
-        getSQLContext().exec("DELETE FROM " + cd_results.Meta.table, new Object[0]);
-        getSQLContext().exec("DELETE FROM " + attachments.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + Result.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + Attachment.Meta.table, new Object[0]);
     }
 
     @After
@@ -46,14 +46,14 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         String tid = UUID.randomUUID().toString();
         int blockTid = 1;
 
-        cd_results item = new cd_results(UUID.randomUUID().toString());
+        Result item = new Result(UUID.randomUUID().toString());
         item.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
         item.__TID = tid;
         item.__BLOCK_TID = String.valueOf(blockTid);
 
         getSQLContext().insert(item);
 
-        item = new cd_results(UUID.randomUUID().toString());
+        item = new Result(UUID.randomUUID().toString());
 
         getSQLContext().insert(item);
 
@@ -62,7 +62,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = cd_results.Meta.table;
+        result.action = Result.Meta.table;
         result.method = "Add";
         RPCRecords records = new RPCRecords();
         records.total = 1;
@@ -80,7 +80,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         PackageResult packageResult = sidePackage.to(getSQLContext(), result, tid);
         Assert.assertTrue(packageResult.success);
 
-        Collection<cd_results> results = getSQLContext().select("select * from " + cd_results.Meta.table + " where " + FieldNames.IS_SYNCHRONIZATION + " = 1", new String[0], cd_results.class);
+        Collection<Result> results = getSQLContext().select("select * from " + Result.Meta.table + " where " + FieldNames.IS_SYNCHRONIZATION + " = 1", new String[0], Result.class);
         Assert.assertEquals(results.size(), 1);
 
         result.meta.success = false;
@@ -94,13 +94,13 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         String tid = UUID.randomUUID().toString();
         int blockTid = 0;
 
-        cd_results item = new cd_results(UUID.randomUUID().toString());
+        Result item = new Result(UUID.randomUUID().toString());
         item.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
         item.__TID = tid;
         item.__BLOCK_TID = String.valueOf(blockTid);
         getSQLContext().insert(item);
 
-        item = new cd_results(UUID.randomUUID().toString());
+        item = new Result(UUID.randomUUID().toString());
         getSQLContext().insert(item);
 
         RPCResult result = new RPCResult();
@@ -108,7 +108,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = cd_results.Meta.table;
+        result.action = Result.Meta.table;
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;
@@ -133,14 +133,14 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         String tid = UUID.randomUUID().toString();
         int blockTid = 0;
 
-        cd_results item = new cd_results(UUID.randomUUID().toString());
+        Result item = new Result(UUID.randomUUID().toString());
         item.jb_data = item.id;
         item.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
         item.__TID = tid;
         item.__BLOCK_TID = String.valueOf(blockTid);
         getSQLContext().insert(item);
 
-        item = new cd_results(UUID.randomUUID().toString());
+        item = new Result(UUID.randomUUID().toString());
         item.jb_data = item.id;
         getSQLContext().insert(item);
 
@@ -149,7 +149,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = cd_results.Meta.table;
+        result.action = Result.Meta.table;
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;
@@ -169,10 +169,10 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         sidePackage.setDeleteRecordBeforeAppend(false);
         PackageResult packageResult = sidePackage.from(getSQLContext(), result, tid, true);
         Assert.assertTrue(packageResult.success);
-        Collection<cd_results> results = getSQLContext().select("select * from " + cd_results.Meta.table, new String[0], cd_results.class); // getDaoSession().getTrackingDao().queryBuilder().list();
+        Collection<Result> results = getSQLContext().select("select * from " + Result.Meta.table, new String[0], Result.class); // getDaoSession().getTrackingDao().queryBuilder().list();
         Assert.assertEquals(results.size(), 2);
-        results = getSQLContext().select("select * from " + cd_results.Meta.table + " where id = ?", new String[] { item.id }, cd_results.class); // getDaoSession().getTrackingDao().queryBuilder().where(TrackingDao.Properties.Id.eq(tracking2.getId())).list();
-        cd_results t = results.toArray(new cd_results[0])[0];
+        results = getSQLContext().select("select * from " + Result.Meta.table + " where id = ?", new String[] { item.id }, Result.class); // getDaoSession().getTrackingDao().queryBuilder().where(TrackingDao.Properties.Id.eq(tracking2.getId())).list();
+        Result t = results.toArray(new Result[0])[0];
         Assert.assertEquals(t.id, item.id);
     }
 
@@ -192,7 +192,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
         fileManager.writeBytes(FileManager.ATTACHMENTS, "file1.tmp", "attachmentsToTest".getBytes());
 
-        attachments attachment = new attachments();
+        Attachment attachment = new Attachment();
         attachment.id = LINK;
         attachment.c_path = "file1.tmp";
         attachment.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
@@ -206,7 +206,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = attachments.Meta.table;
+        result.action = Attachment.Meta.table;
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;

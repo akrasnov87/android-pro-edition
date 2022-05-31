@@ -24,7 +24,8 @@ public class SyncUtil {
         List<Field> array = new ArrayList<>();
 
         for (Field field: fields) {
-            if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+            if (java.lang.reflect.Modifier.isPublic(field.getModifiers()) &&
+                    !java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
                 array.add(field);
             }
         }

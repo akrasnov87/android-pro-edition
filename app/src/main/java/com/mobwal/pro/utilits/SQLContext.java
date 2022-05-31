@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.mobwal.pro.Names;
 import com.mobwal.pro.WalkerApplication;
+import com.mobwal.pro.annotation.TableMetaData;
 
 public abstract class SQLContext extends SQLiteOpenHelper {
 
@@ -243,12 +244,14 @@ public abstract class SQLContext extends SQLiteOpenHelper {
     /**
      * Создание SQL - запроса на "создание" таблицы
      * @param entity сущность
-     * @param pKeyName имя поля первичного ключа
      * @return SQL - запрос
      */
-    public <T> String getCreateQuery(T entity, String pKeyName) {
-        // "CREATE TABLE IF NOT EXISTS FIELDS " +
-        // "(ROW INTEGER PRIMARY KEY, FIELD_DATA TEXT);
+    public <T> String getCreateQuery(T entity) {
+        String pKeyName = "id";
+        TableMetaData tableMetaData = entity.getClass().getAnnotation(TableMetaData.class);
+        if (tableMetaData != null) {
+            pKeyName = tableMetaData.pKey();
+        }
 
         String tableName = getTableName(entity);
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
@@ -299,7 +302,12 @@ public abstract class SQLContext extends SQLiteOpenHelper {
      * @return наименование класса
      */
     protected <T> String getTableName(T entity) {
-        return entity.getClass().getSimpleName();
+        TableMetaData tableMetaData = entity.getClass().getAnnotation(TableMetaData.class);
+        if (tableMetaData != null) {
+            return tableMetaData.name();
+        } else {
+            return entity.getClass().getSimpleName();
+        }
     }
 
     /**

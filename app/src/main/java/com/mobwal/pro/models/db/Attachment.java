@@ -4,17 +4,19 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.mobwal.pro.MetaTableName;
+import com.mobwal.pro.annotation.TableMetaData;
 import com.mobwal.pro.data.OnAttachmentListeners;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public class attachments implements Serializable, OnAttachmentListeners {
+@TableMetaData(name = "attachments")
+public class Attachment implements Serializable, OnAttachmentListeners {
 
     public static MetaTableName Meta = new MetaTableName("dbo", "attachments");
 
-    public attachments() {
+    public Attachment() {
         id = UUID.randomUUID().toString();
         d_date = new Date();
         n_latitude = null;

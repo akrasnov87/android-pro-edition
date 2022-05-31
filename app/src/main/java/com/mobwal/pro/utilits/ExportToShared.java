@@ -25,10 +25,10 @@ import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.complex.ResultExportItem;
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_points;
-import com.mobwal.pro.models.db.cd_routes;
-import com.mobwal.pro.models.db.cd_templates;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.Template;
 import pw.appcode.mimic.*;
 
 /**
@@ -56,7 +56,7 @@ public class ExportToShared {
     @Nullable
     public String generate(@NotNull Context context, @Nullable ZipManager.ZipListeners listeners) {
         DataManager dataManager = new DataManager(context);
-        cd_routes route = dataManager.getRoute(mRouteID);
+        Route route = dataManager.getRoute(mRouteID);
         FileManager fileManager = new FileManager(context.getCacheDir());
 
         if (route != null) {
@@ -120,11 +120,11 @@ public class ExportToShared {
                     }
 
                     // формирование tags.csv
-                    cd_templates[] templates = dataManager.getTemplates(mRouteID);
+                    Template[] templates = dataManager.getTemplates(mRouteID);
                     if (templates != null && templates.length > 0) {
                         StringBuilder tagsCSV = new StringBuilder();
                         for (int i = 0; i < templates.length; i++) {
-                            cd_templates template = templates[i];
+                            Template template = templates[i];
                             tagsCSV.append(MessageFormat.format("{0};{1};template", template.c_name, template.c_template));
                             if (i != templates.length - 1) {
                                 tagsCSV.append("\n");
@@ -149,7 +149,7 @@ public class ExportToShared {
                     }
 
                     // формирование points.csv
-                    cd_points[] points = dataManager.getPoints(mRouteID);
+                    Point[] points = dataManager.getPoints(mRouteID);
                     if (points != null && points.length > 0) {
                         List<String[]> pointItems = new ArrayList<>();
                         List<String> pointHeaders = new ArrayList<>();
@@ -163,7 +163,7 @@ public class ExportToShared {
                         pointHeaders.add("b_check");
                         pointHeaders.add("c_comment");
 
-                        for (cd_points item : points) {
+                        for (Point item : points) {
                             List<String> pointItem = new ArrayList<>();
 
                             pointItem.add(item.c_address);
@@ -203,10 +203,10 @@ public class ExportToShared {
                 // Результаты
                 ResultExportItem[] resultItems = dataManager.getResultExport(mRouteID);
                 if (resultItems != null) {
-                    cd_templates[] templates = dataManager.getTemplates(mRouteID);
+                    Template[] templates = dataManager.getTemplates(mRouteID);
 
                     if (templates != null) {
-                        for (cd_templates template : templates) {
+                        for (Template template : templates) {
                             List<String> fields = new ArrayList<>();
                             // нужно достать список полей в карточке
                             String layout = SimpleFormLayout.isSimpleLayout(template.c_layout)
@@ -313,10 +313,10 @@ public class ExportToShared {
                     }
 
                     // Обработка вложений
-                    Collection<attachments> attachmentCollections = dataManager.getRouteAttachments(mRouteID);
+                    Collection<Attachment> attachmentCollections = dataManager.getRouteAttachments(mRouteID);
 
                     if (attachmentCollections != null) {
-                        attachments[] attachments = attachmentCollections.toArray(new attachments[0]);
+                        Attachment[] attachments = attachmentCollections.toArray(new Attachment[0]);
                         if (attachments.length > 0) {
                             // создать csv
                             List<String[]> files = new ArrayList<>();
@@ -337,8 +337,8 @@ public class ExportToShared {
                             }
 
                             for (ResultExportItem resultItem : resultItems) {
-                                List<com.mobwal.pro.models.db.attachments> filterAttachments = new ArrayList<>();
-                                for (com.mobwal.pro.models.db.attachments attachment :
+                                List<Attachment> filterAttachments = new ArrayList<>();
+                                for (Attachment attachment :
                                         attachments) {
                                     /*if (attachment.f_result.equals(resultItem.f_result)) {
                                         filterAttachments.add(attachment);
@@ -348,7 +348,7 @@ public class ExportToShared {
                                 for (int j = 0; j < filterAttachments.size(); j++) {
                                     List<String> fileItem = new ArrayList<>();
 
-                                    com.mobwal.pro.models.db.attachments attachment = filterAttachments.get(j);
+                                    Attachment attachment = filterAttachments.get(j);
 
                                     fileItem.add(resultItem.getId());
                                     /*String picName = resultItem.getId() + "-" + (j + 1) + StringUtil.getFileExtension(attachment.c_name);

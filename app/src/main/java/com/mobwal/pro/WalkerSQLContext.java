@@ -3,21 +3,34 @@ package com.mobwal.pro;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_points;
-import com.mobwal.pro.models.db.cd_results;
-import com.mobwal.pro.models.db.cd_routes;
-import com.mobwal.pro.models.db.cd_settings;
-import com.mobwal.pro.models.db.cd_templates;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.Setting;
+import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.utilits.SQLContext;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class WalkerSQLContext extends SQLContext {
 
-    public WalkerSQLContext(Context context) {
+    public final List<Object> mTableList = Arrays.asList(
+            new Template(),
+            new Setting(),
+            new Route(),
+            new Point(),
+            new Result(),
+            new Attachment());
+
+    public WalkerSQLContext(@NotNull Context context) {
         super(context);
     }
 
-    public WalkerSQLContext(Context context, String dbName) {
+    public WalkerSQLContext(@NotNull Context context, @NotNull String dbName) {
         super(context, dbName);
     }
 
@@ -26,13 +39,9 @@ public class WalkerSQLContext extends SQLContext {
         db.beginTransaction();
 
         try {
-            db.execSQL(getCreateQuery(new cd_templates(), "id"));
-            db.execSQL(getCreateQuery(new cd_settings(), "id"));
-            db.execSQL(getCreateQuery(new cd_routes(), "id"));
-            db.execSQL(getCreateQuery(new cd_points(), "id"));
-            db.execSQL(getCreateQuery(new cd_results(), "id"));
-            db.execSQL(getCreateQuery(new attachments(), "id"));
-
+            for (Object obj: mTableList) {
+                db.execSQL(getCreateQuery(obj));
+            }
             db.setTransactionSuccessful();
         } catch (Exception ignored) {
 

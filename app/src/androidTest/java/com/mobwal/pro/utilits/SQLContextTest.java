@@ -33,15 +33,15 @@ public class SQLContextTest {
     @Test
     public void getCreateQuery() {
         Profile profile = new Profile();
-        String sql = sqlContext.getCreateQuery(profile,"id");
-        Assert.assertEquals(sql, "CREATE TABLE IF NOT EXISTS Profile (B_MALE INTEGER, C_NAME TEXT, D_DATE TEXT, ID INTEGER64 PRIMARY KEY, N_AGE INTEGER, N_SUM REAL, N_YEAR INTEGER);");
+        String sql = sqlContext.getCreateQuery(profile);
+        Assert.assertEquals(sql, "CREATE TABLE IF NOT EXISTS cd_profiles (B_MALE INTEGER, C_NAME TEXT, D_DATE TEXT, ID INTEGER64 PRIMARY KEY, N_AGE INTEGER, N_SUM REAL, N_YEAR INTEGER);");
     }
 
     @Test
     public void isExistsQuery() {
         Profile profile = new Profile();
         String sql = sqlContext.isExistsQuery(profile);
-        Assert.assertEquals(sql, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Profile';");
+        Assert.assertEquals(sql, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='cd_profiles';");
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SQLContextTest {
         profiles.add(profile);
 
         sqlContext.insertMany(profiles.toArray());
-        Collection<Profile> results = sqlContext.select("select * from Profile;", null, Profile.class);
+        Collection<Profile> results = sqlContext.select("select * from cd_profiles;", null, Profile.class);
         Assert.assertEquals(1, results.stream().count());
 
         Profile resultItem = results.toArray(new Profile[0])[0];
@@ -66,14 +66,14 @@ public class SQLContextTest {
         profiles.add(profile);
         sqlContext.insertMany(profiles.toArray());
 
-        results = sqlContext.select("select * from Profile;", null, Profile.class);
+        results = sqlContext.select("select * from cd_profiles;", null, Profile.class);
         Assert.assertEquals(1, results.stream().count());
 
         resultItem = results.toArray(new Profile[0])[0];
 
         Assert.assertEquals(profile.c_name, resultItem.c_name);
 
-        Long count = sqlContext.count("delete from profile;");
+        Long count = sqlContext.count("delete from cd_profiles;");
         Assert.assertNull(count);
     }
 
@@ -89,14 +89,14 @@ public class SQLContextTest {
 
         sqlContext.insertMany(profiles.toArray());
 
-        Long count = sqlContext.count("select count(*) from Profile;");
+        Long count = sqlContext.count("select count(*) from cd_profiles;");
         Assert.assertNotNull(count);
         Assert.assertEquals(1, (long) count);
     }
 
     @Test
     public void count() {
-        Long count = sqlContext.count("select count(*) from Profile;");
+        Long count = sqlContext.count("select count(*) from cd_profiles;");
         Assert.assertNotNull(count);
         Assert.assertTrue(count >= 0);
 

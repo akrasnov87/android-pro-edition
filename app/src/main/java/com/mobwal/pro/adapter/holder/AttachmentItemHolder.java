@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import com.mobwal.pro.R;
-import com.mobwal.pro.models.db.attachments;
+import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.utilits.FileManager;
 
@@ -24,7 +24,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
     private final ImageView mImage;
     private final FileManager mFileManager;
     private final Context mContext;
-    private attachments mAttachment;
+    private Attachment mAttachment;
     private final RecycleViewItemListeners mListeners;
 
     public AttachmentItemHolder(@NonNull View itemView, @Nullable RecycleViewItemListeners listeners) {
@@ -44,7 +44,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bind(@NotNull attachments item) {
+    public void bind(@NotNull Attachment item) {
         mAttachment = item;
 
         /*try {

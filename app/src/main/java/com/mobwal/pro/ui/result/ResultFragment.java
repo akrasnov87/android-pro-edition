@@ -32,11 +32,11 @@ import com.mobwal.pro.databinding.FragmentResultBinding;
 import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_points;
-import com.mobwal.pro.models.db.cd_results;
-import com.mobwal.pro.models.db.cd_routes;
-import com.mobwal.pro.models.db.cd_templates;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.ui.global.GoogleMapBottomDialogFragment;
 import com.mobwal.pro.ui.GeoLocationLayout;
@@ -46,7 +46,7 @@ import com.mobwal.pro.utilits.JsonUtil;
 public class ResultFragment extends BaseFragment
         implements WalkerLocationListeners, View.OnClickListener {
 
-    private attachments[] mItems;
+    private Attachment[] mItems;
 
     private ActivityResultLauncher<Intent> mChoiceActivityResultLauncher;
     private final ActivityResultLauncher<String[]> mPermissionGalleryActivityResultLauncher;
@@ -68,17 +68,17 @@ public class ResultFragment extends BaseFragment
     private String f_route;
     private String f_point;
     @Nullable
-    private cd_points mPoint;
+    private Point mPoint;
     private String f_result;
 
     @Nullable
-    private cd_results mResult;
+    private Result mResult;
 
     private String c_template;
     @Nullable
-    private cd_templates mTemplate;
+    private Template mTemplate;
     @Nullable
-    private cd_routes mRoute;
+    private Route mRoute;
 
     private String id = UUID.randomUUID().toString();
 
@@ -110,7 +110,7 @@ public class ResultFragment extends BaseFragment
 
         if(savedInstanceState != null) {
             mLocation = savedInstanceState.getParcelable("location");
-            mItems = (attachments[]) savedInstanceState.getSerializable("items");
+            mItems = (Attachment[]) savedInstanceState.getSerializable("items");
             mAttachmentFileName = savedInstanceState.getString("fileName");
         }
 
@@ -260,8 +260,8 @@ public class ResultFragment extends BaseFragment
         // получение данных с формы
         String jb_data = JsonUtil.toString(binding.createResultForm.getValues());
 
-        cd_results item = mResult == null
-                ? new cd_results(id, f_route, f_point, c_template, mLocation, mPoint)
+        Result item = mResult == null
+                ? new Result(id, f_route, f_point, c_template, mLocation, mPoint)
                 : mResult;
 
         item.jb_data = jb_data;
@@ -308,7 +308,7 @@ public class ResultFragment extends BaseFragment
      * @param point точка маршрута
      * @param location геолокация
      */
-    private void putMapLocation(@Nullable cd_points point, @Nullable Location location) {
+    private void putMapLocation(@Nullable Point point, @Nullable Location location) {
         if(point != null) {
             LocationInfo locationInfo = new LocationInfo(location);
             locationInfo.taskLatitude = point.n_latitude;

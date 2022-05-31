@@ -20,12 +20,12 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.models.DemoPlaceItem;
 import com.mobwal.pro.models.db.complex.PointItem;
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_points;
-import com.mobwal.pro.models.db.cd_results;
-import com.mobwal.pro.models.db.cd_routes;
-import com.mobwal.pro.models.db.cd_settings;
-import com.mobwal.pro.models.db.cd_templates;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.Setting;
+import com.mobwal.pro.models.db.Template;
 
 public class ImportUtil {
 
@@ -35,16 +35,16 @@ public class ImportUtil {
      * @param f_route иден. маршрута
      * @return массив шаблонов для сохранения в БД
      */
-    public static cd_templates[] convertRowsToTemplates(@Nullable String[][] rows, @NotNull String f_route) {
+    public static Template[] convertRowsToTemplates(@Nullable String[][] rows, @NotNull String f_route) {
         if(rows == null) {
             return null;
         }
 
-        List<cd_templates> templates = new ArrayList<>();
+        List<Template> templates = new ArrayList<>();
         for (int i = 0; i < rows.length; i++) {
             String[] row = rows[i];
             if (row.length >= 2) {
-                cd_templates template = new cd_templates();
+                Template template = new Template();
                 template.c_name = row[0];
                 template.c_template = row[1];
                 //template.f_route = f_route;
@@ -54,7 +54,7 @@ public class ImportUtil {
             }
         }
 
-        return templates.toArray(new cd_templates[0]);
+        return templates.toArray(new Template[0]);
     }
 
     /**
@@ -64,15 +64,15 @@ public class ImportUtil {
      * @return массив настроек для сохранения в БД
      */
     @Nullable
-    public static cd_settings[] convertRowsToSettings(@Nullable String[][] rows, @NotNull String f_route) {
+    public static Setting[] convertRowsToSettings(@Nullable String[][] rows, @NotNull String f_route) {
         if(rows == null) {
             return null;
         }
 
-        List<cd_settings> settings = new ArrayList<>();
+        List<Setting> settings = new ArrayList<>();
         for (String[] row : rows) {
             if (row.length == 2) {
-                cd_settings setting = new cd_settings();
+                Setting setting = new Setting();
                 setting.c_key = row[0].toLowerCase();
                 setting.c_value = row[1].toLowerCase();
                 setting.f_route = f_route;
@@ -81,11 +81,11 @@ public class ImportUtil {
             }
         }
 
-        return settings.toArray(new cd_settings[0]);
+        return settings.toArray(new Setting[0]);
     }
 
     @Nullable
-    public static PointItem[] convertPointsToPointItems(@Nullable cd_points[] points) {
+    public static PointItem[] convertPointsToPointItems(@Nullable Point[] points) {
         if(points == null) {
             return null;
         }
@@ -105,17 +105,17 @@ public class ImportUtil {
      * @return массив точек
      */
     @Nullable
-    public static cd_points[] convertRowsToPoints(@Nullable String[][] rows, @NotNull String f_route) {
+    public static Point[] convertRowsToPoints(@Nullable String[][] rows, @NotNull String f_route) {
         if(rows == null) {
             return null;
         }
 
-        List<cd_points> points = new ArrayList<>();
+        List<Point> points = new ArrayList<>();
 
         for(int i = 0; i < rows.length; i++) {
             String[] row = rows[i];
             if (row.length > 0) {
-                cd_points point = convertRowToPoint(row);
+                Point point = convertRowToPoint(row);
                 if(point == null) {
                     continue;
                 }
@@ -131,7 +131,7 @@ public class ImportUtil {
             }
         }
 
-        return points.toArray(new cd_points[0]);
+        return points.toArray(new Point[0]);
     }
 
     /**
@@ -141,17 +141,17 @@ public class ImportUtil {
      * @return массив точек
      */
     @Nullable
-    public static cd_points[] convertRowsToPointsFromResults(@Nullable String[][] rows, @NotNull String f_route) {
+    public static Point[] convertRowsToPointsFromResults(@Nullable String[][] rows, @NotNull String f_route) {
         if(rows == null) {
             return null;
         }
 
-        List<cd_points> points = new ArrayList<>();
+        List<Point> points = new ArrayList<>();
 
         for(int i = 0; i < rows.length; i++) {
             String[] row = rows[i];
             if (row.length > 0) {
-                cd_points point = convertRowToPoint(row);
+                Point point = convertRowToPoint(row);
                 if(point == null) {
                     continue;
                 }
@@ -179,11 +179,11 @@ public class ImportUtil {
             }
         }
 
-        return points.toArray(new cd_points[0]);
+        return points.toArray(new Point[0]);
     }
 
     @Nullable
-    private static cd_points convertRowToPoint(@NotNull String[] row) {
+    private static Point convertRowToPoint(@NotNull String[] row) {
         if (row.length > 0) {
             if (row[0].equals("")) {
                 return null;
@@ -207,7 +207,7 @@ public class ImportUtil {
                 }
             }
 
-            cd_points point = new cd_points();
+            Point point = new Point();
             point.c_address = row[0];
             point.n_latitude = n_latitude == null ? 0.0 : n_latitude;
             point.n_longitude = n_longitude == null ? 0.0 : n_longitude;
@@ -266,17 +266,17 @@ public class ImportUtil {
      */
     @Nullable
     public static String generateRouteFormCsv(@NotNull Context context, @NotNull CsvReader reader, @NotNull String routeName) {
-        cd_routes route = new cd_routes();
+        Route route = new Route();
         route.c_name = routeName;
 
-        cd_points[] points = ImportUtil.convertRowsToPoints(reader.getRows(), route.id);
+        Point[] points = ImportUtil.convertRowsToPoints(reader.getRows(), route.id);
         WalkerSQLContext db = WalkerApplication.getWalkerSQLContext(context);
 
-        if(db.insertMany(new cd_routes[] { route })) {
+        if(db.insertMany(new Route[] { route })) {
             if(points != null && db.insertMany(points)) {
-                cd_templates template = new cd_templates();
+                Template template = new Template();
                 template.setDefault(context, route.id);
-                if(db.insertMany(new cd_templates[] { template })) {
+                if(db.insertMany(new Template[] { template })) {
                     return null;
                 }
             }
@@ -304,17 +304,17 @@ public class ImportUtil {
             return context.getString(R.string.demo_route_empty);
         }
 
-        cd_routes route = new cd_routes();
+        Route route = new Route();
         //route.c_catalog = "demo";
         route.c_name = routeName;
         //route.b_export = true;
         //route.d_export = new Date();
         //route.c_readme = MessageFormat.format(context.getString(R.string.create_route_docs), Names.ROUTE_DOCS);
 
-        List<cd_points> list = new ArrayList<>();
+        List<Point> list = new ArrayList<>();
         int i = 0;
         for (DemoPlaceItem item: places) {
-            cd_points point = new cd_points();
+            Point point = new Point();
             //point.f_route = route.id;
             point.c_address = item.name;
             //point.c_description = item.kinds;
@@ -324,20 +324,20 @@ public class ImportUtil {
             list.add(point);
         }
 
-        cd_points[] points = list.toArray(new cd_points[0]);
+        Point[] points = list.toArray(new Point[0]);
         WalkerSQLContext db = WalkerApplication.getWalkerSQLContext(context);
 
-        if(db.insertMany(new cd_routes[] { route })) {
+        if(db.insertMany(new Route[] { route })) {
             if(db.insertMany(points)) {
-                cd_templates template = new cd_templates();
+                Template template = new Template();
                 template.setDefault(context, route.id);
                 template.n_order = 1;
 
-                cd_templates template2 = new cd_templates();
+                Template template2 = new Template();
                 template2.setDemo(context, route.id);
                 template2.n_order = 2;
 
-                if(db.insertMany(new cd_templates[] { template, template2 })) {
+                if(db.insertMany(new Template[] { template, template2 })) {
                     return null;
                 }
             }
@@ -361,7 +361,7 @@ public class ImportUtil {
      */
     @Nullable
     public static String generateRouteFromZip(@NotNull Context context, @NotNull ZipReader reader, @NotNull String routeName, @NotNull String catalog) {
-        cd_routes route = new cd_routes();
+        Route route = new Route();
         route.c_name = routeName;
         //route.c_catalog = catalog;
         route.b_check = reader.isCheckMode();
@@ -380,32 +380,32 @@ public class ImportUtil {
 
         String[][] pointRows = reader.getPoints(route.b_check);
         if(pointRows != null) {
-            cd_points[] points = route.b_check ? ImportUtil.convertRowsToPointsFromResults(pointRows, route.id)
+            Point[] points = route.b_check ? ImportUtil.convertRowsToPointsFromResults(pointRows, route.id)
                                             : ImportUtil.convertRowsToPoints(pointRows, route.id);
             WalkerSQLContext db = WalkerApplication.getWalkerSQLContext(context);
 
-            if(db.insertMany(new cd_routes[] { route })) {
+            if(db.insertMany(new Route[] { route })) {
                 if(points != null && db.insertMany(points)) {
-                    cd_settings[] settings = ImportUtil.convertRowsToSettings(reader.getSettings(route.b_check), route.id);
+                    Setting[] settings = ImportUtil.convertRowsToSettings(reader.getSettings(route.b_check), route.id);
                     // загрузка настроек
                     if(settings != null) {
                         db.insertMany(settings);
                     }
 
                     // поиск шаблонов
-                    cd_templates[] templates = ImportUtil.convertRowsToTemplates(reader.getTags(route.b_check), route.id);
+                    Template[] templates = ImportUtil.convertRowsToTemplates(reader.getTags(route.b_check), route.id);
                     if(templates != null && templates.length > 0) {
 
-                        for (cd_templates temp : templates) {
+                        for (Template temp : templates) {
                             temp.c_layout = reader.getForm(temp.c_template, route.b_check);
                         }
 
                         db.insertMany(templates);
                     } else {
-                        cd_templates template = new cd_templates();
+                        Template template = new Template();
                         template.setDefault(context, route.id);
 
-                        db.insertMany(new cd_templates[] { template });
+                        db.insertMany(new Template[] { template });
                     }
 
                     // загружаем результаты
@@ -418,14 +418,14 @@ public class ImportUtil {
                         String[][] attachmentRows = reader.getArrayFromCSV("attachments.csv");
                         if(attachmentRows != null && attachmentRows.length > 0) {
 
-                            List<attachments> attachmentItems = new ArrayList<>();
-                            List<cd_results> results = new ArrayList<>();
+                            List<Attachment> attachmentItems = new ArrayList<>();
+                            List<Result> results = new ArrayList<>();
 
-                            Collection<cd_templates> templateCollection = db.select("select * from TEMPLATE as t where t.f_route = ?;", new String[] { route.id }, cd_templates.class);
+                            Collection<Template> templateCollection = db.select("select * from TEMPLATE as t where t.f_route = ?;", new String[] { route.id }, Template.class);
                             if(templateCollection != null) {
-                                cd_templates[] dbTemplates = templateCollection.toArray(new cd_templates[0]);
+                                Template[] dbTemplates = templateCollection.toArray(new Template[0]);
 
-                                for (cd_templates template : dbTemplates) {
+                                for (Template template : dbTemplates) {
                                     String[][] rows = reader.getArrayFromCSV(template.c_template + ".csv");
                                     if(rows != null) {
                                         for (int i = 1; i < rows.length; i++) {
@@ -433,9 +433,9 @@ public class ImportUtil {
 
                                             if (f_result_id.length > 0) {
                                                 int pointOrder = Integer.parseInt(f_result_id[0]);
-                                                List<cd_points> pointOrderFilter = new ArrayList<>();
+                                                List<Point> pointOrderFilter = new ArrayList<>();
 
-                                                for (cd_points point : points) {
+                                                for (Point point : points) {
                                                     if (point.n_order == pointOrder) {
                                                         pointOrderFilter.add(point);
                                                     }
@@ -445,7 +445,7 @@ public class ImportUtil {
                                                     continue;
                                                 }
 
-                                                cd_results result = new cd_results();
+                                                Result result = new Result();
                                                 //result.f_route = route.id;
                                                 //result.f_point = pointOrderFilter.get(0).id;
                                                 //result.c_template = template.c_template;
@@ -488,7 +488,7 @@ public class ImportUtil {
                                                         if (attUrl != null) {
                                                             fileManager.copy(attUrl, new File(fileManager.getRootCatalog(route.id), attItem[1]));
 
-                                                            attachments attachmentItem = new attachments();
+                                                            Attachment attachmentItem = new Attachment();
                                                             //attachmentItem.fn_point = result.f_point;
                                                             //attachmentItem.fn_route = route.id;
                                                             //attachmentItem.fn_result = result.id;
@@ -514,11 +514,11 @@ public class ImportUtil {
                                 }
                             }
 
-                            if(results.size() > 0 && !db.insertMany(results.toArray(new cd_results[0]))) {
+                            if(results.size() > 0 && !db.insertMany(results.toArray(new Result[0]))) {
                                 return context.getString(R.string.unknown_error) + "ZIP3";
                             }
 
-                            if(attachmentItems.size() > 0 && !db.insertMany(attachmentItems.toArray(new attachments[0]))) {
+                            if(attachmentItems.size() > 0 && !db.insertMany(attachmentItems.toArray(new Attachment[0]))) {
                                 return context.getString(R.string.unknown_error) + "ZIP2";
                             }
 

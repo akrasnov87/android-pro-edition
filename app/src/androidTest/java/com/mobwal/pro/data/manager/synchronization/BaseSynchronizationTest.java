@@ -18,19 +18,19 @@ import ru.mobnius.core.data.credentials.BasicCredentials;
 
 import com.mobwal.pro.data.Entity;
 import com.mobwal.pro.data.MultipartUtility;
-import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.utilits.SyncUtil;
 
 public class BaseSynchronizationTest extends DbGenerate {
     private MySynchronization synchronization;
 
-    private ArrayList<cd_results> mResults;
+    private ArrayList<Result> mResults;
 
     @Before
     public void setUp() {
         synchronization = new MySynchronization(getSQLContext(), getCredentials());
 
-        getSQLContext().exec("DELETE FROM " + cd_results.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + Result.Meta.table, new Object[0]);
     }
 
     @After
@@ -41,7 +41,7 @@ public class BaseSynchronizationTest extends DbGenerate {
     void generateData() {
         mResults = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            cd_results item = new cd_results();
+            Result item = new Result();
             item.jb_data = "{\"idx\": "+i+"}";
             item.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
             mResults.add(item);
@@ -52,30 +52,30 @@ public class BaseSynchronizationTest extends DbGenerate {
     @Test
     public void oneTable() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(cd_results.Meta.table).setTid(tid));
+        synchronization.addEntity(new Entity(Result.Meta.table).setTid(tid));
 
         generateData();
 
-        int length = synchronization.getRecords(cd_results.Meta.table, "").toArray().length;
+        int length = synchronization.getRecords(Result.Meta.table, "").toArray().length;
         Assert.assertEquals(length, 10);
 
-        SyncUtil.updateTid(synchronization, cd_results.Meta.table, tid);
+        SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
 
-        length = synchronization.getRecords(cd_results.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
         Assert.assertEquals(length, 10);
         boolean reset = SyncUtil.resetTid(synchronization);
         Assert.assertTrue(reset);
-        boolean update = SyncUtil.updateTid(synchronization, cd_results.Meta.table, tid);
+        boolean update = SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
         Assert.assertTrue(update);
-        length = synchronization.getRecords(cd_results.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
         Assert.assertEquals(length, 10);
 
-        byte[] bytes = synchronization.generatePackage(tid, cd_results.Meta.table);
+        byte[] bytes = synchronization.generatePackage(tid, Result.Meta.table);
         byte[] results = (byte[]) synchronization.sendBytes(tid, bytes);
         String[] array = new String[1];
         array[0] = tid;
         synchronization.processingPackage(array, results);
-        length = synchronization.getRecords(cd_results.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
         Assert.assertEquals(length, 0);
 
         synchronization.destroy();
@@ -84,39 +84,39 @@ public class BaseSynchronizationTest extends DbGenerate {
     @Test
     public void duplicateRecords() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(cd_results.Meta.table).setTid(tid));
+        synchronization.addEntity(new Entity(Result.Meta.table).setTid(tid));
         generateData();
 
-        SyncUtil.updateTid(synchronization, cd_results.Meta.table, tid);
-        byte[] bytes = synchronization.generatePackage(tid, cd_results.Meta.table);
+        SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
+        byte[] bytes = synchronization.generatePackage(tid, Result.Meta.table);
         byte[] results = (byte[]) synchronization.sendBytes(tid, bytes);
         String[] array = new String[1];
         array[0] = tid;
         synchronization.processingPackage(array, results);
-        int length = synchronization.getRecords(cd_results.Meta.table, tid).toArray().length;
+        int length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
         Assert.assertEquals(length, 0);
-        getSQLContext().exec("delete from " + cd_results.Meta.table, new Object[0]);
+        getSQLContext().exec("delete from " + Result.Meta.table, new Object[0]);
 
         // тут повторно отправляем
-        for (cd_results item : mResults) {
+        for (Result item : mResults) {
             getSQLContext().insert(item);
         }
         // принудительно указывается, что нужно передать данные в другом режиме
         synchronization.oneOnlyMode = true;
-        SyncUtil.updateTid(synchronization, cd_results.Meta.table, tid);
-        bytes = synchronization.generatePackage(tid, cd_results.Meta.table);
+        SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
+        bytes = synchronization.generatePackage(tid, Result.Meta.table);
         results = (byte[]) synchronization.sendBytes(tid, bytes);
         array = new String[1];
         array[0] = tid;
         synchronization.processingPackage(array, results);
-        length = synchronization.getRecords(cd_results.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
         Assert.assertEquals(length, 0);
     }
 
     @Test
     public void twoTable() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(cd_results.Meta.table).setTid(tid).setSchema("dbo"));
+        synchronization.addEntity(new Entity(Result.Meta.table).setTid(tid).setSchema("dbo"));
 
         generateData();
 
@@ -125,7 +125,7 @@ public class BaseSynchronizationTest extends DbGenerate {
         Assert.assertTrue(b);
 
         // передача первого пакета
-        byte[] bytes = synchronization.generatePackage(tid, cd_results.Meta.table);
+        byte[] bytes = synchronization.generatePackage(tid, Result.Meta.table);
         byte[] results = (byte[]) synchronization.sendBytes(tid, bytes);
         String[] array = new String[1];
         array[0] = tid;
@@ -138,7 +138,7 @@ public class BaseSynchronizationTest extends DbGenerate {
         array[0] = tid;
         synchronization.processingPackage(array, results);*/
 
-        int length = synchronization.getRecords(cd_results.Meta.table, "").toArray().length;
+        int length = synchronization.getRecords(Result.Meta.table, "").toArray().length;
         Assert.assertEquals(length, 0);
         //length = synchronization.getRecords(AuditsDao.TABLENAME, "").toArray().length;
         //Assert.assertEquals(length, 2);//потому что в методе onProcessingPackage класса ServiceSynchronization добавилась строчка

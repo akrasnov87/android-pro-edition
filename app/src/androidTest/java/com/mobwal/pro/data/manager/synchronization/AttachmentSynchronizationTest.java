@@ -21,14 +21,14 @@ import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.pro.data.EntityAttachment;
 import com.mobwal.pro.data.MultipartUtility;
-import com.mobwal.pro.models.db.attachments;
+import com.mobwal.pro.models.db.Attachment;
 
 public class AttachmentSynchronizationTest extends DbGenerate {
     private AttachmentSynchronizationTest.MySynchronization synchronization;
 
     @Before
     public void setUp() {
-        getSQLContext().exec("DELETE FROM " + attachments.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + Attachment.Meta.table, new Object[0]);
 
         synchronization = new MySynchronization(getSQLContext(), getFileManager(), getCredentials());
     }
@@ -46,9 +46,9 @@ public class AttachmentSynchronizationTest extends DbGenerate {
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
 
-        Object[] array = synchronization.getRecords(attachments.Meta.table, "").toArray();
+        Object[] array = synchronization.getRecords(Attachment.Meta.table, "").toArray();
         for(Object o : array) {
-            attachments attachment = (attachments)o;
+            Attachment attachment = (Attachment)o;
             assertTrue(getFileManager().exists(FileManager.ATTACHMENTS, attachment.c_path));
         }
     }
@@ -58,7 +58,7 @@ public class AttachmentSynchronizationTest extends DbGenerate {
         public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredentials credentials) {
             super(context, fileManager, false);
             fileTid = UUID.randomUUID().toString();
-            addEntity(new EntityAttachment(attachments.Meta.table, true, true).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));
+            addEntity(new EntityAttachment(Attachment.Meta.table, true, true).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));
             //addEntity(new EntityAttachment(AttachmentsDao.TABLENAME, true, true).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));
             mCredentials = credentials;
         }

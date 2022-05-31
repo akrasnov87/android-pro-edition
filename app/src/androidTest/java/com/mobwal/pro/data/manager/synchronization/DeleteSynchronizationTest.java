@@ -6,7 +6,7 @@ import com.mobwal.pro.data.EntityAttachment;
 import com.mobwal.pro.data.FileTransferWebSocketSynchronization;
 import com.mobwal.pro.data.MultipartUtility;
 import com.mobwal.pro.data.utils.FullServerSidePackage;
-import com.mobwal.pro.models.db.attachments;
+import com.mobwal.pro.models.db.Attachment;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -33,7 +33,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
 
     @Before
     public void setUp() {
-        getSQLContext().exec("DELETE FROM " + attachments.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + Attachment.Meta.table, new Object[0]);
         fileId = UUID.randomUUID().toString();
         synchronization = new DeleteSynchronizationTest.MySynchronization(getSQLContext(), getFileManager(), getCredentials(), getBaseUrl());
         synchronization.initEntities();
@@ -46,7 +46,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
 
     @Test
     public void deleteFile() throws IOException {
-        attachments file = new attachments();
+        Attachment file = new Attachment();
         file.id = fileId;
         file.c_path = "readme.txt";
 
@@ -58,38 +58,38 @@ public class DeleteSynchronizationTest extends DbGenerate {
         file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
         getSQLContext().insert(file);
-        SyncUtil.updateTid(synchronization, attachments.Meta.table, synchronization.fileTid);
+        SyncUtil.updateTid(synchronization, Attachment.Meta.table, synchronization.fileTid);
 
         byte[] bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        Object[] array = synchronization.getRecords(attachments.Meta.table, "").toArray();
+        Object[] array = synchronization.getRecords(Attachment.Meta.table, "").toArray();
 
-        attachments resultFile = getFile(array, file.c_path);
+        Attachment resultFile = getFile(array, file.c_path);
 
         Assert.assertNotNull(resultFile);
         utils.destroy();
 
         removeFile(file.id);
 
-        SyncUtil.updateTid(synchronization, attachments.Meta.table, synchronization.fileTid);
+        SyncUtil.updateTid(synchronization, Attachment.Meta.table, synchronization.fileTid);
 
         bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        array = synchronization.getRecords(attachments.Meta.table, "").toArray();
+        array = synchronization.getRecords(Attachment.Meta.table, "").toArray();
 
         resultFile = getFile(array, file.c_path);
         Assert.assertNull(resultFile);
     }
 
-    private attachments getFile(Object[] array, String fileName) {
-        attachments resultFile = null;
+    private Attachment getFile(Object[] array, String fileName) {
+        Attachment resultFile = null;
         for (Object obj : array) {
-            if (obj instanceof attachments) {
-                resultFile = (attachments) obj;
+            if (obj instanceof Attachment) {
+                resultFile = (Attachment) obj;
                 if (resultFile.c_path.equals(fileName)) {
                     break;
                 } else {
@@ -106,9 +106,9 @@ public class DeleteSynchronizationTest extends DbGenerate {
      * @param fileId идентификтаор
      */
     public void removeFile(String fileId) {
-        Collection<attachments> files = getSQLContext().select("select * from " + attachments.Meta.table + " where id = ?", new String[] { fileId }, attachments.class);
+        Collection<Attachment> files = getSQLContext().select("select * from " + Attachment.Meta.table + " where id = ?", new String[] { fileId }, Attachment.class);
         if (files != null) {
-            attachments file = files.iterator().next();
+            Attachment file = files.iterator().next();
             if (file.__IS_SYNCHRONIZATION) {
                 file.__OBJECT_OPERATION_TYPE = DbOperationType.REMOVED;
                 file.__IS_DELETE = true;
@@ -117,7 +117,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
                 getSQLContext().insert(file);
                 //daoSession.getFilesDao().update(files);
             } else {
-                getSQLContext().exec("delete from " + attachments.Meta.table + " where id = ?", new Object[] { fileId });
+                getSQLContext().exec("delete from " + Attachment.Meta.table + " where id = ?", new Object[] { fileId });
             }
             FileManager fileManager = FileManager.getInstance();
             try {
@@ -158,7 +158,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
         @Override
         protected void initEntities() {
             fileTid = UUID.randomUUID().toString();
-            addEntity(new EntityAttachment(attachments.Meta.table, true, true)
+            addEntity(new EntityAttachment(Attachment.Meta.table, true, true)
                     .setSelect("id", "c_path", "fn_user", "fn_result", "fn_point", "fn_route", "n_longitude", "n_latitude", "d_date", "c_mime", "c_extension", "jb_data", "n_distance", "fn_storage")
                     .setFilter(new FilterItem("id", fileId))
                     .setTid(fileTid)

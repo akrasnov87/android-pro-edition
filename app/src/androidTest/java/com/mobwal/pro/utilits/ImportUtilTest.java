@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.WalkerSQLContext;
-import com.mobwal.pro.models.db.cd_points;
+import com.mobwal.pro.models.db.Point;
 
 public class ImportUtilTest {
     private Context mContext;
@@ -38,7 +38,7 @@ public class ImportUtilTest {
         CsvReader csvReader = new CsvReader(data);
         String[][] rows = csvReader.getRows();
 
-        cd_points[] points = ImportUtil.convertRowsToPoints(rows, "");
+        Point[] points = ImportUtil.convertRowsToPoints(rows, "");
 
         assert points != null;
         Assert.assertEquals(points[0].c_address, "point1");

@@ -6,7 +6,7 @@ import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.data.meta.TableQuery;
 import com.mobwal.pro.data.utils.FullServerSidePackage;
 import com.mobwal.pro.data.utils.PackageResult;
-import com.mobwal.pro.models.db.attachments;
+import com.mobwal.pro.models.db.Attachment;
 
 import java.io.IOException;
 
@@ -100,7 +100,7 @@ public abstract class FileTransferWebSocketSynchronization
                             }
 
                             if (record instanceof OnAttachmentListeners) {
-                                attachments attachment = (attachments) record;
+                                Attachment attachment = (Attachment) record;
                                 if (attachment.__IS_DELETE) {
                                     continue;
                                 }

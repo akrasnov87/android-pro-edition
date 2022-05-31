@@ -12,7 +12,7 @@ public class SQLContextProfile extends SQLContext {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(getCreateQuery(new Profile(), "id"));
+        db.execSQL(getCreateQuery(new Profile()));
     }
 
     @Override

@@ -7,9 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 import com.mobwal.pro.R;
+import com.mobwal.pro.annotation.TableMetaData;
 
-public class cd_settings {
-    public cd_settings() {
+@TableMetaData(name = "cd_settings")
+public class Setting {
+    public Setting() {
         id = UUID.randomUUID().toString();
     }
 

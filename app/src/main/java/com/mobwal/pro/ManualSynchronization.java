@@ -14,8 +14,8 @@ import com.mobwal.pro.data.FileTransferWebSocketSynchronization;
 import com.mobwal.pro.data.IProgress;
 import com.mobwal.pro.data.IProgressStep;
 import com.mobwal.pro.data.utils.FullServerSidePackage;
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Result;
 //import com.mobwal.pro.data.utils.FullServerSidePackage;
 import ru.mobnius.core.utils.PackageReadUtils;
 
@@ -102,8 +102,8 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
 
         addEntity(new EntityDictionary(TableChangeDao.TABLENAME, false, true).setParam(getUserID(), getAppVersion()).setUseCFunction().setTid(totalTid));*/
 
-        addEntity(Entity.createInstance(cd_results.Meta.table, true, true).setTid(totalTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
-        addEntity(new EntityAttachment(attachments.Meta.table, true, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
+        addEntity(Entity.createInstance(Result.Meta.table, true, true).setTid(totalTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
+        addEntity(new EntityAttachment(Attachment.Meta.table, true, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
     }
 
     @Override

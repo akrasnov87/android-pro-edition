@@ -8,11 +8,14 @@ import java.util.UUID;
 
 import com.mobwal.pro.CustomLayoutManager;
 import com.mobwal.pro.R;
+import com.mobwal.pro.annotation.TableMetaData;
 
-public class cd_templates {
-    public cd_templates() {
+@TableMetaData(name = "cd_templates")
+public class Template {
+    public Template() {
         id = UUID.randomUUID().toString();
         n_order = 0;
+
     }
 
     public String id;

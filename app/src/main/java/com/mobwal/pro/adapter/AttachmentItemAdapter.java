@@ -15,15 +15,15 @@ import java.util.List;
 
 import com.mobwal.pro.R;
 import com.mobwal.pro.adapter.holder.AttachmentItemHolder;
-import com.mobwal.pro.models.db.attachments;
+import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 
 public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemHolder> {
     private final Context mContext;
-    private final List<attachments> mAttachments;
+    private final List<Attachment> mAttachments;
     private final RecycleViewItemListeners mListeners;
 
-    public AttachmentItemAdapter(@NotNull Context context, @NonNull List<attachments> attachments, @Nullable RecycleViewItemListeners listeners) {
+    public AttachmentItemAdapter(@NotNull Context context, @NonNull List<Attachment> attachments, @Nullable RecycleViewItemListeners listeners) {
         mContext = context;
         mAttachments = attachments;
         mListeners = listeners;
@@ -51,7 +51,7 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemHo
      * Добавление вложения
      * @param attachment объект вложения
      */
-    public void add(@NotNull attachments attachment) {
+    public void add(@NotNull Attachment attachment) {
         mAttachments.add(attachment);
         notifyItemInserted(mAttachments.size() - 1);
     }
@@ -60,7 +60,7 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemHo
      * Возвращается массив данных
      * @return массив данных
      */
-    public List<attachments> getData() {
+    public List<Attachment> getData() {
         return mAttachments;
     }
 
@@ -70,8 +70,8 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemHo
      */
     public void removeAttachment(String id) {
         int idx = 0;
-        attachments removeAttach = null;
-        for (attachments attach: mAttachments) {
+        Attachment removeAttach = null;
+        for (Attachment attach: mAttachments) {
             if (attach.id.equals(id)) {
                 removeAttach = attach;
                 break;

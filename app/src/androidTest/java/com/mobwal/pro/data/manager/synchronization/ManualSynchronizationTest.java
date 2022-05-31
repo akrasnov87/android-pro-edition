@@ -18,14 +18,13 @@ import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicCredentials;
 import ru.mobnius.core.utils.LongUtil;
 import ru.mobnius.core.utils.PackageReadUtils;
-import ru.mobnius.core.utils.StringUtil;
 
 import com.mobwal.pro.ManualSynchronization;
 import com.mobwal.pro.WalkerSQLContext;
 import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.pro.data.MultipartUtility;
-import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.utilits.SyncUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -39,7 +38,7 @@ public class ManualSynchronizationTest extends DbGenerate {
     @Before
     public void setUp() {
 
-        cd_results point = new cd_results();
+        Result point = new Result();
         getSQLContext().insert(point);
 
         synchronization = new MySynchronization(getSQLContext(), getFileManager(), getCredentials());
@@ -47,7 +46,7 @@ public class ManualSynchronizationTest extends DbGenerate {
 
         // без этого фильтрации не будет работать
         // TODO 09/01/2020 нужно добавить проверку в метод start у синхронизации на передачу идентификатора пользователя, что null не было
-        synchronization.getEntity(attachments.Meta.table).setSchema("dbo").setParam("1000.0.0.0");
+        synchronization.getEntity(Attachment.Meta.table).setSchema("dbo").setParam("1000.0.0.0");
         //synchronization.getEntity(getDaoSession().getFilesDao().getTablename()).setParam("null", "1000.0.0.0");
     }
 
@@ -62,7 +61,7 @@ public class ManualSynchronizationTest extends DbGenerate {
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.dictionaryTid, bytes);
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.dictionaryTid);
-        int length = synchronization.getRecords(cd_results.Meta.table, "").toArray().length;
+        int length = synchronization.getRecords(Result.Meta.table, "").toArray().length;
         Assert.assertTrue(length > 0);
         synchronization.destroy();
         utils.destroy();
@@ -84,7 +83,7 @@ public class ManualSynchronizationTest extends DbGenerate {
             saveFile("file" + i + ".tmp", bytes, FileManager.FILES);
         }
 
-        boolean updateTid = SyncUtil.updateTid(synchronization, attachments.Meta.table, synchronization.fileTid);
+        boolean updateTid = SyncUtil.updateTid(synchronization, Attachment.Meta.table, synchronization.fileTid);
         Assert.assertTrue(updateTid);
 
         //updateTid = SyncUtil.updateTid(synchronization, session.getFilesDao().getTablename(), synchronization.fileTid);
@@ -99,7 +98,7 @@ public class ManualSynchronizationTest extends DbGenerate {
 
         }
 
-        getSQLContext().exec("delete from " + attachments.Meta.table, new Object[0]);
+        getSQLContext().exec("delete from " + Attachment.Meta.table, new Object[0]);
         //getDaoSession().getAttachmentsDao().deleteAll();
         //getDaoSession().getFilesDao().deleteAll();
 
@@ -108,7 +107,7 @@ public class ManualSynchronizationTest extends DbGenerate {
         byte[] fileBytes = fileManager.readPath(FileManager.FILES, "file0.tmp");
         Assert.assertNull(fileBytes);
 
-        @SuppressWarnings("rawtypes") Collection records = synchronization.getRecords(attachments.Meta.table, "");
+        @SuppressWarnings("rawtypes") Collection records = synchronization.getRecords(Attachment.Meta.table, "");
         Assert.assertTrue(records.size() >= 2);
 
         //records = synchronization.getRecords(session.getFilesDao().getTablename(), "");
@@ -132,11 +131,11 @@ public class ManualSynchronizationTest extends DbGenerate {
      * @return файл
      * @throws IOException исключение
      */
-    public attachments saveFile(String c_name, byte[] bytes, String folder) throws IOException {
+    public Attachment saveFile(String c_name, byte[] bytes, String folder) throws IOException {
         FileManager fileManager = FileManager.getInstance();
         fileManager.writeBytes(folder, c_name, bytes);
 
-        attachments file = new attachments();
+        Attachment file = new Attachment();
         file.c_path = c_name;
         file.d_date = new Date();
         //file.folder = folder;

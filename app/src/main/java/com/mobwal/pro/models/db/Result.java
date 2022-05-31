@@ -7,19 +7,21 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
 import com.mobwal.pro.MetaTableName;
+import com.mobwal.pro.annotation.TableMetaData;
 
 import java.util.Date;
 import java.util.UUID;
 
-public class cd_results {
+@TableMetaData(name = "cd_results")
+public class Result {
 
     public static MetaTableName Meta = new MetaTableName("dbo", "cd_results");
 
-    public cd_results() {
+    public Result() {
         this(null);
     }
 
-    public cd_results(String f_point) {
+    public Result(String f_point) {
         id = UUID.randomUUID().toString();
         n_latitude = null;
         n_longitude = null;
@@ -28,7 +30,7 @@ public class cd_results {
         this.fn_point = f_point;
     }
 
-    public cd_results(String id, String f_route, String f_point, String fn_template, @Nullable Location location, @Nullable cd_points point) {
+    public Result(String id, String f_route, String f_point, String fn_template, @Nullable Location location, @Nullable Point point) {
         this.id = id;
 
         this.fn_route = f_route;
@@ -87,7 +89,7 @@ public class cd_results {
         }
     }
 
-    public void setDistance(@Nullable cd_points point, @Nullable Location position) {
+    public void setDistance(@Nullable Point point, @Nullable Location position) {
         if(point != null && position != null && point.getLocation() != null) {
             n_distance = (double) point.getLocation().distanceTo(position);
         }

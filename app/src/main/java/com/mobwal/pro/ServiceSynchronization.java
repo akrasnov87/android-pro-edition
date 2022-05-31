@@ -2,7 +2,6 @@ package com.mobwal.pro;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 
 import com.mobwal.pro.data.Entity;
 import com.mobwal.pro.data.IProgress;
@@ -10,14 +9,12 @@ import com.mobwal.pro.data.IProgressStep;
 import com.mobwal.pro.data.WebSocketSynchronization;
 import com.mobwal.pro.data.utils.PackageResult;
 import com.mobwal.pro.data.utils.ToServerOnly;
-import com.mobwal.pro.models.db.cd_results;
+import com.mobwal.pro.models.db.Result;
 
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import ru.mobnius.core.data.audit.AuditManager;
-import ru.mobnius.core.data.audit.OnAuditListeners;
 import ru.mobnius.core.data.rpc.RPCResult;
 import ru.mobnius.core.utils.PackageCreateUtils;
 import ru.mobnius.core.utils.PackageReadUtils;
@@ -111,7 +108,7 @@ public class ServiceSynchronization extends WebSocketSynchronization {
 
     @Override
     protected void initEntities() {
-        addEntity(new Entity(cd_results.Meta.table).setTid(UUID.randomUUID().toString()).setSchema("dbo"));
+        addEntity(new Entity(Result.Meta.table).setTid(UUID.randomUUID().toString()).setSchema("dbo"));
         //addEntity(new Entity(AuditsDao.TABLENAME).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(MobileDevicesDao.TABLENAME).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(MobileIndicatorsDao.TABLENAME).setTid(UUID.randomUUID().toString()));
