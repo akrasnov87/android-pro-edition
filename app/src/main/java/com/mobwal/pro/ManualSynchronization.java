@@ -102,8 +102,8 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
 
         addEntity(new EntityDictionary(TableChangeDao.TABLENAME, false, true).setParam(getUserID(), getAppVersion()).setUseCFunction().setTid(totalTid));*/
 
-        addEntity(Entity.createInstance(cd_results.Meta.table, true, true).setTid(totalTid).setParam(getUserID(), getAppVersion()).setUseCFunction().setSchema("dbo"));
-        addEntity(new EntityAttachment(attachments.Meta.table, true, true).setParam(getUserID(), getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
+        addEntity(Entity.createInstance(cd_results.Meta.table, true, true).setTid(totalTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
+        addEntity(new EntityAttachment(attachments.Meta.table, true, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
     }
 
     @Override

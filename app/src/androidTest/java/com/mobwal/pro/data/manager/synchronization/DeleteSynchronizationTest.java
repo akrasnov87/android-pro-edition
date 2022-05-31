@@ -55,8 +55,6 @@ public class DeleteSynchronizationTest extends DbGenerate {
         FileManager fileManager = synchronization.getFileManager();
         fileManager.writeBytes(FileManager.FILES, file.c_path, fileBytes);
 
-        file.c_mime = "text/plain";
-        file.c_extension = ".txt";
         file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
         getSQLContext().insert(file);

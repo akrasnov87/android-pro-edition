@@ -47,7 +47,7 @@ public class ManualSynchronizationTest extends DbGenerate {
 
         // без этого фильтрации не будет работать
         // TODO 09/01/2020 нужно добавить проверку в метод start у синхронизации на передачу идентификатора пользователя, что null не было
-        synchronization.getEntity(attachments.Meta.table).setSchema("dbo").setParam("null", "1000.0.0.0");
+        synchronization.getEntity(attachments.Meta.table).setSchema("dbo").setParam("1000.0.0.0");
         //synchronization.getEntity(getDaoSession().getFilesDao().getTablename()).setParam("null", "1000.0.0.0");
     }
 
@@ -106,8 +106,7 @@ public class ManualSynchronizationTest extends DbGenerate {
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
         byte[] fileBytes = fileManager.readPath(FileManager.FILES, "file0.tmp");
-        Assert.assertNotNull(fileBytes);
-        assertEquals(new String(fileBytes), "file number 0");
+        Assert.assertNull(fileBytes);
 
         @SuppressWarnings("rawtypes") Collection records = synchronization.getRecords(attachments.Meta.table, "");
         Assert.assertTrue(records.size() >= 2);
@@ -139,8 +138,6 @@ public class ManualSynchronizationTest extends DbGenerate {
 
         attachments file = new attachments();
         file.c_path = c_name;
-        file.c_mime = StringUtil.getMimeByName(c_name);
-        file.c_extension = StringUtil.getExtension(c_name);
         file.d_date = new Date();
         //file.folder = folder;
         file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;

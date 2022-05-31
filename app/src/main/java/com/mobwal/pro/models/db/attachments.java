@@ -49,20 +49,8 @@ public class attachments implements Serializable, OnAttachmentListeners {
     public String c_path;
 
     @Expose
-    public int n_size;
-
-    @Expose
-    public String c_extension;
-
-    @Expose
-    public String c_mime;
-
-    @Expose
     @Nullable
     public Long n_distance;
-
-    @Expose
-    public String fn_storage;
 
     /**
      * Тип операции надл объектом

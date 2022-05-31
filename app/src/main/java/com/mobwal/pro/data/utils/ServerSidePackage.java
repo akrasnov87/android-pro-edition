@@ -92,13 +92,13 @@ public abstract class ServerSidePackage implements IServerSidePackage {
                 Object[] params = new Object[1];
                 params[0] = packageTid;
 
-                //db.execSQL("delete from " + rpcResult.action + " where tid = ?", params);
-                return null; // PackageResult.success(null);
+                session.exec("delete from " + rpcResult.action + " where tid = ?", params);
+                return PackageResult.success(null);
             } else {
                 return to(session, rpcResult, packageTid);
             }
         } else {
-            return null; // PackageResult.fail(rpcResult.meta.msg, null);
+            return PackageResult.fail(rpcResult.meta.msg, null);
         }
     }
 
