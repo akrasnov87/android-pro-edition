@@ -1,6 +1,6 @@
 package ru.mobnius.core.utils;
 
-import org.greenrobot.greendao.AbstractDao;
+//import org.greenrobot.greendao.AbstractDao;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,9 +11,9 @@ import java.util.Iterator;
  * Класс для обработки JSONObject и создания из него SQL запроса на добавление записи
  */
 public class SqlInsertFromJSONObject{
-    final String params;
-    final String tableName;
-    final String[] fields;
+    //final String params;
+    //final String tableName;
+    //final String[] fields;
 
     /**
      * Конструктор
@@ -22,7 +22,7 @@ public class SqlInsertFromJSONObject{
      * @param tableName   имя таблицы
      * @param abstractDao внутренняя сущность
      */
-    public SqlInsertFromJSONObject(JSONObject object, String tableName, AbstractDao abstractDao) {
+    /*public SqlInsertFromJSONObject(JSONObject object, String tableName, AbstractDao abstractDao) {
         this.tableName = tableName;
 
         StringBuilder builder = new StringBuilder();
@@ -38,14 +38,14 @@ public class SqlInsertFromJSONObject{
         }
         fields = tempFields.toArray(new String[0]);
         params = builder.substring(0, builder.length() - 1);
-    }
+    }*/
 
     /**
      * запрос в БД для вставки
      * @param appendField добавить дополнительные поля
      * @return возвращается запрос
      */
-    public String convertToQuery(boolean appendField) {
+    /*public String convertToQuery(boolean appendField) {
         StringBuilder builder = new StringBuilder();
         for (String field : fields) {
             builder.append(field).append(",");
@@ -55,7 +55,7 @@ public class SqlInsertFromJSONObject{
             strAppendField = ",OBJECT_OPERATION_TYPE,IS_DELETE,IS_SYNCHRONIZATION,TID,BLOCK_TID";
         }
         return "INSERT INTO " + tableName + "("+builder.substring(0, builder.length() - 1) + strAppendField+")" + " VALUES("+ params + (appendField ? ",?,?,?,?,?" : "") +")";
-    }
+    }*/
 
     /**
      * Получение объекта для передачи в запрос
@@ -64,7 +64,7 @@ public class SqlInsertFromJSONObject{
      * @return Массив значений полей
      * @throws JSONException исключение
      */
-    public Object[] getValues(JSONObject object, boolean appendField) throws JSONException {
+    /*public Object[] getValues(JSONObject object, boolean appendField) throws JSONException {
         Object[] values = new Object[appendField? fields.length + 5 : fields.length];
 
         for(int i = 0; i < fields.length; i++){
@@ -78,7 +78,7 @@ public class SqlInsertFromJSONObject{
             values[fields.length + 4] = "";
         }
         return values;
-    }
+    }*/
 
     /**
      * колонка доступна или нет
@@ -86,7 +86,7 @@ public class SqlInsertFromJSONObject{
      * @param columnName  имя колонки
      * @return true - колонка доступна в модели
      */
-    private boolean isColumnExists(AbstractDao abstractDao, String columnName) {
+    /*private boolean isColumnExists(AbstractDao abstractDao, String columnName) {
         for (String s : abstractDao.getAllColumns()) {
             if (s.toLowerCase().equals(columnName)) {
                 return true;
@@ -94,5 +94,5 @@ public class SqlInsertFromJSONObject{
         }
 
         return false;
-    }
+    }*/
 }

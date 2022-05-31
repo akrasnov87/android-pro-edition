@@ -11,8 +11,8 @@ import java.util.UUID;
 import com.mobwal.pro.R;
 import com.mobwal.pro.utilits.DateUtil;
 
-public class Route {
-    public Route() {
+public class cd_routes {
+    public cd_routes() {
         id = UUID.randomUUID().toString();
         d_date = new Date();
         b_check = false;

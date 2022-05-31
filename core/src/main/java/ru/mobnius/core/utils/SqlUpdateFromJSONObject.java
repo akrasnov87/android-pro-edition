@@ -3,7 +3,7 @@ package ru.mobnius.core.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.greenrobot.greendao.AbstractDao;
+//import org.greenrobot.greendao.AbstractDao;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,10 +14,10 @@ import ru.mobnius.core.data.storage.FieldNames;
  * Класс для обработки JSONObject и создания из него SQL запроса на обновление записи
  */
 public class SqlUpdateFromJSONObject {
-    final String params;
-    final String tableName;
-    final String[] fields;
-    final String pkColumn;
+    //final String params;
+    //final String tableName;
+    //final String[] fields;
+    //final String pkColumn;
 
     /**
      * Конструктор
@@ -25,9 +25,9 @@ public class SqlUpdateFromJSONObject {
      * @param tableName имя таблицы
      * @param pkColumn имя первичного ключа
      */
-    public SqlUpdateFromJSONObject(JsonObject object, String tableName, String pkColumn, AbstractDao abstractDao) {
-        this.tableName = tableName;
-        this.pkColumn = pkColumn;
+    /*public SqlUpdateFromJSONObject(JsonObject object, String tableName, String pkColumn, AbstractDao abstractDao) {
+        //this.tableName = tableName;
+        //this.pkColumn = pkColumn;
 
         StringBuilder builder = new StringBuilder();
         ArrayList<String> tempFields = new ArrayList<>();
@@ -45,20 +45,20 @@ public class SqlUpdateFromJSONObject {
         }
         fields = tempFields.toArray(new String[0]);
         params = builder.substring(0, builder.length() - 2);
-    }
+    }*/
 
     /**
      * запрос в БД для обновления
      * @param appendField добавить дополнительные поля
      * @return возвращается запрос
      */
-    public String convertToQuery(boolean appendField) {
+    /*public String convertToQuery(boolean appendField) {
         String appendStr = "";
         if(appendField){
             appendStr= " and (" + FieldNames.OBJECT_OPERATION_TYPE + " = ? OR " + FieldNames.OBJECT_OPERATION_TYPE + " = ?)";
         }
         return "UPDATE " + tableName + " set " + params + " where " + pkColumn + " = ?" + (appendField ? appendStr : "");
-    }
+    }*/
 
     /**
      * Получение объекта для передачи в запрос
@@ -66,7 +66,7 @@ public class SqlUpdateFromJSONObject {
      * @return Массив значений полей
      * @param appendField добавить дополнительные поля
      */
-    public Object[] getValues(JsonObject object, boolean appendField) {
+    /*public Object[] getValues(JsonObject object, boolean appendField) {
         ArrayList<Object> values = new ArrayList<>(fields.length);
 
         Object pk = null;
@@ -86,7 +86,7 @@ public class SqlUpdateFromJSONObject {
         }
 
         return values.toArray();
-    }
+    }*/
 
     private Object toObject(JsonElement value) {
         if (value == null || value.isJsonNull()) {
@@ -100,7 +100,7 @@ public class SqlUpdateFromJSONObject {
         }
     }
 
-    private boolean isColumnExists(AbstractDao abstractDao, String columnName) {
+    /*private boolean isColumnExists(AbstractDao abstractDao, String columnName) {
         for (String s : abstractDao.getAllColumns()) {
             if (s.toLowerCase().equals(columnName)) {
                 return true;
@@ -108,5 +108,5 @@ public class SqlUpdateFromJSONObject {
         }
 
         return false;
-    }
+    }*/
 }

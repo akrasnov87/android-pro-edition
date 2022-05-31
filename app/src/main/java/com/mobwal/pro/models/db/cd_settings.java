@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import com.mobwal.pro.R;
 
-public class Setting {
-    public Setting() {
+public class cd_settings {
+    public cd_settings() {
         id = UUID.randomUUID().toString();
     }
 

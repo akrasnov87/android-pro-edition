@@ -9,20 +9,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.WalkerSQLContext;
-import com.mobwal.pro.models.db.Point;
-import com.mobwal.pro.models.db.Route;
-import com.mobwal.pro.models.db.Setting;
-import com.mobwal.pro.models.db.Template;
+import com.mobwal.pro.models.db.cd_points;
 
 public class ImportUtilTest {
     private Context mContext;
@@ -45,7 +38,7 @@ public class ImportUtilTest {
         CsvReader csvReader = new CsvReader(data);
         String[][] rows = csvReader.getRows();
 
-        Point[] points = ImportUtil.convertRowsToPoints(rows, "");
+        cd_points[] points = ImportUtil.convertRowsToPoints(rows, "");
 
         assert points != null;
         Assert.assertEquals(points[0].c_address, "point1");

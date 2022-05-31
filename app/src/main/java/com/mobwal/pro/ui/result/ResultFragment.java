@@ -33,10 +33,10 @@ import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
 import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.cd_points;
 import com.mobwal.pro.models.db.cd_results;
-import com.mobwal.pro.models.db.Route;
-import com.mobwal.pro.models.db.Template;
+import com.mobwal.pro.models.db.cd_routes;
+import com.mobwal.pro.models.db.cd_templates;
 import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.ui.global.GoogleMapBottomDialogFragment;
 import com.mobwal.pro.ui.GeoLocationLayout;
@@ -68,7 +68,7 @@ public class ResultFragment extends BaseFragment
     private String f_route;
     private String f_point;
     @Nullable
-    private Point mPoint;
+    private cd_points mPoint;
     private String f_result;
 
     @Nullable
@@ -76,9 +76,9 @@ public class ResultFragment extends BaseFragment
 
     private String c_template;
     @Nullable
-    private Template mTemplate;
+    private cd_templates mTemplate;
     @Nullable
-    private Route mRoute;
+    private cd_routes mRoute;
 
     private String id = UUID.randomUUID().toString();
 
@@ -308,7 +308,7 @@ public class ResultFragment extends BaseFragment
      * @param point точка маршрута
      * @param location геолокация
      */
-    private void putMapLocation(@Nullable Point point, @Nullable Location location) {
+    private void putMapLocation(@Nullable cd_points point, @Nullable Location location) {
         if(point != null) {
             LocationInfo locationInfo = new LocationInfo(location);
             locationInfo.taskLatitude = point.n_latitude;

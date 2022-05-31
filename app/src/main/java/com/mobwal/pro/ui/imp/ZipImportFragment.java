@@ -28,7 +28,7 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.PointItemAdapter;
 import com.mobwal.pro.databinding.FragmentZipImportBinding;
 import com.mobwal.pro.models.db.complex.PointItem;
-import com.mobwal.pro.models.db.Setting;
+import com.mobwal.pro.models.db.cd_settings;
 import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.FileManager;
@@ -231,9 +231,9 @@ public class ZipImportFragment extends BaseFragment
 
         String[][] rows = mZipReader.getSettings(mZipReader.isCheckMode());
         if(rows != null) {
-            Setting[] settings = ImportUtil.convertRowsToSettings(rows, "");
+            cd_settings[] settings = ImportUtil.convertRowsToSettings(rows, "");
             if(settings != null) {
-                for (Setting setting : settings) {
+                for (cd_settings setting : settings) {
                     if (setting.c_key.equalsIgnoreCase("geo")) {
                         if(setting.c_value.equalsIgnoreCase("true")) {
                             locationVisible = true;

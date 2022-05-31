@@ -9,8 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.UUID;
 
-public class Point {
-    public Point() {
+public class cd_points {
+    public cd_points() {
         id = UUID.randomUUID().toString();
         n_latitude = null;
         n_longitude = null;
@@ -65,4 +65,29 @@ public class Point {
             return location;
         }
     }
+
+    /**
+     * Тип операции надл объектом
+     */
+    public String __OBJECT_OPERATION_TYPE;
+
+    /**
+     * Запись была удалена или нет
+     */
+    public boolean __IS_DELETE;
+
+    /**
+     * Была произведена синхронизация или нет
+     */
+    public boolean __IS_SYNCHRONIZATION;
+
+    /**
+     * идентификатор транзакции
+     */
+    public String __TID;
+
+    /**
+     * идентификатор блока
+     */
+    public String __BLOCK_TID;
 }

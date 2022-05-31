@@ -29,7 +29,7 @@ import com.mobwal.pro.adapter.PointItemAdapter;
 import com.mobwal.pro.databinding.FragmentPointBinding;
 import com.mobwal.pro.models.db.complex.PointItem;
 import com.mobwal.pro.models.db.complex.ResultTemplate;
-import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.cd_routes;
 import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.ui.RecycleViewItemRemovable;
@@ -79,7 +79,7 @@ public class PointFragment extends BaseFragment
         if(getArguments() != null) {
             f_route = getArguments().getString("f_route");
 
-            Route route = mDataManager.getRoute(f_route);
+            cd_routes route = mDataManager.getRoute(f_route);
             if (route != null) {
                 mRouteName = route.c_name;
             }

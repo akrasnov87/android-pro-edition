@@ -3,7 +3,7 @@ package ru.mobnius.core.data;
 import android.location.Location;
 import android.os.Bundle;
 
-import org.greenrobot.greendao.AbstractDaoSession;
+//import org.greenrobot.greendao.AbstractDaoSession;
 
 import java.io.Serializable;
 
@@ -17,17 +17,17 @@ public abstract class DiffValueManager
     private OnFormValuesListeners mListeners;
     protected Bundle mBundle;
     protected Bundle mMasterBundle;
-    protected AbstractDaoSession mDaoSession;
+    //protected AbstractDaoSession mDaoSession;
 
     private String mRouteId;
     private String mPointId;
     private String mResultId;
 
-    public DiffValueManager(AbstractDaoSession daoSession, OnFormValuesListeners listeners) {
+    /*public DiffValueManager(AbstractDaoSession daoSession, OnFormValuesListeners listeners) {
         mListeners = listeners;
         mDaoSession = daoSession;
         mBundle = new Bundle();
-    }
+    }*/
 
     /**
      * Получение информации полях и значениях
@@ -138,8 +138,8 @@ public abstract class DiffValueManager
         mPointId = pointId;
         mResultId = resultId;
 
-        Bundle bundle = mListeners.onFormValues(mDaoSession, routeId, pointId, resultId);
-        mBundle.putAll(bundle);
+        //Bundle bundle = mListeners.onFormValues(mDaoSession, routeId, pointId, resultId);
+        //mBundle.putAll(bundle);
     }
 
     /**

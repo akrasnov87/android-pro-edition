@@ -28,7 +28,7 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.RouteInfoCategoryAdapter;
 import com.mobwal.pro.databinding.FragmentRouteInfoBinding;
 import com.mobwal.pro.models.RouteInfo;
-import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.cd_routes;
 import com.mobwal.pro.utilits.ExportToShared;
 import ru.mobnius.core.utils.NewThread;
 import com.mobwal.pro.utilits.ZipManager;
@@ -44,7 +44,7 @@ public class RouteInfoFragment extends Fragment {
     private RouteInfoCategoryAdapter mRouteInfoCategoryAdapter;
     private DataManager mDataManager;
     @Nullable
-    private Route mRoute;
+    private cd_routes mRoute;
 
     private NewThread mPackThread;
 

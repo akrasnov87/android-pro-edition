@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 
-import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.cd_points;
 import com.mobwal.pro.utilits.StringUtil;
 
 public class PointItem implements Serializable {
@@ -14,7 +14,7 @@ public class PointItem implements Serializable {
         jb_data = null;
     }
 
-    public PointItem(Point point) {
+    public PointItem(cd_points point) {
         id = point.id;
         c_address = point.c_address;
         b_done = false;

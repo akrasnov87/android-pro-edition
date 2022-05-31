@@ -9,8 +9,8 @@ import java.util.UUID;
 import com.mobwal.pro.CustomLayoutManager;
 import com.mobwal.pro.R;
 
-public class Template {
-    public Template() {
+public class cd_templates {
+    public cd_templates() {
         id = UUID.randomUUID().toString();
         n_order = 0;
     }

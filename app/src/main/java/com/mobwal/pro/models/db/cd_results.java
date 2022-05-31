@@ -28,7 +28,7 @@ public class cd_results {
         this.fn_point = f_point;
     }
 
-    public cd_results(String id, String f_route, String f_point, String fn_template, @Nullable Location location, @Nullable Point point) {
+    public cd_results(String id, String f_route, String f_point, String fn_template, @Nullable Location location, @Nullable cd_points point) {
         this.id = id;
 
         this.fn_route = f_route;
@@ -87,7 +87,7 @@ public class cd_results {
         }
     }
 
-    public void setDistance(@Nullable Point point, @Nullable Location position) {
+    public void setDistance(@Nullable cd_points point, @Nullable Location position) {
         if(point != null && position != null && point.getLocation() != null) {
             n_distance = (double) point.getLocation().distanceTo(position);
         }

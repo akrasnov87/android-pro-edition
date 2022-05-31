@@ -44,7 +44,7 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.PointInfoItemAdapter;
 import com.mobwal.pro.databinding.FragmentPointInfoBinding;
 import com.mobwal.pro.models.PointInfo;
-import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.cd_points;
 import com.mobwal.pro.models.db.cd_results;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 
@@ -256,7 +256,7 @@ public class InfoFragment extends Fragment
             mMarkers.clear();
         }
 
-        Point pointItem = mDataManager.getPoint(f_point);
+        cd_points pointItem = mDataManager.getPoint(f_point);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         if(pointItem != null) {
             LatLng point = pointItem.convertToLatLng();

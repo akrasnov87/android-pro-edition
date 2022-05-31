@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.shared.Profile;
 import com.mobwal.pro.shared.SQLContextProfile;
 

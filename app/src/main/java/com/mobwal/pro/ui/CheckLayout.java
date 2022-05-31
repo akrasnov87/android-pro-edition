@@ -12,7 +12,7 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
-import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.cd_points;
 import com.mobwal.pro.utilits.ActivityUtil;
 
 /**
@@ -65,7 +65,7 @@ public class CheckLayout extends LinearLayout {
      * Привязка данных
      * @param point точка маршрута
      */
-    public void bind(@Nullable Point point) {
+    public void bind(@Nullable cd_points point) {
         if(point != null) {
             onCheckedChange(point.b_check);
 

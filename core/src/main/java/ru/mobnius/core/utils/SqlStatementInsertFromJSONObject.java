@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.LazilyParsedNumber;
 
-import org.greenrobot.greendao.AbstractDao;
-import org.greenrobot.greendao.database.DatabaseStatement;
+//import org.greenrobot.greendao.AbstractDao;
+//import org.greenrobot.greendao.database.DatabaseStatement;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -16,13 +16,13 @@ import java.util.ArrayList;
  */
 public class SqlStatementInsertFromJSONObject {
 
-    final String mParams;
-    final String mTable;
-    final String[] mFields;
-    DatabaseStatement mStatement;
-    final boolean mIsRequestToServer;
+    //final String mParams;
+    //final String mTable;
+    //final String[] mFields;
+    //DatabaseStatement mStatement;
+    //final boolean mIsRequestToServer;
 
-    public SqlStatementInsertFromJSONObject(JsonObject object, String tableName, boolean isRequestToServer, AbstractDao abstractDao) {
+    /*public SqlStatementInsertFromJSONObject(JsonObject object, String tableName, boolean isRequestToServer, AbstractDao abstractDao) {
         mTable = tableName;
         mIsRequestToServer= isRequestToServer;
 
@@ -40,14 +40,14 @@ public class SqlStatementInsertFromJSONObject {
 
         String sql  = convertToQuery(isRequestToServer);
         mStatement = abstractDao.getDatabase().compileStatement(sql);
-    }
+    }*/
 
     /**
      * Получение объекта для передачи в запрос
      * @param object объект для обработки
      */
     public void bind(JsonObject object) {
-        mStatement.clearBindings();
+        /*mStatement.clearBindings();
 
         for(int i = 0; i < mFields.length; i++) {
             bindObjectToStatement(mStatement, i + 1, object.get(mFields[i]));
@@ -60,7 +60,7 @@ public class SqlStatementInsertFromJSONObject {
             mStatement.bindString(mFields.length + 4, "");
             mStatement.bindString(mFields.length + 5, "");
         }
-        mStatement.execute();
+        mStatement.execute();*/
     }
 
     /**
@@ -68,7 +68,7 @@ public class SqlStatementInsertFromJSONObject {
      * @param appendField добавить дополнительные поля
      * @return возвращается запрос
      */
-    public  String convertToQuery(boolean appendField) {
+    /*public  String convertToQuery(boolean appendField) {
         StringBuilder builder = new StringBuilder();
         for (String field : mFields) {
             builder.append(field).append(",");
@@ -78,7 +78,7 @@ public class SqlStatementInsertFromJSONObject {
             strAppendField = ",OBJECT_OPERATION_TYPE,IS_DELETE,IS_SYNCHRONIZATION,TID,BLOCK_TID";
         }
         return "INSERT INTO " + mTable + "("+builder.substring(0, builder.length() - 1) + strAppendField+")" + " VALUES(" + mParams + (appendField ? ",?,?,?,?,?" : "") +")";
-    }
+    }*/
 
     /**
      * колонка доступна или нет
@@ -86,7 +86,7 @@ public class SqlStatementInsertFromJSONObject {
      * @param columnName  имя колонки
      * @return true - колонка доступна в модели
      */
-    private boolean isColumnExists(AbstractDao abstractDao, String columnName) {
+    /*private boolean isColumnExists(AbstractDao abstractDao, String columnName) {
         for (String s : abstractDao.getAllColumns()) {
             if (s.toLowerCase().equals(columnName)) {
                 return true;
@@ -94,9 +94,9 @@ public class SqlStatementInsertFromJSONObject {
         }
 
         return false;
-    }
+    }*/
 
-    private void bindObjectToStatement(DatabaseStatement statement, int index, JsonElement value) {
+    /*private void bindObjectToStatement(DatabaseStatement statement, int index, JsonElement value) {
         if (value == null || value.isJsonNull()) {
             statement.bindNull(index);
         } else {
@@ -112,5 +112,5 @@ public class SqlStatementInsertFromJSONObject {
                 statement.bindString(index, value.getAsString());
             }
         }
-    }
+    }*/
 }

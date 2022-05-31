@@ -4,11 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.mobwal.pro.models.db.attachments;
-import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.cd_points;
 import com.mobwal.pro.models.db.cd_results;
-import com.mobwal.pro.models.db.Route;
-import com.mobwal.pro.models.db.Setting;
-import com.mobwal.pro.models.db.Template;
+import com.mobwal.pro.models.db.cd_routes;
+import com.mobwal.pro.models.db.cd_settings;
+import com.mobwal.pro.models.db.cd_templates;
 import com.mobwal.pro.utilits.SQLContext;
 
 public class WalkerSQLContext extends SQLContext {
@@ -26,10 +26,10 @@ public class WalkerSQLContext extends SQLContext {
         db.beginTransaction();
 
         try {
-            db.execSQL(getCreateQuery(new Template(), "id"));
-            db.execSQL(getCreateQuery(new Setting(), "id"));
-            db.execSQL(getCreateQuery(new Route(), "id"));
-            db.execSQL(getCreateQuery(new Point(), "id"));
+            db.execSQL(getCreateQuery(new cd_templates(), "id"));
+            db.execSQL(getCreateQuery(new cd_settings(), "id"));
+            db.execSQL(getCreateQuery(new cd_routes(), "id"));
+            db.execSQL(getCreateQuery(new cd_points(), "id"));
             db.execSQL(getCreateQuery(new cd_results(), "id"));
             db.execSQL(getCreateQuery(new attachments(), "id"));
 

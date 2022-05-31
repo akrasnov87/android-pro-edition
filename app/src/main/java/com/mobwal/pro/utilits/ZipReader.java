@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.mobwal.pro.WalkerApplication;
-import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.cd_points;
 
 /**
  * Чтение zip файла.
@@ -96,10 +96,10 @@ public class ZipReader {
         if(dataDir.exists() && dataDir.isDirectory()) {
             String[][] rows = getPoints(true);
             if(rows != null) {
-                Point[] points = ImportUtil.convertRowsToPointsFromResults(rows, "");
+                cd_points[] points = ImportUtil.convertRowsToPointsFromResults(rows, "");
                 if(points != null) {
                     int count = 0;
-                    for (Point point : points) {
+                    for (cd_points point : points) {
                         if (!point.b_check) {
                             count++;
                         }
