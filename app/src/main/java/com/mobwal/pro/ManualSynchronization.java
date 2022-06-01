@@ -15,7 +15,11 @@ import com.mobwal.pro.data.IProgress;
 import com.mobwal.pro.data.IProgressStep;
 import com.mobwal.pro.data.utils.FullServerSidePackage;
 import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.Template;
+import com.mobwal.pro.utilits.ReflectionUtil;
 //import com.mobwal.pro.data.utils.FullServerSidePackage;
 import ru.mobnius.core.utils.PackageReadUtils;
 
@@ -102,8 +106,11 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
 
         addEntity(new EntityDictionary(TableChangeDao.TABLENAME, false, true).setParam(getUserID(), getAppVersion()).setUseCFunction().setTid(totalTid));*/
 
-        addEntity(Entity.createInstance(Result.Meta.table, true, true).setTid(totalTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
-        addEntity(new EntityAttachment(Attachment.Meta.table, true, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Point.class), true, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Route.class), false, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Template.class), false, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
+        addEntity(Entity.createInstance(ReflectionUtil.getTableName(Result.class), true, true).setTid(totalTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Attachment.class), true, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
     }
 
     @Override
@@ -114,13 +121,13 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         onProgress(IProgressStep.START, "пакет общих данных " + totalTid, null);
 
         try {
-            byte[] dictionaryBytes = generatePackage(dictionaryTid, (Object) null);
-            sendBytes(dictionaryTid, dictionaryBytes);
+            byte[] dictionaryBytes = generatePackage(totalTid, (Object) null);
+            sendBytes(totalTid, dictionaryBytes);
             //AuditManager.getInstance().write(String.valueOf(dictionaryBytes.length), AuditListeners.TRAFFIC_OUTPUT, OnAuditListeners.Level.HIGH);
         } catch (Exception e) {
             onError(IProgressStep.START, "Ошибка обработки пакета для справочников. " + e.toString(), dictionaryTid);
         }
-        try {
+        /*try {
             byte[] totalBytes = generatePackage(totalTid, (Object) null);
             sendBytes(totalTid, totalBytes, () -> {
                 try {
@@ -134,7 +141,7 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
             //AuditManager.getInstance().write(String.valueOf(totalBytes.length), AuditListeners.TRAFFIC_OUTPUT, OnAuditListeners.Level.HIGH);
         } catch (Exception e) {
             onError(IProgressStep.START, "Ошибка обработки пакета для общих таблиц. " + e.toString(), totalTid);
-        }
+        }*/
 
     }
 

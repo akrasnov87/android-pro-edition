@@ -1,4 +1,4 @@
-package com.mobwal.pro.reflection;
+package com.mobwal.pro.utilits;
 
 import androidx.annotation.Nullable;
 
@@ -50,10 +50,10 @@ public class ReflectionUtil {
      * @param entity сощность
      * @return наименование класса
      */
-    public static <T> String getTableName(@NotNull T entity) {
+    public static String getTableName(@NotNull Class<?> entity) {
         TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(entity);
         if(tableMetaData == null) {
-            return entity.getClass().getSimpleName();
+            return entity.getSimpleName();
         }
         return tableMetaData.name();
     }
@@ -74,8 +74,8 @@ public class ReflectionUtil {
      * @return анотация *.annotation.TableMetaData
      */
     @Nullable
-    public static <T> TableMetaData getTableMetaData(@NotNull T entity) {
-        return entity.getClass().getAnnotation(TableMetaData.class);
+    public static TableMetaData getTableMetaData(@NotNull Class<?> entity) {
+        return entity.getAnnotation(TableMetaData.class);
     }
 
     /**

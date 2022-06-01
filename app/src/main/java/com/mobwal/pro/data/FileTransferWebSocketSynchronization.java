@@ -124,6 +124,8 @@ public abstract class FileTransferWebSocketSynchronization
                     RPCItem rpcItem;
                     if (entity.useCFunction) {
                         rpcItem = tableQuery.toRPCSelect(entity.params);
+                        // TODO: переделать
+                        rpcItem.action = "of_mui_" + rpcItem.action;
                     } else {
                         rpcItem = tableQuery.toRPCQuery(MAX_COUNT_IN_QUERY, entity.filters);
                     }
@@ -175,6 +177,8 @@ public abstract class FileTransferWebSocketSynchronization
                     onError(IProgressStep.PACKAGE_CREATE, result.meta.msg, tid);
                     continue;
                 }
+                // TODO: переделать
+                result.action = result.action.replace("of_mui_", "");
                 String tableName = result.action;
                 Entity entity = getEntity(tableName);
                 PackageResult packageResult;

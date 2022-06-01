@@ -10,6 +10,7 @@ import com.mobwal.pro.data.WebSocketSynchronization;
 import com.mobwal.pro.data.utils.PackageResult;
 import com.mobwal.pro.data.utils.ToServerOnly;
 import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.utilits.ReflectionUtil;
 
 import java.util.Date;
 import java.util.UUID;
@@ -108,7 +109,7 @@ public class ServiceSynchronization extends WebSocketSynchronization {
 
     @Override
     protected void initEntities() {
-        addEntity(new Entity(Result.Meta.table).setTid(UUID.randomUUID().toString()).setSchema("dbo"));
+        addEntity(new Entity(ReflectionUtil.getTableName(Result.class)).setTid(UUID.randomUUID().toString()).setSchema("dbo"));
         //addEntity(new Entity(AuditsDao.TABLENAME).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(MobileDevicesDao.TABLENAME).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(MobileIndicatorsDao.TABLENAME).setTid(UUID.randomUUID().toString()));

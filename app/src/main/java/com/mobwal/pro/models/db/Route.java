@@ -12,7 +12,7 @@ import com.mobwal.pro.R;
 import com.mobwal.pro.annotation.TableMetaData;
 import com.mobwal.pro.utilits.DateUtil;
 
-@TableMetaData(name = "cd_routes")
+@TableMetaData(name = "cd_routes", to = false)
 public class Route {
     public Route() {
         id = UUID.randomUUID().toString();

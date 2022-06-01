@@ -43,11 +43,11 @@ public class DownloadTransfer extends Transfer {
         Log.d(DOWNLOAD_TAG, "Старт иден. " + tid);
         downloadListener = new DownloadListener(synchronization, context, tid, this, callback);
         downloadListener.onStart();
-        //socket.on(EVENT_DOWNLOAD, downloadListener);
+        socket.on(EVENT_DOWNLOAD, downloadListener);
 
 
         Log.d(DOWNLOAD_TAG, "tid: "+tid+"; start: " + downloadPosition + "; chunk: " + getChunk());
-        //socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition, getChunk(), tid);
+        socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition, getChunk(), tid);
     }
 
     /**
@@ -55,9 +55,9 @@ public class DownloadTransfer extends Transfer {
      */
     public void restart(){
         downloadListener = new DownloadTransfer.DownloadListener(synchronization, context, tid, this, callback);
-        //socket.on(EVENT_DOWNLOAD, downloadListener);
+        socket.on(EVENT_DOWNLOAD, downloadListener);
 
-        //socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition,  getChunk(), tid);
+        socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition,  getChunk(), tid);
         Log.d(DOWNLOAD_TAG, "Запуск после восстановления "+ EVENT_DOWNLOAD +": " + downloadPosition);
     }
 
@@ -67,7 +67,7 @@ public class DownloadTransfer extends Transfer {
     public void removeListener(){
         if(socket != null){
             if(downloadListener != null) {
-                //socket.off(EVENT_DOWNLOAD, downloadListener);
+                socket.off(EVENT_DOWNLOAD, downloadListener);
                 downloadListener = null;
 
                 Log.d(DOWNLOAD_TAG, "Удаляем обработчик " + EVENT_DOWNLOAD);
@@ -152,7 +152,7 @@ public class DownloadTransfer extends Transfer {
                         downloadPosition = result.meta.start;
                         int percent = (int)(((long)downloadPosition * 100) / (long)result.meta.totalLength);
                         Log.d(DOWNLOAD_TAG, "tid: " + tid + "; start: " + downloadPosition + "; chunk: " + getChunk() + "; totalLength: " + result.meta.totalLength);
-                        //socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition, getChunk(), tid);
+                        socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition, getChunk(), tid);
 
                         long lashChunk = getChunk();
 

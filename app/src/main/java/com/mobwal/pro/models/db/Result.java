@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
-import com.mobwal.pro.MetaTableName;
 import com.mobwal.pro.annotation.TableMetaData;
 
 import java.util.Date;
@@ -14,8 +13,6 @@ import java.util.UUID;
 
 @TableMetaData(name = "cd_results")
 public class Result {
-
-    public static MetaTableName Meta = new MetaTableName("dbo", "cd_results");
 
     public Result() {
         this(null);

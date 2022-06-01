@@ -3,7 +3,6 @@ package com.mobwal.pro.models.db;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
-import com.mobwal.pro.MetaTableName;
 import com.mobwal.pro.annotation.TableMetaData;
 import com.mobwal.pro.data.OnAttachmentListeners;
 
@@ -13,8 +12,6 @@ import java.util.UUID;
 
 @TableMetaData(name = "attachments")
 public class Attachment implements Serializable, OnAttachmentListeners {
-
-    public static MetaTableName Meta = new MetaTableName("dbo", "attachments");
 
     public Attachment() {
         id = UUID.randomUUID().toString();

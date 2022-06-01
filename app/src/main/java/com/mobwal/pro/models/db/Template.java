@@ -10,7 +10,7 @@ import com.mobwal.pro.CustomLayoutManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.annotation.TableMetaData;
 
-@TableMetaData(name = "cd_templates")
+@TableMetaData(name = "cd_templates", to = false)
 public class Template {
     public Template() {
         id = UUID.randomUUID().toString();

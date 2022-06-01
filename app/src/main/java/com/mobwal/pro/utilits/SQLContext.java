@@ -19,7 +19,6 @@ import java.util.List;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.annotation.TableMetaData;
-import com.mobwal.pro.reflection.ReflectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -184,7 +183,7 @@ public abstract class SQLContext
      * @return SQL - запрос
      */
     public <T> String isExistsQuery(T entity) {
-        return "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='" + ReflectionUtil.getTableName(entity) + "';";
+        return "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='" + ReflectionUtil.getTableName(entity.getClass()) + "';";
     }
 
     /**
@@ -245,12 +244,12 @@ public abstract class SQLContext
      */
     public <T> String getCreateQuery(T entity) {
         String pKeyName = "id";
-        TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(entity);
+        TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(entity.getClass());
         if (tableMetaData != null) {
             pKeyName = tableMetaData.pKey();
         }
 
-        String tableName = ReflectionUtil.getTableName(entity);
+        String tableName = ReflectionUtil.getTableName(entity.getClass());
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
         Field[] fields = ReflectionUtil.getDbFields(entity);
         int count = fields.length;
@@ -303,7 +302,7 @@ public abstract class SQLContext
     @Nullable
     public Class<?> getClassFromName(@NotNull String tableName) {
         for (Object obj: getTables()) {
-            TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(obj);
+            TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(obj.getClass());
             if(tableMetaData != null && tableMetaData.name().equals(tableName)) {
                 return obj.getClass();
             }
@@ -316,8 +315,8 @@ public abstract class SQLContext
      * удаление базы данных
      * В рабочем коде не должно использоваться, так как приведет к удалению базы данных
      */
-    @Deprecated
     // TODO: нужно найти другой способ
+    @Deprecated
     public void trash() {
         close();
 

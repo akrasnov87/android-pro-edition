@@ -11,4 +11,16 @@ public @interface TableMetaData {
     String pKey() default "id";
     String schema() default "dbo";
     String name();
+
+    /**
+     * Разрешать передавать объект на сервер
+     * @return true - разрешено
+     */
+    boolean to() default true;
+
+    /**
+     * Объект разрешается забирать с сервера
+     * @return true - разрещено
+     */
+    boolean from() default true;
 }

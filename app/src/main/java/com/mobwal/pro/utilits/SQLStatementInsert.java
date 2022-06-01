@@ -3,8 +3,6 @@ package com.mobwal.pro.utilits;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import com.mobwal.pro.reflection.ReflectionUtil;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -21,7 +19,7 @@ public class SQLStatementInsert {
     SQLiteStatement mStatement;
 
     public <T> SQLStatementInsert(@NotNull T entity, @NotNull SQLiteDatabase db) {
-        mTable = ReflectionUtil.getTableName(entity);
+        mTable = ReflectionUtil.getTableName(entity.getClass());
 
         StringBuilder builder = new StringBuilder();
         ArrayList<String> tempFields = new ArrayList<>();

@@ -314,7 +314,7 @@ public class RouteFragment extends BaseFragment
     }
 
     private void updateRoutes() {
-        RouteItem[] items = mDataManager.getRoutes(null);
+        RouteItem[] items = null; //mDataManager.getRoutes(null);
         setEmptyText(items, false);
 
         bindAdapter(items);

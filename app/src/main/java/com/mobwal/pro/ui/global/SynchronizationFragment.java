@@ -88,7 +88,7 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onRegistry() {
-        ManualSynchronization synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), PreferencesManager.getInstance().getZip());
+        ManualSynchronization synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), false);
         synchronization.start(requireActivity(), new IProgress() {
             @Override
             public void onStart(OnSynchronizationListeners synchronization) {

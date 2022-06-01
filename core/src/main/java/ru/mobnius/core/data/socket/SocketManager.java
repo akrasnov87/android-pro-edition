@@ -160,7 +160,7 @@ public class SocketManager {
      * @return сокет соединение
      */
     public Socket getSocket() {
-        return null;
+        return socket;
     }
 
     /**

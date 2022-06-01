@@ -8,15 +8,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
+import io.socket.client.Socket;
+import io.socket.client.SocketIOException;
 import io.socket.emitter.Emitter;
+import io.socket.engineio.client.EngineIOException;
+import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.socket.SocketManager;
+
+import com.mobwal.pro.data.utils.transfer.DownloadTransfer;
+import com.mobwal.pro.data.utils.transfer.ITransferStatusCallback;
 import com.mobwal.pro.data.utils.transfer.Transfer;
 import com.mobwal.pro.data.utils.transfer.TransferListener;
 import com.mobwal.pro.data.utils.transfer.TransferProgress;
+import com.mobwal.pro.data.utils.transfer.UploadTransfer;
+import com.mobwal.pro.utilits.SyncUtil;
+
 import ru.mobnius.core.utils.DoubleUtil;
 
 /**
@@ -63,29 +75,29 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
             synchronizationListener = new WebSocketSynchronization.SynchronizationListener();
             synchronizationConnectListener = new SynchronizationConnectListener();
 
-            /*getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_FAILED, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_RECONNECTING, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_ERROR, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_FAILED, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECTING, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_ERROR, synchronizationConnectListener);
             getSocketManager().getSocket().on(Socket.EVENT_DISCONNECT, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_RECONNECT, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_ATTEMPT, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_ERROR, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_ATTEMPT, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_ERROR, synchronizationConnectListener);
             getSocketManager().getSocket().on(Socket.EVENT_CONNECT, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, synchronizationConnectListener);
+            //getSocketManager().getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, synchronizationConnectListener);
             getSocketManager().getSocket().on(Socket.EVENT_CONNECT_ERROR, synchronizationConnectListener);
 
             getSocketManager().getSocket().on("synchronization", synchronizationListener);
             getSocketManager().getSocket().on("synchronization-status", synchronizationListener);
-*/
+
             // устанавливаем идентификаторы
             for(Entity entity : getEntityToList()){
                 onProgress(IProgressStep.START, "select " + entity.tableName + " change=" + DoubleUtil.toStringValue(entity.change), entity.tid);
 
-                /*if (!SyncUtil.updateTid(this, entity.tableName, entity.tid)) {
+                if (!SyncUtil.updateTid(this, entity.tableName, entity.tid)) {
                     onError(IProgressStep.START, "Ошибка обнуления tid для таблицы " + entity.tableName, entity.tid);
                     stop();
                     return;
-                }*/
+                }
             }
         }else{
             onError(IProgressStep.START, "Подключение к серверу по websocket не доступно.", null);
@@ -97,7 +109,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     protected Object sendBytes(final String tid, byte[] bytes) {
         if(bytes != null && getSocketManager() != null) {
             onProgress(IProgressStep.UPLOAD, "", tid);
-            /*UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), PreferencesManager.SYNC_PROTOCOL_v2, getActivity(), tid);
+            UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), PreferencesManager.SYNC_PROTOCOL_v2, getActivity(), tid);
             transfers.put(tid, uploadTransfer);
 
             uploadTransfer.upload(bytes, new ITransferStatusCallback() {
@@ -124,7 +136,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 @Override
                 public void onEndTransfer(String tid, Transfer transfer, Object data) {
                     onProgressTransfer(TransferListener.END, tid, transfer, data);
-                    //getSocketManager().getSocket().emit("synchronization", tid, PreferencesManager.SYNC_PROTOCOL_v2);
+                    getSocketManager().getSocket().emit("synchronization", tid, PreferencesManager.SYNC_PROTOCOL_v2);
                 }
 
                 @Override
@@ -132,7 +144,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                     onProgressTransfer(TransferListener.ERROR, tid, transfer, message);
                     onError(IProgressStep.UPLOAD, message, tid);
                 }
-            });*/
+            });
         }
 
         return null;
@@ -142,7 +154,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     protected Object sendBytes(final String tid, byte[] bytes, FileTransferFinishedCallback fileTransferFinishedCallback) {
         if(bytes != null && getSocketManager() != null) {
             onProgress(IProgressStep.UPLOAD, "", tid);
-            /*UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), PreferencesManager.SYNC_PROTOCOL_v2, getActivity(), tid);
+            UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), PreferencesManager.SYNC_PROTOCOL_v2, getActivity(), tid);
             transfers.put(tid, uploadTransfer);
 
             uploadTransfer.upload(bytes, new ITransferStatusCallback() {
@@ -169,7 +181,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 @Override
                 public void onEndTransfer(String tid, Transfer transfer, Object data) {
                     onProgressTransfer(TransferListener.END, tid, transfer, data);
-                    //getSocketManager().getSocket().emit("synchronization", tid, PreferencesManager.SYNC_PROTOCOL_v2);
+                    getSocketManager().getSocket().emit("synchronization", tid, PreferencesManager.SYNC_PROTOCOL_v2);
                     fileTransferFinishedCallback.onFileTransferFinish();
                 }
 
@@ -178,7 +190,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                     onProgressTransfer(TransferListener.ERROR, tid, transfer, message);
                     onError(IProgressStep.UPLOAD, message, tid);
                 }
-            });*/
+            });
         }
 
         return null;
@@ -187,23 +199,23 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     @Override
     public void stop() {
         if(synchronizationListener != null && getSocketManager() != null) {
-            //getSocketManager().getSocket().off("synchronization", synchronizationListener);
-            //getSocketManager().getSocket().off("synchronization-status", synchronizationListener);
+            getSocketManager().getSocket().off("synchronization", synchronizationListener);
+            getSocketManager().getSocket().off("synchronization-status", synchronizationListener);
         }
 
         if(synchronizationConnectListener != null && getSocketManager() != null){
-            /*getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_FAILED, synchronizationConnectListener);
-            getSocketManager().getSocket().off(Socket.EVENT_RECONNECTING, synchronizationConnectListener);
-            getSocketManager().getSocket().off(Socket.EVENT_ERROR, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_FAILED, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECTING, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_ERROR, synchronizationConnectListener);
             getSocketManager().getSocket().off(Socket.EVENT_DISCONNECT, synchronizationConnectListener);
-            getSocketManager().getSocket().off(Socket.EVENT_RECONNECT, synchronizationConnectListener);
-            getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_ATTEMPT, synchronizationConnectListener);
-            getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_ERROR, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_ATTEMPT, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_ERROR, synchronizationConnectListener);
 
             getSocketManager().getSocket().off(Socket.EVENT_CONNECT, synchronizationConnectListener);
-            getSocketManager().getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, synchronizationConnectListener);
+            //getSocketManager().getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, synchronizationConnectListener);
             getSocketManager().getSocket().off(Socket.EVENT_CONNECT_ERROR, synchronizationConnectListener);
-        */}
+        }
 
         if(transfers != null){
             for(Transfer t : transfers.values()){
@@ -342,7 +354,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
         void processing(Object[] args) {
             if(args != null && args.length > 0){
                 Object item = args[0];
-                /*if(item instanceof String){
+                if(item instanceof String){
                     onProgress(IProgressStep.NONE, (String)item, null);
                 }else if(item instanceof SocketIOException){
                     onError(IProgressStep.NONE, ((SocketIOException)item).getMessage(), null);
@@ -350,7 +362,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                     onError(IProgressStep.NONE, ((EngineIOException)item).getMessage(), null);
                 } else if(item instanceof Integer){
                     onProgress(IProgressStep.NONE, String.valueOf(item), null);
-                }*/
+                }
             }else {
                 onProgress(IProgressStep.NONE, "ERROR", null);
             }
@@ -423,7 +435,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                     JSONObject metaJSONObject = jsonObject.getJSONObject("meta");
                     String tid = metaJSONObject.getString("tid");
                     if(metaJSONObject.getBoolean("processed") && getEntities(tid).length > 0) {
-                        /*DownloadTransfer downloadTransfer = new DownloadTransfer(getSynchronization(), getSocketManager().getSocket(), PreferencesManager.SYNC_PROTOCOL_v2, getActivity(), tid);
+                        DownloadTransfer downloadTransfer = new DownloadTransfer(getSynchronization(), getSocketManager().getSocket(), PreferencesManager.SYNC_PROTOCOL_v2, getActivity(), tid);
                         if(transfers.get(tid) != null) {
                             Objects.requireNonNull(transfers.get(tid)).destroy();
                         }
@@ -491,7 +503,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                                 onProgressTransfer(TransferListener.ERROR, tid, transfer, message);
                                 onError(IProgressStep.DOWNLOAD, message, tid);
                             }
-                        });*/
+                        });
                     }
                 }else{
                     // тут текст ошибки
