@@ -80,7 +80,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
     public void onCreate() {
         super.onCreate();
 
-        mWalkerSQLContext = new WalkerSQLContext(this);
+        mWalkerSQLContext = new WalkerSQLContext(this, "walker");
 
         SharedPreferences sharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
 

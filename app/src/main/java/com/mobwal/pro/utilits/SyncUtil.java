@@ -20,19 +20,6 @@ import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;*/
 
 public class SyncUtil {
 
-    public static Field[] getNormalFields(Field[] fields) {
-        List<Field> array = new ArrayList<>();
-
-        for (Field field: fields) {
-            if (java.lang.reflect.Modifier.isPublic(field.getModifiers()) &&
-                    !java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
-                array.add(field);
-            }
-        }
-
-        return array.toArray(new Field[0]);
-    }
-
     /**
      * объект для сброса параметров транзакции
      */

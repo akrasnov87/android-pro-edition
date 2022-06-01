@@ -34,7 +34,7 @@ public class SQLContextTest {
     public void getCreateQuery() {
         Profile profile = new Profile();
         String sql = sqlContext.getCreateQuery(profile);
-        Assert.assertEquals(sql, "CREATE TABLE IF NOT EXISTS cd_profiles (B_MALE INTEGER, C_NAME TEXT, D_DATE TEXT, ID INTEGER64 PRIMARY KEY, N_AGE INTEGER, N_SUM REAL, N_YEAR INTEGER);");
+        Assert.assertEquals(sql, "CREATE TABLE IF NOT EXISTS cd_profiles (B_MALE INTEGER, D_DATE TEXT, ID INTEGER64 PRIMARY KEY, N_AGE INTEGER, C_NAME TEXT, N_SUM REAL, N_YEAR INTEGER);");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class SQLContextTest {
         Profile profile = new Profile();
         profile.b_male = true;
         profile.n_age = null;
-        profile.c_name = "Шурик";
+        profile.name = "Шурик";
         profile.d_date = new Date();
         profiles.add(profile);
 
@@ -60,8 +60,8 @@ public class SQLContextTest {
 
         Profile resultItem = results.toArray(new Profile[0])[0];
 
-        Assert.assertEquals(profile.c_name, resultItem.c_name);
-        profile.c_name = "саша";
+        Assert.assertEquals(profile.name, resultItem.name);
+        profile.name = "саша";
         profiles.clear();
         profiles.add(profile);
         sqlContext.insertMany(profiles.toArray());
@@ -71,7 +71,7 @@ public class SQLContextTest {
 
         resultItem = results.toArray(new Profile[0])[0];
 
-        Assert.assertEquals(profile.c_name, resultItem.c_name);
+        Assert.assertEquals(profile.name, resultItem.name);
 
         Long count = sqlContext.count("delete from cd_profiles;");
         Assert.assertNull(count);
@@ -83,7 +83,7 @@ public class SQLContextTest {
         Profile profile = new Profile();
         profile.b_male = true;
         profile.n_age = null;
-        profile.c_name = "Шурик";
+        profile.name = "Шурик";
         profile.d_date = new Date();
         profiles.add(profile);
 
@@ -106,8 +106,8 @@ public class SQLContextTest {
 
     @Test
     public void exists() {
-        //Assert.assertTrue(sqlContext.exists(new Route()));
-        //Assert.assertFalse(sqlContext.exists(new TestClass()));
+        Assert.assertTrue(sqlContext.exists(new Profile()));
+        Assert.assertFalse(sqlContext.exists(new TestClass()));
     }
 
     @After
@@ -115,9 +115,6 @@ public class SQLContextTest {
         sqlContext.trash();
     }
 
-    /**
-     * Тестовый класс
-     */
     static class TestClass {
 
     }

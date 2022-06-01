@@ -3,16 +3,33 @@ package com.mobwal.pro.shared;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
+import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.Route;
+import com.mobwal.pro.models.db.Setting;
+import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.utilits.SQLContext;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class SQLContextProfile extends SQLContext {
-    public SQLContextProfile(Context context) {
-        super(context);
-    }
+
+    private final List<Object> mTableList = Collections.singletonList(
+            new Profile());
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(getCreateQuery(new Profile()));
+    public Object[] getTables() {
+        return mTableList.toArray();
+    }
+
+    public SQLContextProfile(Context context) {
+        super(context, "walker", 1);
     }
 
     @Override

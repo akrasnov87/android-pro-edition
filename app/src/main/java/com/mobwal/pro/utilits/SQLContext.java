@@ -19,16 +19,24 @@ import java.util.List;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.annotation.TableMetaData;
+import com.mobwal.pro.reflection.ReflectionUtil;
 
-public abstract class SQLContext extends SQLiteOpenHelper {
+import org.jetbrains.annotations.NotNull;
 
-    // Database Version
-    private static final int DATABASE_VERSION = 1;
+/**
+ * Объект для работы с SQLite
+ */
+public abstract class SQLContext
+        extends SQLiteOpenHelper {
 
-    // Database Name
-    private static String DATABASE_NAME = "walker";
+    /**
+     * Имя создаваемой БД (c расширением *.db)
+     */
+    private final String dbName;
 
-    // путь к БД
+    /**
+     * Путь в файловой системе для хранения БД
+     */
     private final File databasePath;
 
     @NonNull
@@ -39,43 +47,27 @@ public abstract class SQLContext extends SQLiteOpenHelper {
         return mContext;
     }
 
-    public SQLContext(@NonNull Context context, String dbName) {
-        super(context, dbName + ".db", null, DATABASE_VERSION);
+    public SQLContext(@NonNull Context context, @NonNull String dbName, int version) {
+        super(context, dbName + ".db", null, version);
         mContext = context;
-        DATABASE_NAME = dbName + ".db";
-        databasePath = context.getDatabasePath(DATABASE_NAME);
-    }
-
-    public SQLContext(@NonNull Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        mContext = context;
-        databasePath = context.getDatabasePath(DATABASE_NAME);
+        this.dbName = dbName + ".db";
+        databasePath = context.getDatabasePath(this.dbName);
     }
 
     /**
-     * Создание базы данных
-     * @param db подключение к БД
+     * Получение данных из SQLite
+     * @param query запрос
+     * @param args аргументы
+     * @param itemClass сущность
+     * @return список данных
      */
-    @Override
-    public abstract void onCreate(SQLiteDatabase db);
-
-    /**
-     * Обновление базы данных
-     * @param db подключение к БД
-     * @param oldVersion старая версия
-     * @param newVersion новая версия
-     */
-    @Override
-    public abstract void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
-
     @Nullable
-    public <T> Collection<T> select(String query, String[] args, Class<?> itemClass) {
+    public <T> Collection<T> select(@NonNull String query, String[] args, @NonNull Class<?> itemClass) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, args);
 
         Collection<T> results = new ArrayList<>();
-
-        Field[] fields = SyncUtil.getNormalFields(itemClass.getDeclaredFields());
+        Field[] fields = itemClass.getDeclaredFields();
         if(cursor.moveToFirst()) {
             do {
                 T item;
@@ -88,7 +80,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
                 }
                 try {
                     for (Field field : fields) {
-                        int idx = cursor.getColumnIndex(field.getName().toUpperCase());
+                        int idx = cursor.getColumnIndex(ReflectionUtil.getFieldName(field).toUpperCase());
                         if (idx == -1) {
                             continue;
                         }
@@ -140,7 +132,12 @@ public abstract class SQLContext extends SQLiteOpenHelper {
         return results;
     }
 
-    public <T> boolean insert(T item) {
+    /**
+     * Добавление или обновление записи
+     * @param item записи
+     * @return результат вставки
+     */
+    public <T> boolean insert(@NonNull T item) {
         List<T> array = new ArrayList<>();
         array.add(item);
 
@@ -152,7 +149,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
      * @param array массив данных для добавления
      * @param <T> тип передаваемого массива
      */
-    public <T> boolean insertMany(T[] array) {
+    public <T> boolean insertMany(@NonNull T[] array) {
         boolean result = false;
 
         if(array.length > 0) {
@@ -187,7 +184,7 @@ public abstract class SQLContext extends SQLiteOpenHelper {
      * @return SQL - запрос
      */
     public <T> String isExistsQuery(T entity) {
-        return "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='" + getTableName(entity) + "';";
+        return "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='" + ReflectionUtil.getTableName(entity) + "';";
     }
 
     /**
@@ -248,20 +245,20 @@ public abstract class SQLContext extends SQLiteOpenHelper {
      */
     public <T> String getCreateQuery(T entity) {
         String pKeyName = "id";
-        TableMetaData tableMetaData = entity.getClass().getAnnotation(TableMetaData.class);
+        TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(entity);
         if (tableMetaData != null) {
             pKeyName = tableMetaData.pKey();
         }
 
-        String tableName = getTableName(entity);
+        String tableName = ReflectionUtil.getTableName(entity);
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
-        Field[] fields = SyncUtil.getNormalFields(entity.getClass().getDeclaredFields());
+        Field[] fields = ReflectionUtil.getDbFields(entity);
         int count = fields.length;
 
         for (Field field: fields) {
             count--;
             String sqlTypeName = getTypeNameFromProperty(field);
-            String fieldName = field.getName();
+            String fieldName = ReflectionUtil.getFieldName(field);
 
             sql.append(fieldName.toUpperCase());
             sql.append(" ");
@@ -271,43 +268,6 @@ public abstract class SQLContext extends SQLiteOpenHelper {
         }
 
         return sql.toString();
-    }
-
-    /**
-     * удаление базы данных
-     * В рабочем коде не должно использоваться, так как приведет к удалению базы данных
-     */
-    @Deprecated
-    // TODO: нужно найти другой способ
-    public void trash() {
-        close();
-
-        if(databasePath.exists()) {
-            if(!databasePath.delete()) {
-                WalkerApplication.Log("Ошибка удаления базы данных " + DATABASE_NAME);
-            }
-        }
-
-        File databaseLog = new File(databasePath.getParentFile(), DATABASE_NAME + "-journal");
-        if(databaseLog.exists()) {
-            if(!databaseLog.delete()) {
-                WalkerApplication.Log("Ошибка удаления лога базы данных " + DATABASE_NAME);
-            }
-        }
-    }
-
-    /**
-     * Получение имени класса
-     * @param entity сощность
-     * @return наименование класса
-     */
-    protected <T> String getTableName(T entity) {
-        TableMetaData tableMetaData = entity.getClass().getAnnotation(TableMetaData.class);
-        if (tableMetaData != null) {
-            return tableMetaData.name();
-        } else {
-            return entity.getClass().getSimpleName();
-        }
     }
 
     /**
@@ -334,4 +294,79 @@ public abstract class SQLContext extends SQLiteOpenHelper {
                 return "TEXT";
         }
     }
+
+    /**
+     * Получение Class<?> по наименованию таблицы
+     * @param tableName имя сущности в SQLite
+     * @return объект - класс
+     */
+    @Nullable
+    public Class<?> getClassFromName(@NotNull String tableName) {
+        for (Object obj: getTables()) {
+            TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(obj);
+            if(tableMetaData != null && tableMetaData.name().equals(tableName)) {
+                return obj.getClass();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * удаление базы данных
+     * В рабочем коде не должно использоваться, так как приведет к удалению базы данных
+     */
+    @Deprecated
+    // TODO: нужно найти другой способ
+    public void trash() {
+        close();
+
+        if(databasePath.exists()) {
+            if(!databasePath.delete()) {
+                WalkerApplication.Log("Ошибка удаления базы данных " + this.dbName);
+            }
+        }
+
+        File databaseLog = new File(databasePath.getParentFile(), this.dbName + "-journal");
+        if(databaseLog.exists()) {
+            if(!databaseLog.delete()) {
+                WalkerApplication.Log("Ошибка удаления лога базы данных " + this.dbName);
+            }
+        }
+    }
+
+    /**
+     * Создание базы данных
+     * @param db подключение к БД
+     */
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.beginTransaction();
+
+        try {
+            for (Object obj: getTables()) {
+                db.execSQL(getCreateQuery(obj));
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception ignored) {
+
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * Обновление базы данных
+     * @param db подключение к БД
+     * @param oldVersion старая версия
+     * @param newVersion новая версия
+     */
+    @Override
+    public abstract void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
+
+    /**
+     * Получение списка таблиц, которые будут храниться в SQLite
+     * @return список таблиц
+     */
+    public abstract Object[] getTables();
 }

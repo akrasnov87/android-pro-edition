@@ -1,10 +1,8 @@
 package com.mobwal.pro.data.utils;
 
-import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.mobwal.pro.WalkerSQLContext;
 
@@ -13,22 +11,14 @@ import com.mobwal.pro.WalkerSQLContext;
 //import org.greenrobot.greendao.database.Database;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import ru.mobnius.core.NamesCore;
 import ru.mobnius.core.data.FileManager;
-import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.packager.FileBinary;
 import ru.mobnius.core.data.rpc.RPCResult;
 import ru.mobnius.core.data.storage.FieldNames;
-import ru.mobnius.core.utils.ReflectionUtil;
-import ru.mobnius.core.utils.SqlStatementInsertFromJSONObject;
-import ru.mobnius.core.utils.SqlUpdateFromJSONObject;
-import ru.mobnius.core.utils.StringUtil;
 
 /**
  * абстрактный обработчик результат от сервера
@@ -180,7 +170,7 @@ public abstract class ServerSidePackage implements IServerSidePackage {
         if (rpcResult.meta.success) {
             String tableName = rpcResult.action;
             // TODO: нужно заменить на более выстрый вариант
-            Class<?> classObject = ReflectionUtil.getClassFromName(session.getContext(), tableName);
+            Class<?> classObject = session.getClassFromName(tableName); // ReflectionUtil.getClassFromName(session.getContext(), tableName);
 
             if (classObject == null) {
                 return PackageResult.fail("Имя сущности не найдено в локальной БД. " + tableName + ".", new NullPointerException("AbstractDao not found."));

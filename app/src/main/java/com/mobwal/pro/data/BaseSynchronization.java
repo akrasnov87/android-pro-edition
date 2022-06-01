@@ -17,7 +17,6 @@ import ru.mobnius.core.data.storage.FieldNames;
 import com.mobwal.pro.data.utils.IServerSidePackage;
 import ru.mobnius.core.utils.PackageCreateUtils;
 import ru.mobnius.core.utils.PackageReadUtils;
-import ru.mobnius.core.utils.ReflectionUtil;
 import ru.mobnius.core.utils.VersionUtil;
 
 //import static com.mobwal.pro.utilits.SyncUtil.resetTid;
@@ -246,7 +245,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @return возвращается массив данных
      */
     protected Collection getRecords(String tableName, String tid, String operationType) {
-        Class<?> objectClass = ReflectionUtil.getClassFromName(mContext.getContext(), tableName);
+        Class<?> objectClass = mContext.getClassFromName(tableName); // ReflectionUtil.getClassFromName(mContext.getContext(), tableName);
 
         if (tid.isEmpty()) {
             return mContext.select("select * from " + tableName, new String[0], objectClass);

@@ -3,30 +3,32 @@ package com.mobwal.pro.utilits;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import com.mobwal.pro.reflection.ReflectionUtil;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Дополнительный класс для массовой вставки данных в базу данных SQLite
- * @param <T> тип сущности
  */
-public class SQLStatementInsert<T> {
+public class SQLStatementInsert {
     final String mTable;
-    final String[] mFields;
-    final String mParams;
+    String[] mFields;
+    String mParams;
     SQLiteStatement mStatement;
 
-    public SQLStatementInsert(T entity, SQLiteDatabase db) {
-        mTable = entity.getClass().getSimpleName();
+    public <T> SQLStatementInsert(@NotNull T entity, @NotNull SQLiteDatabase db) {
+        mTable = ReflectionUtil.getTableName(entity);
 
         StringBuilder builder = new StringBuilder();
         ArrayList<String> tempFields = new ArrayList<>();
 
-        Field[] fields = SyncUtil.getNormalFields(entity.getClass().getDeclaredFields());
-
-        for (Field field: fields) {
-            String fieldName = field.getName();
+        Field[] fields = ReflectionUtil.getDbFields(entity);
+        for (Field field : fields) {
+            String fieldName = ReflectionUtil.getFieldName(field); //.getName();
             builder.append("?,");
             tempFields.add(fieldName);
         }
@@ -54,12 +56,14 @@ public class SQLStatementInsert<T> {
      * Привязка данных для вставки в запрос
      * @param entity сущность для обработки
      */
-    public void bind(T entity) throws NoSuchFieldException, IllegalAccessException {
+    public <T> void bind(T entity) throws NoSuchFieldException, IllegalAccessException {
         mStatement.clearBindings();
 
         for(int i = 0; i < mFields.length; i++) {
             String fieldName = mFields[i];
-            Field field = entity.getClass().getDeclaredField(fieldName);
+            Field field = ReflectionUtil.getClassField(entity, fieldName);
+            if(field == null)
+                continue;
             Object value = field.get(entity);
             if(value != null) {
                 String fieldTypeName = field.getType().getSimpleName().toLowerCase();

@@ -55,7 +55,7 @@ public class Attachment implements Serializable, OnAttachmentListeners {
     public Long n_distance;
 
     /**
-     * Тип операции надл объектом
+     * Тип операции над объектом
      */
     public String __OBJECT_OPERATION_TYPE;
 

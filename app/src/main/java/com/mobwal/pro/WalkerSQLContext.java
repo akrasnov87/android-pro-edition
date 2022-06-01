@@ -3,12 +3,16 @@ package com.mobwal.pro;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.Nullable;
+
+import com.mobwal.pro.annotation.TableMetaData;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.models.db.Template;
+import com.mobwal.pro.reflection.ReflectionUtil;
 import com.mobwal.pro.utilits.SQLContext;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +22,12 @@ import java.util.List;
 
 public class WalkerSQLContext extends SQLContext {
 
-    public final List<Object> mTableList = Arrays.asList(
+    /**
+     * Текущая версия БД
+     */
+    public static final int DATABASE_VERSION = 1;
+
+    private final List<Object> mTableList = Arrays.asList(
             new Template(),
             new Setting(),
             new Route(),
@@ -26,28 +35,16 @@ public class WalkerSQLContext extends SQLContext {
             new Result(),
             new Attachment());
 
-    public WalkerSQLContext(@NotNull Context context) {
-        super(context);
+    /**
+     * Получение списка таблиц, которые будут храниться в SQLite
+     * @return список таблиц
+     */
+    public Object[] getTables() {
+        return mTableList.toArray(new Object[0]);
     }
 
     public WalkerSQLContext(@NotNull Context context, @NotNull String dbName) {
-        super(context, dbName);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.beginTransaction();
-
-        try {
-            for (Object obj: mTableList) {
-                db.execSQL(getCreateQuery(obj));
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ignored) {
-
-        } finally {
-            db.endTransaction();
-        }
+        super(context, dbName, DATABASE_VERSION);
     }
 
     @Override
