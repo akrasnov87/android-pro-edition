@@ -1,6 +1,7 @@
 package com.mobwal.pro.data.manager.synchronization;
 
 import com.google.gson.JsonObject;
+import com.mobwal.android.library.util.ReflectionUtil;
 import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.pro.data.utils.PackageResult;
 import com.mobwal.pro.data.utils.ServerSidePackage;
@@ -32,8 +33,8 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
     @Before
     public void setUp() {
-        getSQLContext().exec("DELETE FROM " + Result.Meta.table, new Object[0]);
-        getSQLContext().exec("DELETE FROM " + Attachment.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + ReflectionUtil.getTableName(Result.class), new Object[0]);
+        getSQLContext().exec("DELETE FROM " + ReflectionUtil.getTableName(Attachment.class), new Object[0]);
     }
 
     @After
@@ -62,7 +63,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = Result.Meta.table;
+        result.action = ReflectionUtil.getTableName(Result.class);
         result.method = "Add";
         RPCRecords records = new RPCRecords();
         records.total = 1;
@@ -80,7 +81,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         PackageResult packageResult = sidePackage.to(getSQLContext(), result, tid);
         Assert.assertTrue(packageResult.success);
 
-        Collection<Result> results = getSQLContext().select("select * from " + Result.Meta.table + " where " + FieldNames.IS_SYNCHRONIZATION + " = 1", new String[0], Result.class);
+        Collection<Result> results = getSQLContext().select("select * from " + ReflectionUtil.getTableName(Result.class) + " where " + FieldNames.IS_SYNCHRONIZATION + " = 1", new String[0], Result.class);
         Assert.assertEquals(results.size(), 1);
 
         result.meta.success = false;
@@ -108,7 +109,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = Result.Meta.table;
+        result.action = ReflectionUtil.getTableName(Result.class);
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;
@@ -149,7 +150,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = Result.Meta.table;
+        result.action = ReflectionUtil.getTableName(Result.class);
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;
@@ -169,9 +170,9 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         sidePackage.setDeleteRecordBeforeAppend(false);
         PackageResult packageResult = sidePackage.from(getSQLContext(), result, tid, true);
         Assert.assertTrue(packageResult.success);
-        Collection<Result> results = getSQLContext().select("select * from " + Result.Meta.table, new String[0], Result.class); // getDaoSession().getTrackingDao().queryBuilder().list();
+        Collection<Result> results = getSQLContext().select("select * from " + ReflectionUtil.getTableName(Result.class), new String[0], Result.class); // getDaoSession().getTrackingDao().queryBuilder().list();
         Assert.assertEquals(results.size(), 2);
-        results = getSQLContext().select("select * from " + Result.Meta.table + " where id = ?", new String[] { item.id }, Result.class); // getDaoSession().getTrackingDao().queryBuilder().where(TrackingDao.Properties.Id.eq(tracking2.getId())).list();
+        results = getSQLContext().select("select * from " + ReflectionUtil.getTableName(Result.class) + " where id = ?", new String[] { item.id }, Result.class); // getDaoSession().getTrackingDao().queryBuilder().where(TrackingDao.Properties.Id.eq(tracking2.getId())).list();
         Result t = results.toArray(new Result[0])[0];
         Assert.assertEquals(t.id, item.id);
     }
@@ -206,7 +207,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         resultMeta.success = true;
         result.meta = resultMeta;
         result.tid = blockTid;
-        result.action = Attachment.Meta.table;
+        result.action = ReflectionUtil.getTableName(Attachment.class);
         result.method = "Query";
         RPCRecords records = new RPCRecords();
         records.total = 1;

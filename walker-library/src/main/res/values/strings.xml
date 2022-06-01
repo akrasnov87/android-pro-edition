@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="byt">byte</string>
+    <string name="kb">KB</string>
+    <string name="mb">MB</string>
+    <string name="gb">GB</string>
+    <string name="tb">TB</string>
+    <string name="unknown_error">Unknown error. Code</string>
+    <string name="zip_error">Compression directory not found</string>
+    <string name="unzip_error">Output directory error. Code</string>
+</resources>

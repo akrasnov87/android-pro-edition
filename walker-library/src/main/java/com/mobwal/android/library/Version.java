@@ -1,4 +1,4 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -17,7 +17,7 @@ public class Version {
     /**
      * Дата рождения приложения
      */
-    public static Date BIRTH_DAY = new GregorianCalendar(2021, 7, 18).getTime();
+    public static Date BIRTH_DAY = new GregorianCalendar(2022, 6, 1).getTime();
     /**
      * альфа версия
      */

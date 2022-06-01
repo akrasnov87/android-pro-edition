@@ -33,7 +33,7 @@ import com.mobwal.pro.utilits.CsvReader;
 import com.mobwal.pro.utilits.ImportUtil;
 import ru.mobnius.core.utils.NewThread;
 import com.mobwal.pro.utilits.StreamUtil;
-import com.mobwal.pro.utilits.StringUtil;
+import com.mobwal.android.library.util.StringUtil;
 
 /**
  * Импорт текстовых данных в приложение

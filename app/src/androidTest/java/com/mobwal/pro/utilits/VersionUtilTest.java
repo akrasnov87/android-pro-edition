@@ -11,6 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import com.mobwal.android.library.Version;
+import com.mobwal.android.library.util.VersionUtil;
+
 public class VersionUtilTest {
     private Context appContext;
 

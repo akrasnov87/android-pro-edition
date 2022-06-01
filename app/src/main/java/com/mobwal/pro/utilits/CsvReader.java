@@ -2,6 +2,8 @@ package com.mobwal.pro.utilits;
 
 import android.text.TextUtils;
 
+import com.mobwal.android.library.util.StringUtil;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

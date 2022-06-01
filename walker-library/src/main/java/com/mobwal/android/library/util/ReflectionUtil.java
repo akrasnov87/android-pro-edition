@@ -1,11 +1,10 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mobwal.pro.annotation.FieldMetaData;
-import com.mobwal.pro.annotation.TableMetaData;
-
-import org.jetbrains.annotations.NotNull;
+import com.mobwal.android.library.annotation.FieldMetaData;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class ReflectionUtil {
      * @return поле класса
      */
     @Nullable
-    public static <T> Field getClassField(@NotNull T entity, @NotNull String fieldName) {
+    public static <T> Field getClassField(@NonNull T entity, @NonNull String fieldName) {
         Field[] fields = getDbFields(entity);
         for (Field field:
              fields) {
@@ -36,7 +35,7 @@ public class ReflectionUtil {
      * @param field поле класс (объекта)
      * @return имя поля
      */
-    public static String getFieldName(@NotNull Field field) {
+    public static String getFieldName(@NonNull Field field) {
         FieldMetaData fieldMetaData = getFieldMetaData(field);
         if(fieldMetaData != null) {
             return fieldMetaData.name();
@@ -50,7 +49,7 @@ public class ReflectionUtil {
      * @param entity сощность
      * @return наименование класса
      */
-    public static String getTableName(@NotNull Class<?> entity) {
+    public static String getTableName(@NonNull Class<?> entity) {
         TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(entity);
         if(tableMetaData == null) {
             return entity.getSimpleName();
@@ -64,7 +63,7 @@ public class ReflectionUtil {
      * @return анотация *.annotation.FieldMetaData
      */
     @Nullable
-    public static FieldMetaData getFieldMetaData(@NotNull Field field) {
+    public static FieldMetaData getFieldMetaData(@NonNull Field field) {
         return field.getAnnotation(FieldMetaData.class);
     }
 
@@ -74,7 +73,7 @@ public class ReflectionUtil {
      * @return анотация *.annotation.TableMetaData
      */
     @Nullable
-    public static TableMetaData getTableMetaData(@NotNull Class<?> entity) {
+    public static TableMetaData getTableMetaData(@NonNull Class<?> entity) {
         return entity.getAnnotation(TableMetaData.class);
     }
 
@@ -83,7 +82,7 @@ public class ReflectionUtil {
      * @param entity сущность
      * @return список полей
      */
-    public static <T> Field[] getDbFields(@NotNull T entity) {
+    public static <T> Field[] getDbFields(@NonNull T entity) {
         // получение всех полей
         Field[] fields = entity.getClass().getDeclaredFields();
 

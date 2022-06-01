@@ -31,7 +31,7 @@ import com.mobwal.pro.models.RouteInfo;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.utilits.ExportToShared;
 import ru.mobnius.core.utils.NewThread;
-import com.mobwal.pro.utilits.ZipManager;
+import com.mobwal.android.library.ZipManager;
 
 /**
  * Информация по маршруту

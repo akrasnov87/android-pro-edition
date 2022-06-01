@@ -1,9 +1,11 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import android.content.Context;
 import android.util.Log;
 
-import org.jetbrains.annotations.Nullable;
+import androidx.annotation.Nullable;
+
+import com.mobwal.android.library.ZipManager;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -100,6 +102,25 @@ public class LogUtil {
                 }
             }
         }
+    }
+
+    /**
+     * Данные для вывода в режиме отладки
+     * @param context контекст
+     * @param message текст сообщения
+     */
+    public static void debug(Context context, String message) {
+        writeText(context, message);
+    }
+
+    /**
+     * Запись текста в файл лога
+     * @param context контекст
+     * @param message текст сообщения
+     * @param e исключение
+     */
+    public static void writeText(Context context, String message, Exception e) {
+        writeText(context, message + " " + e.toString());
     }
 
     /**

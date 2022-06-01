@@ -7,6 +7,8 @@ import android.text.TextUtils;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.mobwal.android.library.ZipManager;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

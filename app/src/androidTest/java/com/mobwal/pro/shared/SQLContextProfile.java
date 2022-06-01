@@ -3,18 +3,8 @@ package com.mobwal.pro.shared;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.mobwal.android.library.sql.SQLContext;
 
-import com.mobwal.pro.models.db.Attachment;
-import com.mobwal.pro.models.db.Point;
-import com.mobwal.pro.models.db.Result;
-import com.mobwal.pro.models.db.Route;
-import com.mobwal.pro.models.db.Setting;
-import com.mobwal.pro.models.db.Template;
-import com.mobwal.pro.utilits.SQLContext;
-
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

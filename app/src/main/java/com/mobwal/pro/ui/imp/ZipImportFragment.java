@@ -35,7 +35,7 @@ import com.mobwal.pro.utilits.FileManager;
 import com.mobwal.pro.utilits.ImportUtil;
 import ru.mobnius.core.utils.NewThread;
 import com.mobwal.pro.utilits.StreamUtil;
-import com.mobwal.pro.utilits.ZipManager;
+import com.mobwal.android.library.ZipManager;
 import com.mobwal.pro.utilits.ZipReader;
 
 /**

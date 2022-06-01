@@ -19,7 +19,7 @@ import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Template;
-import com.mobwal.pro.utilits.ReflectionUtil;
+import com.mobwal.android.library.util.ReflectionUtil;
 //import com.mobwal.pro.data.utils.FullServerSidePackage;
 import ru.mobnius.core.utils.PackageReadUtils;
 

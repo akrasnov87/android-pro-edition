@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.Expose;
-import com.mobwal.pro.annotation.TableMetaData;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 import java.util.Date;
 import java.util.UUID;

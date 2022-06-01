@@ -1,10 +1,12 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library;
 
 import android.content.Context;
 import android.text.TextUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.mobwal.android.library.util.LogUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -12,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,16 +21,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import com.mobwal.pro.R;
-import com.mobwal.pro.WalkerApplication;
-
 /**
  * Вспомагательный класс для работы с архивами ZIP
  */
 public class ZipManager {
     private static final int BUFFER_SIZE = 4 * 1024;
 
-    public static String zip(@NotNull Context context, File dir, String outputFile) {
+    public static String zip(@NonNull Context context, File dir, String outputFile) {
         return zip(context, dir, outputFile, null);
     }
 
@@ -64,7 +62,7 @@ public class ZipManager {
      * @return Если пустая строка, то результат обработки прошел без ошибок
      */
     @Nullable
-    public static String zipFiles(@NotNull Context context, @NotNull File[] files, String outputFile, @Nullable ZipListeners listeners) {
+    public static String zipFiles(@NonNull Context context, @NonNull File[] files, String outputFile, @Nullable ZipListeners listeners) {
         int total = files.length;
         int current = 0;
 
@@ -94,7 +92,7 @@ public class ZipManager {
                 }
             }
         } catch (IOException e) {
-            WalkerApplication.Log("Ошибка упаковки файлов в архив", e);
+            LogUtil.writeText(context, "Ошибка упаковки файлов в архив", e);
             return context.getString(R.string.unknown_error) + " ZIP1";
         }
 
@@ -108,7 +106,7 @@ public class ZipManager {
      * @return Если пустая строка, то результат обработки прошел без ошибок
      */
     @Nullable
-    public static String zip(@NotNull Context context, File dir, String outputFile, @Nullable ZipListeners listeners) {
+    public static String zip(@NonNull Context context, File dir, String outputFile, @Nullable ZipListeners listeners) {
         if(!dir.exists()) {
             return context.getString(R.string.zip_error);
         }
@@ -150,7 +148,7 @@ public class ZipManager {
                     }
                 }
             } catch (IOException e) {
-                WalkerApplication.Log("Ошибка упаковки архива", e);
+                LogUtil.writeText(context, "Ошибка упаковки архива", e);
                 return context.getString(R.string.unknown_error) + " ZIP0";
             }
         }
@@ -158,7 +156,7 @@ public class ZipManager {
         return null;
     }
 
-    public static String unzip(@NotNull Context context, @NotNull String zipFile, @Nullable String output) {
+    public static String unzip(@NonNull Context context, @NonNull String zipFile, @Nullable String output) {
         return unzip(context, zipFile, output, null);
     }
 
@@ -170,7 +168,7 @@ public class ZipManager {
      * @return Если пустая строка, то результат обработки прошел без ошибок
      */
     @Nullable
-    public static String unzip(@NotNull Context context, @NotNull String zipFile, @Nullable String output, @Nullable ZipListeners listeners) {
+    public static String unzip(@NonNull Context context, @NonNull String zipFile, @Nullable String output, @Nullable ZipListeners listeners) {
         try {
             File file = new File(zipFile);
             if(TextUtils.isEmpty(output)) {
@@ -231,7 +229,7 @@ public class ZipManager {
                 }
             }
         } catch (Exception e) {
-            WalkerApplication.Log("Ошибка распаковки архива", e);
+            LogUtil.writeText(context, "Ошибка распаковки архива", e);
             return context.getString(R.string.unknown_error) + " UNZIP6";
         }
 

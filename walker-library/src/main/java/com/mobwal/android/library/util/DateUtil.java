@@ -1,16 +1,19 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
-import org.jetbrains.annotations.Nullable;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+
+import com.mobwal.android.library.Constants;
+import com.mobwal.android.library.Version;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.mobwal.pro.WalkerApplication;
-
 public class DateUtil {
-    public static final String SYSTEM_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static String SYSTEM_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     /**
      * Дата преобразуется в строку с системным форматом
@@ -32,7 +35,7 @@ public class DateUtil {
             SimpleDateFormat dateFormat = new SimpleDateFormat(SYSTEM_FORMAT, Locale.getDefault());
             return dateFormat.parse(date);
         } catch (Exception e) {
-            WalkerApplication.Debug("Ошибка преобразования строки " + date + " в дату", e);
+            Log.d(Constants.TAG, "Ошибка преобразования строки " + date + " в дату." + e);
             return null;
         }
     }
@@ -50,7 +53,7 @@ public class DateUtil {
      * Генерация TID
      * @return уникальный идентификатор
      */
-    public static int geenerateTid() {
+    public static int generateTid() {
         return Math.abs((int)((new Date().getTime() - Version.BIRTH_DAY.getTime())));
     }
 }

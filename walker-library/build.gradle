@@ -1,0 +1,66 @@
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 20
+        targetSdk 32
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+        setProperty("archivesBaseName", getProperty("archivesBaseName") + "-" + getVersion())
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.annotation:annotation:1.3.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.6.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+static def startOfDay() {
+    def now = new Date().getTime()
+    def start = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2022-06-01 0:00:00").getTime()
+
+    return new DecimalFormat("#").format(Math.floor(Math.abs(now - start) / (1000 * 3600 * 24)))
+}
+
+static def minuteOfDay() {
+    def now = new Date()
+    return (now.format("HH").toInteger() * 60) + now.format("mm").toInteger()
+}
+
+static def getRelease() {
+    /**
+     * 0 – альфа (прототип);
+     * 1 – бета (бета);
+     * 2 – выпуск-кандидат (передан на тестирование заказчику);
+     * 3 – публичный выпуск (окончательно передан заказчику).
+     */
+    return 0
+}
+
+static def getVersion() {
+    return "0." + startOfDay() + "." + getRelease() + "." + minuteOfDay()
+}

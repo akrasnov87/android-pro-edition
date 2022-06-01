@@ -1,18 +1,15 @@
 package com.mobwal.pro.utilits;
 
-import static org.junit.Assert.*;
-
 import android.content.Context;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.StringUtil;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Random;
 
 public class LogUtilTest {
     private Context appContext;

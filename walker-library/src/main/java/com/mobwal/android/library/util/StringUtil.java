@@ -1,14 +1,15 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.mobwal.android.library.R;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,8 +19,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
-import com.mobwal.pro.R;
-
 public class StringUtil {
     private static final String NULL = "null";
 
@@ -28,7 +27,7 @@ public class StringUtil {
      * @param txt входная строка
      * @return результат
      */
-    public static String normalString(String txt){
+    public static String normalString(String txt) {
         if(txt == null) {
             return "";
         }
@@ -40,7 +39,7 @@ public class StringUtil {
      * @param input входная строка
      * @return результат сравнения
      */
-    public static boolean isEmptyOrNull(String input){
+    public static boolean isEmptyOrNull(@NonNull String input) {
         String normal = normalString(input);
         return normal.isEmpty();
     }
@@ -89,6 +88,7 @@ public class StringUtil {
                 }
             }
         }
+
         return "";
     }
 
@@ -97,8 +97,7 @@ public class StringUtil {
      * @param name имя файла
      * @return результат
      */
-    @NotNull
-    public static String getNameWithOutExtension(@NotNull String name) {
+    public static String getNameWithOutExtension(@NonNull String name) {
         if(TextUtils.isEmpty(name)) {
             return "";
         }
@@ -117,7 +116,7 @@ public class StringUtil {
      * @param e исключение
      * @return строка
      */
-    public static String exceptionToString(Throwable e) {
+    public static String exceptionToString(@NonNull Throwable e) {
         Writer writer = new StringWriter();
         e.printStackTrace(new PrintWriter(writer));
         return writer.toString();
@@ -131,7 +130,7 @@ public class StringUtil {
      * @return результат форматирования
      */
     @Nullable
-    public static String convertTemplate(@NotNull Context context, @Nullable String content, @Nullable String json) {
+    public static String convertTemplate(@NonNull Context context, @Nullable String content, @Nullable String json) {
         if(!TextUtils.isEmpty(json) && !TextUtils.isEmpty(content)) {
             String newContent = content;
             try {
@@ -153,17 +152,24 @@ public class StringUtil {
                         value = jsonObject.get(key).getAsString();
                     }
 
-                    newContent = newContent.replace(key, value);
+                    newContent = Objects.requireNonNull(newContent).replace(key, value);
                 }
                 return newContent;
-            }catch (Exception ignored) {
+            } catch (Exception ignored) {
                 return content;
             }
         }
+
         return content;
     }
 
-    public static String trimSymbol(String data, char symbol) {
+    /**
+     * Очистка начального и конечного символа
+     * @param data строка для обработки
+     * @param symbol символ для очистки
+     * @return форматированная строка
+     */
+    public static String trimSymbol(@NonNull String data, char symbol) {
         int len = data.length();
         int st = 0;
 
@@ -176,6 +182,11 @@ public class StringUtil {
         return ((st > 0) || (len < data.length())) ? data.substring(st, len) : data;
     }
 
+    /**
+     * Создание рандомной строки определенной длины sizeOfRandomString
+     * @param sizeOfRandomString длина рандомной строки
+     * @return строка
+     */
     public static String getRandomString(final int sizeOfRandomString) {
         String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
         final Random random = new Random();

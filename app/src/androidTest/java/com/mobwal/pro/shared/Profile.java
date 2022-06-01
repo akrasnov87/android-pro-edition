@@ -1,7 +1,7 @@
 package com.mobwal.pro.shared;
 
-import com.mobwal.pro.annotation.FieldMetaData;
-import com.mobwal.pro.annotation.TableMetaData;
+import com.mobwal.android.library.annotation.FieldMetaData;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 import java.util.Date;
 

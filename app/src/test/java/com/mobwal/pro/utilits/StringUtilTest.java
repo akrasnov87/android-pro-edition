@@ -2,6 +2,8 @@ package com.mobwal.pro.utilits;
 
 import static org.junit.Assert.*;
 
+import com.mobwal.android.library.util.StringUtil;
+
 import org.junit.Test;
 
 public class StringUtilTest {

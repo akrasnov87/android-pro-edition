@@ -10,7 +10,7 @@ import com.mobwal.pro.data.WebSocketSynchronization;
 import com.mobwal.pro.data.utils.PackageResult;
 import com.mobwal.pro.data.utils.ToServerOnly;
 import com.mobwal.pro.models.db.Result;
-import com.mobwal.pro.utilits.ReflectionUtil;
+import com.mobwal.android.library.util.ReflectionUtil;
 
 import java.util.Date;
 import java.util.UUID;

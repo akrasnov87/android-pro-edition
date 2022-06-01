@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 
 import com.mobwal.pro.models.db.Point;
-import com.mobwal.pro.utilits.StringUtil;
+import com.mobwal.android.library.util.StringUtil;
 
 public class PointItem implements Serializable {
     public PointItem() {

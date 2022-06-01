@@ -6,7 +6,7 @@ import android.location.LocationManager;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.mobwal.pro.annotation.TableMetaData;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 import java.util.UUID;
 

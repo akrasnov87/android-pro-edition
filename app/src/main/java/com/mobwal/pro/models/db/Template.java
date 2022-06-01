@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import com.mobwal.pro.CustomLayoutManager;
 import com.mobwal.pro.R;
-import com.mobwal.pro.annotation.TableMetaData;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 @TableMetaData(name = "cd_templates", to = false)
 public class Template {

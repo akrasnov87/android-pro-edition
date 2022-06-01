@@ -8,7 +8,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -19,10 +18,8 @@ import android.view.ViewGroup;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
-import com.mobwal.pro.databinding.FragmentBiometryBinding;
 import com.mobwal.pro.databinding.FragmentMailBinding;
-import com.mobwal.pro.utilits.FileManager;
-import com.mobwal.pro.utilits.LogUtil;
+import com.mobwal.android.library.util.LogUtil;
 
 import java.io.File;
 import java.util.List;

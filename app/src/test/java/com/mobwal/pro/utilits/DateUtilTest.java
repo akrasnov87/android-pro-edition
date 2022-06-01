@@ -7,6 +7,8 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
+import com.mobwal.android.library.util.DateUtil;
+
 public class DateUtilTest {
 
     @Test

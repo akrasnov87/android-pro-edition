@@ -25,7 +25,7 @@ import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.models.db.Template;
-import com.mobwal.pro.utilits.DateUtil;
+import com.mobwal.android.library.util.DateUtil;
 import com.mobwal.pro.utilits.FileManager;
 
 public class DataManager {

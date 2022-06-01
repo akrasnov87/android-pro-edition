@@ -1,11 +1,10 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.sql;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,11 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.mobwal.pro.Names;
-import com.mobwal.pro.WalkerApplication;
-import com.mobwal.pro.annotation.TableMetaData;
-
-import org.jetbrains.annotations.NotNull;
+import com.mobwal.android.library.annotation.TableMetaData;
+import com.mobwal.android.library.util.DateUtil;
+import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.ReflectionUtil;
 
 /**
  * Объект для работы с SQLite
@@ -73,7 +71,7 @@ public abstract class SQLContext
                 try {
                     item = (T) itemClass.newInstance();
                 } catch (IllegalAccessException | InstantiationException e) {
-                    Log.d(Names.LOG_ERROR, e.toString());
+                    LogUtil.writeText(mContext, "Ошибка получения результата запроса " + query, e);
                     cursor.close();
                     return null;
                 }
@@ -120,7 +118,7 @@ public abstract class SQLContext
                         }
                     }
                 } catch (Exception e) {
-                    WalkerApplication.Log("Ошибка выполнения запроса " + query, e);
+                    LogUtil.writeText(mContext, "Ошибка выполнения запроса " + query, e);
                     continue;
                 }
                 results.add(item);
@@ -167,7 +165,7 @@ public abstract class SQLContext
                     db.setTransactionSuccessful();
                     result = true;
                 } catch (Exception e) {
-                    Log.d(Names.LOG_ERROR, e.toString());
+                    LogUtil.writeText(mContext, "Ошибка запроса для вставкиданных", e);
                 } finally {
                     db.endTransaction();
                 }
@@ -207,7 +205,7 @@ public abstract class SQLContext
             cursor.moveToFirst();
             return cursor.getLong(0);
         } catch (Exception e) {
-            WalkerApplication.Log("Ошибка вычисления количества в запросе " + query, e);
+            LogUtil.writeText(mContext,"Ошибка вычисления количества в запросе " + query, e);
             return null;
         }
     }
@@ -221,7 +219,7 @@ public abstract class SQLContext
             db.execSQL(query, args);
             return true;
         } catch (SQLException e) {
-            WalkerApplication.Log("SQL. Ошибка выполнения запроса " + query, e);
+            LogUtil.writeText(mContext,"SQL. Ошибка выполнения запроса " + query, e);
             return false;
         }
     }
@@ -300,7 +298,7 @@ public abstract class SQLContext
      * @return объект - класс
      */
     @Nullable
-    public Class<?> getClassFromName(@NotNull String tableName) {
+    public Class<?> getClassFromName(@NonNull String tableName) {
         for (Object obj: getTables()) {
             TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(obj.getClass());
             if(tableMetaData != null && tableMetaData.name().equals(tableName)) {
@@ -316,20 +314,20 @@ public abstract class SQLContext
      * В рабочем коде не должно использоваться, так как приведет к удалению базы данных
      */
     // TODO: нужно найти другой способ
-    @Deprecated
+    @SuppressWarnings(value = "В рабочем коде не должно использоваться, так как приведет к удалению базы данных")
     public void trash() {
         close();
 
         if(databasePath.exists()) {
             if(!databasePath.delete()) {
-                WalkerApplication.Log("Ошибка удаления базы данных " + this.dbName);
+                LogUtil.writeText(mContext,"Ошибка удаления базы данных " + this.dbName);
             }
         }
 
         File databaseLog = new File(databasePath.getParentFile(), this.dbName + "-journal");
         if(databaseLog.exists()) {
             if(!databaseLog.delete()) {
-                WalkerApplication.Log("Ошибка удаления лога базы данных " + this.dbName);
+                LogUtil.writeText(mContext,"Ошибка удаления лога базы данных " + this.dbName);
             }
         }
     }

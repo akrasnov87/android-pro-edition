@@ -23,8 +23,7 @@ import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.utilits.ActivityUtil;
-import com.mobwal.pro.utilits.PrefUtil;
-import com.mobwal.pro.utilits.VersionUtil;
+import com.mobwal.android.library.util.VersionUtil;
 
 public class SettingsFragment extends PreferenceFragmentCompat
         implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {

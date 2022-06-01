@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import com.mobwal.android.library.ZipManager;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.Point;
 

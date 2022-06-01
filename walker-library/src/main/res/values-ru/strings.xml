@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="byt">байт</string>
+    <string name="kb">КБ</string>
+    <string name="mb">МБ</string>
+    <string name="gb">ГБ</string>
+    <string name="tb">ТБ</string>
+    <string name="unknown_error">Неизвестная ошибка. Код </string>
+    <string name="zip_error">Каталог для сжатия не найден</string>
+    <string name="unzip_error">Ошибка с выходным каталогом. Код </string>
+</resources>

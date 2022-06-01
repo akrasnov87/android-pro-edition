@@ -1,16 +1,11 @@
 package com.mobwal.pro.models.db;
 
-import android.content.Context;
-
 import androidx.annotation.Nullable;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.UUID;
 
-import com.mobwal.pro.R;
-import com.mobwal.pro.annotation.TableMetaData;
-import com.mobwal.pro.utilits.DateUtil;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 @TableMetaData(name = "cd_routes", to = false)
 public class Route {

@@ -9,7 +9,7 @@ import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.models.db.Template;
-import com.mobwal.pro.utilits.SQLContext;
+import com.mobwal.android.library.sql.SQLContext;
 
 import org.jetbrains.annotations.NotNull;
 
