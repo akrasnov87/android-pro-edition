@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.configuration.PreferencesManager;
+import com.mobwal.android.library.authorization.Authorization;
+
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.rpc.RPCItem;
 import ru.mobnius.core.utils.DateUtil;

@@ -15,9 +15,9 @@ import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.configuration.PreferencesManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 import ru.mobnius.core.utils.LongUtil;
-import ru.mobnius.core.utils.PackageReadUtils;
+import com.mobwal.android.library.util.PackageReadUtils;
 
 import com.mobwal.pro.ManualSynchronization;
 import com.mobwal.pro.WalkerSQLContext;
@@ -146,8 +146,8 @@ public class ManualSynchronizationTest extends DbGenerate {
     }
 
     public static class MySynchronization extends ManualSynchronization {
-        private final BasicCredentials mCredentials;
-        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredentials credentials) {
+        private final BasicCredential mCredentials;
+        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials) {
             super(context, fileManager, false);
             dictionaryTid = UUID.randomUUID().toString();
             mCredentials = credentials;

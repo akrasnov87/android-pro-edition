@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 
 /*import org.junit.Test;
 
-import ru.mobnius.core.data.rpc.FilterItem;
-import ru.mobnius.core.data.rpc.RPCItem;
+import com.mobwal.android.library.data.rpc.FilterItem;
+import com.mobwal.android.library.data.rpc.RPCItem;
 
 import static org.junit.Assert.assertEquals;
 

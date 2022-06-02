@@ -11,7 +11,7 @@ import java.util.List;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.NetworkChangeReceiver;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.configuration.DefaultPreferencesManager;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicCredentials;

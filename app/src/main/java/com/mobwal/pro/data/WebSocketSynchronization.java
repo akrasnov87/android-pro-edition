@@ -19,7 +19,7 @@ import io.socket.emitter.Emitter;
 import io.socket.engineio.client.EngineIOException;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.data.socket.SocketManager;
+import com.mobwal.android.library.socket.SocketManager;
 
 import com.mobwal.pro.data.utils.transfer.DownloadTransfer;
 import com.mobwal.pro.data.utils.transfer.ITransferStatusCallback;

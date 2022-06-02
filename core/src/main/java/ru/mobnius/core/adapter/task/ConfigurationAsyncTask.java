@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import java.util.List;
 
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.configuration.ConfigurationSetting;
 import ru.mobnius.core.data.configuration.ConfigurationSettingUtil;
 import ru.mobnius.core.data.configuration.DefaultPreferencesManager;

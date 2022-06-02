@@ -21,12 +21,12 @@ import java.util.UUID;
 import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
-import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.packager.BinaryBlock;
-import ru.mobnius.core.data.packager.FileBinary;
-import ru.mobnius.core.data.rpc.RPCRecords;
-import ru.mobnius.core.data.rpc.RPCResult;
-import ru.mobnius.core.data.rpc.RPCResultMeta;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
+import com.mobwal.android.library.data.packager.BinaryBlock;
+import com.mobwal.android.library.data.packager.FileBinary;
+import com.mobwal.android.library.data.rpc.RPCRecords;
+import com.mobwal.android.library.data.rpc.RPCResult;
+import com.mobwal.android.library.data.rpc.RPCResultMeta;
 import ru.mobnius.core.data.storage.FieldNames;
 
 public class ServerSidePackageUtilTest extends DbGenerate {
@@ -183,7 +183,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         String tid = UUID.randomUUID().toString();
         int blockTid = 0;
 
-        BasicCredentials credentials = new BasicCredentials(GlobalSettings.DEFAULT_USER_NAME, GlobalSettings.DEFAULT_USER_PASSWORD);
+        BasicCredential credentials = new BasicCredential(GlobalSettings.DEFAULT_USER_NAME, GlobalSettings.DEFAULT_USER_PASSWORD);
         FileManager fileManager = FileManager.createInstance(credentials, getContext());
         try {
             fileManager.deleteFolder(FileManager.ATTACHMENTS);

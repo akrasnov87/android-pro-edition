@@ -10,9 +10,9 @@ import java.util.UUID;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.configuration.PreferencesManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 import ru.mobnius.core.utils.LongUtil;
-import ru.mobnius.core.utils.PackageReadUtils;
+import com.mobwal.android.library.util.PackageReadUtils;
 
 import static org.junit.Assert.assertTrue;
 
@@ -54,8 +54,8 @@ public class AttachmentSynchronizationTest extends DbGenerate {
     }
 
     public static class MySynchronization extends ManualSynchronization {
-        private final BasicCredentials mCredentials;
-        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredentials credentials) {
+        private final BasicCredential mCredentials;
+        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials) {
             super(context, fileManager, false);
             fileTid = UUID.randomUUID().toString();
             addEntity(new EntityAttachment(Attachment.Meta.table, true, true).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));

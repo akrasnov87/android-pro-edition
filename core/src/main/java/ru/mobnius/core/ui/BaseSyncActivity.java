@@ -9,14 +9,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.SyncLogAdapter;
-import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.Version;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.exception.IExceptionCode;

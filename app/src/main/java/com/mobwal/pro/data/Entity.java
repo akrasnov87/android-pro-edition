@@ -7,7 +7,7 @@ import com.mobwal.android.library.util.ReflectionUtil;
 
 import java.util.UUID;
 
-import ru.mobnius.core.data.rpc.FilterItem;
+import com.mobwal.android.library.data.rpc.FilterItem;
 
 public class Entity implements IEntity {
 

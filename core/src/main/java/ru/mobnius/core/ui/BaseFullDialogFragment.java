@@ -1,10 +1,6 @@
 package ru.mobnius.core.ui;
 
-import android.os.Bundle;
 import android.widget.LinearLayout;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import java.util.Objects;
 

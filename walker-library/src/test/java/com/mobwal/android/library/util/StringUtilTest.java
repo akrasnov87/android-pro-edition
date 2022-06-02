@@ -4,9 +4,17 @@ import static org.junit.Assert.*;
 
 import com.mobwal.android.library.util.StringUtil;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.UUID;
+
 public class StringUtilTest {
+    @Test
+    public void getShortGuid() {
+        Assert.assertEquals(StringUtil.getShortGuid("44e5386d-d461-4693-b3a8-cef54a795336"), "44e5386d");
+    }
+
     @Test
     public void normalString() {
         assertEquals(StringUtil.normalString("null"), "");

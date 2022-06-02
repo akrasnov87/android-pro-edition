@@ -16,8 +16,8 @@ import java.util.List;
 
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.data.packager.FileBinary;
-import ru.mobnius.core.data.rpc.RPCResult;
+import com.mobwal.android.library.data.packager.FileBinary;
+import com.mobwal.android.library.data.rpc.RPCResult;
 import ru.mobnius.core.data.storage.FieldNames;
 
 /**

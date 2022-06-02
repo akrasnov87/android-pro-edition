@@ -21,7 +21,6 @@ import ru.mobnius.core.adapter.PushAsyncTask;
 import ru.mobnius.core.data.exception.IExceptionCode;
 import ru.mobnius.core.model.PushItemModel;
 import ru.mobnius.core.ui.component.ErrorFieldView;
-import ru.mobnius.core.utils.NotificationUtil;
 
 /**
  * Уведомления для пользователя

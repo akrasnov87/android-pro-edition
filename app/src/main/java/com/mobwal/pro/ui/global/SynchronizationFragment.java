@@ -13,11 +13,11 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentSynchronizationBinding;
 
 import ru.mobnius.core.data.GlobalSettings;
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.configuration.PreferencesManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.socket.OnSocketListeners;
-import ru.mobnius.core.data.socket.SocketManager;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+
+import com.mobwal.android.library.authorization.credential.BasicCredential;
+import com.mobwal.android.library.socket.OnSocketListeners;
+import com.mobwal.android.library.socket.SocketManager;
 import com.mobwal.pro.data.IProgress;
 import com.mobwal.pro.data.OnSynchronizationListeners;
 import com.mobwal.pro.data.utils.transfer.Transfer;
@@ -61,7 +61,7 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onClick(View v) {
-        BasicCredentials credentials = Authorization.getInstance().getUser().getCredentials();
+        BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredentials();
         socketManager = SocketManager.createInstance(GlobalSettings.getConnectUrl(), credentials, HardwareUtil.getNumber(requireContext()));
         if(socketManager.isRegistered()) {
             onRegistry();

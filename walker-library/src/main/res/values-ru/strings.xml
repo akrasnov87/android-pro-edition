@@ -10,4 +10,9 @@
     <string name="unknown_error">Неизвестная ошибка. Код </string>
     <string name="zip_error">Каталог для сжатия не найден</string>
     <string name="unzip_error">Ошибка с выходным каталогом. Код </string>
+
+    <string name="authorization_success">Вы авторизованы</string>
+    <string name="authorization_failed">Логин или пароль введены не верно</string>
+    <string name="authorization_network">У приложения отсутствует доступ к серверу. Проверьте интернет.</string>
+    <string name="authorization_error">Ошибка авторизации</string>
 </resources>

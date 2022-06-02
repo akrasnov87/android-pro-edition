@@ -59,7 +59,7 @@ import com.mobwal.pro.ui.RecycleViewItemRemovable;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.ImportUtil;
 import com.mobwal.android.library.util.NetworkInfoUtil;
-import ru.mobnius.core.utils.NewThread;
+import com.mobwal.android.library.NewThread;
 
 public class RouteFragment extends BaseFragment
         implements SearchView.OnQueryTextListener,

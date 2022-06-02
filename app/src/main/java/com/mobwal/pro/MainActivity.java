@@ -24,22 +24,20 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.mobwal.pro.databinding.ActivityMainBinding;
 import com.mobwal.pro.utilits.ActivityUtil;
-import com.mobwal.pro.utilits.PrefUtil;
 
 import java.util.List;
 
 import ru.mobnius.core.data.GlobalSettings;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import ru.mobnius.core.data.configuration.ConfigurationSetting;
 import ru.mobnius.core.data.configuration.ConfigurationSettingUtil;
-import ru.mobnius.core.data.credentials.BasicCredentials;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.ui.ExceptionInterceptActivity;
-import ru.mobnius.core.utils.NewThread;
+import com.mobwal.android.library.NewThread;
 
 public class MainActivity extends ExceptionInterceptActivity
      implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,7 +64,7 @@ public class MainActivity extends ExceptionInterceptActivity
 
         WalkerApplication.Debug("Главный экран.");
 
-        if(!Authorization.getInstance().isAuthorized()) {
+        if(!BasicAuthorizationSingleton.getInstance().isAuthorized()) {
             Toast.makeText(this, R.string.without_auth, Toast.LENGTH_SHORT).show();
 
             startActivity(SecurityActivity.getIntent(this));
@@ -117,8 +115,8 @@ public class MainActivity extends ExceptionInterceptActivity
         mConfigThread = new NewThread(this) {
             @Override
             public void onBackgroundExecute() {
-                if(Authorization.getInstance().isAuthorized()) {
-                    BasicCredentials credentials = Authorization.getInstance().getUser().getCredentials();
+                if(BasicAuthorizationSingleton.getInstance().isAuthorized()) {
+                    BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredentials();
 
                     try {
                         List<ConfigurationSetting> configurationSettings = ConfigurationSettingUtil.getSettings(GlobalSettings.getConnectUrl(), credentials);

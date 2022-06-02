@@ -3,11 +3,9 @@ package com.mobwal.pro.data.utils;
 //import org.greenrobot.greendao.AbstractDaoSession;
 //import org.greenrobot.greendao.database.Database;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import com.mobwal.pro.WalkerSQLContext;
 
-import ru.mobnius.core.data.rpc.RPCResult;
+import com.mobwal.android.library.data.rpc.RPCResult;
 import ru.mobnius.core.data.storage.FieldNames;
 
 /**

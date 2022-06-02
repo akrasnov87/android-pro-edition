@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.rpc.FilterItem;
 import ru.mobnius.core.data.rpc.QueryData;

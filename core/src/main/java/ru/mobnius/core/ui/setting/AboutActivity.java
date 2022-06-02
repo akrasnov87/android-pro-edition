@@ -19,7 +19,7 @@ import ru.mobnius.core.R;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.NotificationManager;
 import ru.mobnius.core.data.RequestManager;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.exception.IExceptionCode;
 import ru.mobnius.core.ui.BasePreferenceFragmentCompact;

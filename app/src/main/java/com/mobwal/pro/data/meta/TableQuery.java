@@ -1,8 +1,8 @@
 package com.mobwal.pro.data.meta;
 
-import ru.mobnius.core.data.rpc.QueryData;
-import ru.mobnius.core.data.rpc.RPCItem;
-import ru.mobnius.core.data.rpc.SingleItemQuery;
+import com.mobwal.android.library.data.rpc.QueryData;
+import com.mobwal.android.library.data.rpc.RPCItem;
+import com.mobwal.android.library.data.rpc.SingleItemQuery;
 
 public class TableQuery {
     /**

@@ -21,7 +21,6 @@ import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -30,8 +29,8 @@ import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.task.ConfigurationAsyncTask;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.app.Application;
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.authorization.AuthorizationCache;
+import com.mobwal.android.library.authorization.Authorization;
+import com.mobwal.android.library.authorization.AuthorizationCache;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicUser;
 import ru.mobnius.core.data.exception.IExceptionCode;

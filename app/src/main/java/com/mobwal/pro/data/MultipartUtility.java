@@ -12,7 +12,7 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 import ru.mobnius.core.data.RequestManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 /**
  * вспомогательный класс для передачи данных на сервер
@@ -33,7 +33,7 @@ public class MultipartUtility {
      * @param requestURL адрес запроса
      * @throws IOException исключение
      */
-    public MultipartUtility(String requestURL, BasicCredentials basicCredentials)
+    public MultipartUtility(String requestURL, BasicCredential basicCredentials)
             throws IOException {
         this.charset = "utf-8";
 

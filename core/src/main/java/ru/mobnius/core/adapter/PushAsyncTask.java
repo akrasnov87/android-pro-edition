@@ -14,13 +14,12 @@ import java.util.List;
 
 import ru.mobnius.core.data.NotificationManager;
 import ru.mobnius.core.data.RequestManager;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.credentials.BasicUser;
 import ru.mobnius.core.data.logger.Logger;
 import ru.mobnius.core.data.rpc.RPCResult;
 import ru.mobnius.core.data.rpc.SingleItemQuery;
 import ru.mobnius.core.model.PushItemModel;
-import ru.mobnius.core.utils.ContentUtil;
 import ru.mobnius.core.utils.DateUtil;
 import ru.mobnius.core.utils.VersionUtil;
 

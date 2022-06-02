@@ -1,25 +1,20 @@
 package ru.mobnius.core.srv;
 
 import android.Manifest;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ru.mobnius.core.R;
 import ru.mobnius.core.data.GlobalSettings;
 import ru.mobnius.core.data.app.OnCoreApplicationListeners;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicUser;
 import ru.mobnius.core.data.exception.IExceptionIntercept;

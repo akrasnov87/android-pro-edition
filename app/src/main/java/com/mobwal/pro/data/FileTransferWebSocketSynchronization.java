@@ -12,13 +12,13 @@ import java.io.IOException;
 
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.data.rpc.RPCItem;
-import ru.mobnius.core.data.rpc.RPCResult;
+import com.mobwal.android.library.data.rpc.RPCItem;
+import com.mobwal.android.library.data.rpc.RPCResult;
 //import com.mobwal.pro.data.meta.TableQuery;
 //import com.mobwal.pro.data.utils.FullServerSidePackage;
 //import com.mobwal.pro.data.utils.PackageResult;
-import ru.mobnius.core.utils.PackageCreateUtils;
-import ru.mobnius.core.utils.PackageReadUtils;
+import com.mobwal.android.library.util.PackageCreateUtils;
+import com.mobwal.android.library.util.PackageReadUtils;
 import ru.mobnius.core.utils.StringUtil;
 
 /**

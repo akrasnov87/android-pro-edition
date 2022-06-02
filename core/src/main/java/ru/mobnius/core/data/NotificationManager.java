@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 
 import java.io.IOException;
 
-import ru.mobnius.core.data.mail.StringMail;
 import ru.mobnius.core.data.rpc.RPCResult;
 import ru.mobnius.core.data.rpc.SingleItemQuery;
 import ru.mobnius.core.data.socket.SocketManager;

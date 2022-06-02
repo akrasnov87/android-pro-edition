@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ru.mobnius.core.data.FileManager;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.logger.Logger;
 

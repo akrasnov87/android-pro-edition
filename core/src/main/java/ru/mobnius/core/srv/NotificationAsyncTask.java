@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import java.io.IOException;
 
 import ru.mobnius.core.data.NotificationManager;
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.Authorization;
 import ru.mobnius.core.data.logger.Logger;
 
 public class NotificationAsyncTask extends AsyncTask<String, Void, Integer> {

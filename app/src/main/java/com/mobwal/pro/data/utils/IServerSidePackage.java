@@ -5,7 +5,7 @@ import com.mobwal.pro.WalkerSQLContext;
 
 import org.json.JSONException;
 
-import ru.mobnius.core.data.rpc.RPCResult;
+import com.mobwal.android.library.data.rpc.RPCResult;
 
 
 /**

@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 import ru.mobnius.core.R;
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.authorization.AuthorizationCache;
-import ru.mobnius.core.data.configuration.PreferencesManager;
+import com.mobwal.android.library.authorization.Authorization;
+import com.mobwal.android.library.authorization.AuthorizationCache;
+
 import ru.mobnius.core.data.credentials.BasicUser;
 import ru.mobnius.core.data.exception.IExceptionCode;
 import ru.mobnius.core.ui.fragment.LoginFragment;

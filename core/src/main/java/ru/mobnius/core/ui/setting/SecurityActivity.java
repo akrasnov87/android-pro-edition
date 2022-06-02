@@ -11,13 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
-import java.util.Date;
 import java.util.Objects;
 
 import ru.mobnius.core.R;
 import ru.mobnius.core.data.app.OnCoreApplicationListeners;
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.authorization.AuthorizationCache;
+import com.mobwal.android.library.authorization.Authorization;
+import com.mobwal.android.library.authorization.AuthorizationCache;
 import ru.mobnius.core.data.configuration.PreferencesManager;
 import ru.mobnius.core.data.credentials.BasicUser;
 import ru.mobnius.core.data.exception.IExceptionCode;

@@ -4,8 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,15 +15,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import com.mobwal.pro.MainActivity;
 import com.mobwal.pro.Names;
@@ -33,10 +28,8 @@ import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentBiometryBinding;
 import com.mobwal.pro.ui.BaseFragment;
-import com.mobwal.pro.utilits.ImportUtil;
-import com.mobwal.pro.utilits.PrefUtil;
 
-import ru.mobnius.core.data.authorization.Authorization;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 
 public class BiometryFragment extends BaseFragment
         implements View.OnClickListener, TextWatcher {
@@ -177,7 +170,7 @@ public class BiometryFragment extends BaseFragment
 
         // авторизация не требуется
         //WalkerApplication.setAuthorized(requireContext(), true);
-        Authorization authorization = Authorization.getInstance();
+        BasicAuthorizationSingleton authorization = BasicAuthorizationSingleton.getInstance();
         authorization.setUser(authorization.getLastAuthUser());
 
         /*if (requireActivity().getCurrentFocus() != null) {

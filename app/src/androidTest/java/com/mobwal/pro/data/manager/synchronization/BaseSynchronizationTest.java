@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.configuration.PreferencesManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 import com.mobwal.pro.data.Entity;
 import com.mobwal.pro.data.MultipartUtility;
@@ -150,9 +150,9 @@ public class BaseSynchronizationTest extends DbGenerate {
 
     static class MySynchronization extends ServiceSynchronization {
 
-        private final BasicCredentials mCredentials;
+        private final BasicCredential mCredentials;
 
-        public MySynchronization(WalkerSQLContext context, BasicCredentials credentials) {
+        public MySynchronization(WalkerSQLContext context, BasicCredential credentials) {
             super(context, false);
 
             mCredentials = credentials;

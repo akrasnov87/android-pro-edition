@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.List;
 
 import ru.mobnius.core.data.DbOperationType;
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.packager.MetaSize;
-import ru.mobnius.core.data.rpc.RPCItem;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+import com.mobwal.android.library.data.packager.MetaSize;
+import com.mobwal.android.library.data.rpc.RPCItem;
 import ru.mobnius.core.data.storage.FieldNames;
 import com.mobwal.pro.data.utils.IServerSidePackage;
-import ru.mobnius.core.utils.PackageCreateUtils;
-import ru.mobnius.core.utils.PackageReadUtils;
+import com.mobwal.android.library.util.PackageCreateUtils;
+import com.mobwal.android.library.util.PackageReadUtils;
 import ru.mobnius.core.utils.VersionUtil;
 
 //import static com.mobwal.pro.utilits.SyncUtil.resetTid;
@@ -125,7 +125,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @return идентификатор пользователя
      */
     public long getUserID() {
-        return Authorization.getInstance().getUser().getUserId();
+        return BasicAuthorizationSingleton.getInstance().getUser().getUserId();
     }
 
     /**

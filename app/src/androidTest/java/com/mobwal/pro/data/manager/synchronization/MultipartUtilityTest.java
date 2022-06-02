@@ -8,11 +8,11 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.UUID;
 
-import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.rpc.RPCItem;
-import ru.mobnius.core.data.rpc.RPCResult;
-import ru.mobnius.core.utils.PackageCreateUtils;
-import ru.mobnius.core.utils.PackageReadUtils;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
+import com.mobwal.android.library.data.rpc.RPCItem;
+import com.mobwal.android.library.data.rpc.RPCResult;
+import com.mobwal.android.library.util.PackageCreateUtils;
+import com.mobwal.android.library.util.PackageReadUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -23,10 +23,10 @@ import com.mobwal.pro.data.MultipartUtility;
 @RunWith(AndroidJUnit4.class)
 public class MultipartUtilityTest {
     private final String URL_PART = "/synchronization/v0";
-    private final BasicCredentials basicCredentials;
+    private final BasicCredential basicCredentials;
 
     public MultipartUtilityTest(){
-        basicCredentials = new BasicCredentials("test", "1234");
+        basicCredentials = new BasicCredential("test", "1234");
     }
 
     @Test

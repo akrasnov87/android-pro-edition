@@ -14,6 +14,8 @@ import com.mobwal.android.library.R;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
@@ -195,5 +197,112 @@ public class StringUtil {
             sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         }
         return sb.toString();
+    }
+
+    /**
+     * Получение md5-хеш кода
+     *
+     * @param inputString входная строка
+     * @return хеш-код
+     */
+    public static String md5(String inputString) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = MessageDigest
+                    .getInstance(MD5);
+            digest.update(inputString.getBytes());
+            byte[] messageDigest = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & aMessageDigest));
+                while (h.length() < 2)
+                    h.insert(0, "0");
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Заполение разделителями
+     *
+     * @param count     количество
+     * @param separator разделитель
+     * @return возвращается строка
+     */
+    public static String fullSpace(int count, String separator) {
+        if (count > 0 && !isEmptyOrNull(separator)) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                builder.append(separator);
+            }
+            return builder.toString();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Сравнение строк без учета регистра
+     * @param str1 строка 1
+     * @param str2 строка 2
+     * @return результат сравнения
+     */
+    public static boolean equalsIgnoreCase(final CharSequence str1, final CharSequence str2) {
+        if (str1 == null || str2 == null) {
+            return str1 == str2;
+        } else if (str1 == str2) {
+            return true;
+        } else if (str1.length() != str2.length()) {
+            return false;
+        } else {
+            return regionMatches(str1, str2, str1.length());
+        }
+    }
+
+    private static boolean regionMatches(final CharSequence cs,
+                                         final CharSequence substring, final int length) {
+        if (cs instanceof String && substring instanceof String) {
+            return ((String) cs).regionMatches(true, 0, (String) substring, 0, length);
+        }
+        int index1 = 0;
+        int index2 = 0;
+        int tmpLen = length;
+
+        while (tmpLen-- > 0) {
+            final char c1 = cs.charAt(index1++);
+            final char c2 = substring.charAt(index2++);
+
+            if (c1 == c2) {
+                continue;
+            }
+
+            if (Character.toUpperCase(c1) != Character.toUpperCase(c2)
+                    && Character.toLowerCase(c1) != Character.toLowerCase(c2)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Сокращение guid
+     *
+     * @param guid UUID
+     * @return возвращается до символа -
+     */
+    public static String getShortGuid(String guid) {
+        if (!isEmptyOrNull(guid) && guid.indexOf("-") > 0) {
+            return guid.substring(0, guid.indexOf("-"));
+        } else {
+            return guid;
+        }
     }
 }

@@ -30,7 +30,7 @@ import com.mobwal.pro.databinding.FragmentRouteInfoBinding;
 import com.mobwal.pro.models.RouteInfo;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.utilits.ExportToShared;
-import ru.mobnius.core.utils.NewThread;
+import com.mobwal.android.library.NewThread;
 import com.mobwal.android.library.ArchiveFileManager;
 
 /**

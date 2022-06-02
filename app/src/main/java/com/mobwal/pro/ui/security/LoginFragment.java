@@ -1,11 +1,7 @@
 package com.mobwal.pro.ui.security;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,34 +16,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.mobwal.pro.MainActivity;
-import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentLoginBinding;
 import com.mobwal.pro.ui.BaseFragment;
 
-import java.util.List;
+import com.mobwal.android.library.data.Meta;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+import com.mobwal.android.library.authorization.AuthorizationMeta;
 
-import ru.mobnius.core.data.GlobalSettings;
-import ru.mobnius.core.data.Meta;
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.authorization.AuthorizationMeta;
-import ru.mobnius.core.data.configuration.ConfigurationSetting;
-import ru.mobnius.core.data.configuration.ConfigurationSettingUtil;
-import ru.mobnius.core.data.configuration.DefaultPreferencesManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.credentials.BasicUser;
-import ru.mobnius.core.data.logger.Logger;
+import com.mobwal.android.library.authorization.credential.BasicUser;
 import ru.mobnius.core.ui.BaseLoginActivity;
 import ru.mobnius.core.utils.NetworkInfoUtil;
-import ru.mobnius.core.utils.NewThread;
 
 /**
  * Экран авторизации по логину и паролю
  */
 public class LoginFragment extends BaseFragment {
 
-    private Authorization mAuthorization;
+    private BasicAuthorizationSingleton mAuthorization;
     private BasicUser mBasicUser;
 
     private FragmentLoginBinding mBinding;
@@ -62,7 +49,7 @@ public class LoginFragment extends BaseFragment {
         setHasOptionsMenu(true);
         WalkerApplication.Log("Безопасность. Лигин и пароль.");
 
-        mAuthorization = Authorization.getInstance();
+        mAuthorization = BasicAuthorizationSingleton.getInstance();
         mBasicUser = mAuthorization.getLastAuthUser();
     }
 
@@ -142,7 +129,7 @@ public class LoginFragment extends BaseFragment {
      * @param mode режим авторизации Authorization.ONLINE | Authorization.OFFLINE
      */
     void onAuthorizationSuccess(int mode) {
-        WalkerApplication.Debug("Авторизация выполнена в режиме: " + (mode == Authorization.ONLINE ? "ONLINE" : "OFFLINE"));
+        WalkerApplication.Debug("Авторизация выполнена в режиме: " + (mode == BasicAuthorizationSingleton.ONLINE ? "ONLINE" : "OFFLINE"));
 
         requireActivity().finish();
         startActivity(MainActivity.getIntent(getContext()));
@@ -165,7 +152,7 @@ public class LoginFragment extends BaseFragment {
     }
 
     void onSignOnline(final String login, final String password) {
-        mAuthorization.onSignIn(requireActivity(), login, password, Authorization.ONLINE, meta -> {
+        mAuthorization.onSignIn(requireActivity(), login, password, BasicAuthorizationSingleton.ONLINE, meta -> {
             AuthorizationMeta authorizationMeta = (AuthorizationMeta) meta;
 
             switch (authorizationMeta.getStatus()) {
@@ -173,9 +160,9 @@ public class LoginFragment extends BaseFragment {
                     onAuthorizationFailed(meta.getMessage());
                     break;
                 case Meta.OK:
-                    if (mAuthorization.isInspector()) {
+                    if (mAuthorization.isUser()) {
                         toast(authorizationMeta.getMessage());
-                        onAuthorizationSuccess(Authorization.ONLINE);
+                        onAuthorizationSuccess(BasicAuthorizationSingleton.ONLINE);
                     } else {
                         onAuthorizationFailed(getString(ru.mobnius.core.R.string.accessDenied));
                     }
@@ -189,12 +176,12 @@ public class LoginFragment extends BaseFragment {
     }
 
     void onSignOffline(String login, String password) {
-        mBasicUser = mAuthorization.getAuthUser(login);
+        mBasicUser = mAuthorization.getOfflineAuthUser(login);
         if (mBasicUser == null) {
             onAuthorizationFailed(getString(ru.mobnius.core.R.string.offlineDenied));
             return;
         }
-        mAuthorization.onSignIn((BaseLoginActivity) requireActivity(), login, password, Authorization.OFFLINE, meta -> {
+        mAuthorization.onSignIn((BaseLoginActivity) requireActivity(), login, password, BasicAuthorizationSingleton.OFFLINE, meta -> {
 
             AuthorizationMeta authorizationMeta = (AuthorizationMeta) meta;
             switch (authorizationMeta.getStatus()) {
@@ -202,9 +189,9 @@ public class LoginFragment extends BaseFragment {
                     onAuthorizationFailed(meta.getMessage());
                     break;
                 case Meta.OK:
-                    if (mAuthorization.isInspector()) {
+                    if (mAuthorization.isUser()) {
                         toast(authorizationMeta.getMessage());
-                        onAuthorizationSuccess(Authorization.OFFLINE);
+                        onAuthorizationSuccess(BasicAuthorizationSingleton.OFFLINE);
                     } else {
                         onAuthorizationFailed(getString(ru.mobnius.core.R.string.accessDenied));
                     }

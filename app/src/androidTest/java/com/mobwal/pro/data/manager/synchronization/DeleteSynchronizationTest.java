@@ -21,9 +21,9 @@ import java.util.UUID;
 import ru.mobnius.core.data.DbOperationType;
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.configuration.PreferencesManager;
-import ru.mobnius.core.data.credentials.BasicCredentials;
-import ru.mobnius.core.data.rpc.FilterItem;
-import ru.mobnius.core.utils.PackageReadUtils;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
+import com.mobwal.android.library.data.rpc.FilterItem;
+import com.mobwal.android.library.util.PackageReadUtils;
 
 import com.mobwal.pro.utilits.SyncUtil;
 
@@ -130,10 +130,10 @@ public class DeleteSynchronizationTest extends DbGenerate {
 
     public class MySynchronization extends FileTransferWebSocketSynchronization {
 
-        private final BasicCredentials mCredentials;
+        private final BasicCredential mCredentials;
         private final String mBaseUrl;
 
-        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredentials credentials, String baseUrl) {
+        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials, String baseUrl) {
             super(context, "test", fileManager, false);
             useAttachments = true;
             oneOnlyMode = true;

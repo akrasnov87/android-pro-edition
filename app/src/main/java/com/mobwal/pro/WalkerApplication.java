@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import com.mobwal.android.library.BitmapCache;
 import com.mobwal.android.library.util.ImageUtil;
 
-import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.exception.IExceptionIntercept;
-import ru.mobnius.core.data.exception.MyUncaughtExceptionHandler;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+import com.mobwal.android.library.exception.IExceptionIntercept;
+import com.mobwal.android.library.exception.MyUncaughtExceptionHandler;
 
 public class WalkerApplication extends Application implements IExceptionIntercept {
 
@@ -114,7 +114,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
             FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
         }
 
-        Authorization.createInstance(this);
+        BasicAuthorizationSingleton.createInstance(this);
     }
 
     /**
@@ -169,7 +169,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
         SharedPreferences sharedPreferences = context.getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
 
-        Authorization.getInstance().destroy();
+        BasicAuthorizationSingleton.getInstance().destroy();
     }
 
     @Override

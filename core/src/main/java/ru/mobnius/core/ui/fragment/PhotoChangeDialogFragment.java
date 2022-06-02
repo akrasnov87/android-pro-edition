@@ -3,7 +3,6 @@ package ru.mobnius.core.ui.fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import java.util.Objects;
 
 import ru.mobnius.core.R;
 import ru.mobnius.core.adapter.BaseSpinnerAdapter;
-import ru.mobnius.core.data.camera.CameraManager;
 import ru.mobnius.core.data.exception.IExceptionCode;
 import ru.mobnius.core.data.gallery.BasePhotoManager;
 import ru.mobnius.core.data.gallery.PhotoDataManager;
