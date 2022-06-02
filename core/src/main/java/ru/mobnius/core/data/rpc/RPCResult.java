@@ -1,5 +1,7 @@
 package ru.mobnius.core.data.rpc;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -36,6 +38,10 @@ public class RPCResult {
     public String host;
 
     public RPCRecords result;
+
+    public String getNormalAction() {
+        return action.replace("of_mui_", "");
+    }
 
     /**
      * обработка JSONObject

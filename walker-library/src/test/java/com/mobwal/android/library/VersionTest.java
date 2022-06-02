@@ -1,4 +1,4 @@
-package ru.mobnius.core.data;
+package com.mobwal.android.library;
 
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class VersionTest {
     public void getBuildDate() {
         Version version = new Version();
         Date buildDate = version.getBuildDate(Version.BIRTH_DAY, "4.4.0.520");
-        assertEquals(buildDate.getTime(), Long.parseLong("1593063600000"));
+        assertEquals(buildDate.getTime(), Long.parseLong("1656999600000"));
     }
 
     @Test

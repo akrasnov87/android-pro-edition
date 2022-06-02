@@ -1,6 +1,7 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.sql;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -13,11 +14,12 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.mobwal.pro.shared.Profile;
-import com.mobwal.pro.shared.SQLContextProfile;
+import com.mobwal.android.library.annotation.FieldMetaData;
+import com.mobwal.android.library.annotation.TableMetaData;
 
 @RunWith(AndroidJUnit4.class)
 public class SQLContextTest {
@@ -56,7 +58,8 @@ public class SQLContextTest {
 
         sqlContext.insertMany(profiles.toArray());
         Collection<Profile> results = sqlContext.select("select * from cd_profiles;", null, Profile.class);
-        Assert.assertEquals(1, results.stream().count());
+        assert results != null;
+        Assert.assertEquals(1, results.size());
 
         Profile resultItem = results.toArray(new Profile[0])[0];
 
@@ -67,7 +70,8 @@ public class SQLContextTest {
         sqlContext.insertMany(profiles.toArray());
 
         results = sqlContext.select("select * from cd_profiles;", null, Profile.class);
-        Assert.assertEquals(1, results.stream().count());
+        assert results != null;
+        Assert.assertEquals(1, results.size());
 
         resultItem = results.toArray(new Profile[0])[0];
 
@@ -117,5 +121,39 @@ public class SQLContextTest {
 
     static class TestClass {
 
+    }
+
+    @TableMetaData(name = "cd_profiles")
+    static class Profile {
+        public long id;
+        @FieldMetaData(name = "c_name")
+        public String name;
+        public Date d_date;
+        public boolean b_male;
+        public Integer n_age;
+        @FieldMetaData(name = "n_year")
+        public int year;
+        @FieldMetaData(name = "n_sum")
+        public double sum;
+    }
+
+    static class SQLContextProfile extends SQLContext {
+
+        private final List<Object> mTableList = Collections.singletonList(
+                new Profile());
+
+        @Override
+        public Object[] getTables() {
+            return mTableList.toArray();
+        }
+
+        public SQLContextProfile(Context context) {
+            super(context, "walker", 1);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        }
     }
 }

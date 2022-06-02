@@ -13,6 +13,6 @@ public class EntityAttachment extends Entity {
      */
     public EntityAttachment(String tableName, boolean to, boolean from) {
         super(tableName, to, from);
-        nameEntity = "Вложения";
+        category = "Вложения";
     }
 }

@@ -1,5 +1,7 @@
 package ru.mobnius.core.data.rpc;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
@@ -73,6 +75,10 @@ public class RPCItem {
 
     @Expose
     public Double change;
+
+    public String getFunctionName() {
+        return "of_mui_" + action;
+    }
 
     public String toJsonString() {
         Gson gson = new GsonBuilder().serializeNulls().excludeFieldsWithoutExposeAnnotation().create();

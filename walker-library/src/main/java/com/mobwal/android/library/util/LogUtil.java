@@ -5,7 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.mobwal.android.library.ZipManager;
+import com.mobwal.android.library.ArchiveFileManager;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -43,10 +43,34 @@ public class LogUtil {
         });
         if (files != null) {
             File file = new File(context.getCacheDir(), "journal.zip");
-            ZipManager.zipFiles(context, files, file.getAbsolutePath(), null);
+            ArchiveFileManager.zipFiles(context, files, file.getAbsolutePath(), null);
             return file;
         }
         return null;
+    }
+
+    /**
+     * Очистка архива с данными
+     * @param context контекст
+     */
+    public static void clear(Context context) {
+        File[] files = context.getCacheDir().listFiles(pathname -> {
+            if(pathname.isFile()) {
+                String extension = StringUtil.getFileExtension(pathname.getName());
+                return extension != null && extension.equals(".log");
+            } else {
+                return false;
+            }
+        });
+
+        if(files != null) {
+            for (File file : files) {
+                file.delete();
+            }
+        }
+
+        File file = new File(context.getCacheDir(), "journal.zip");
+        file.delete();
     }
 
     /**

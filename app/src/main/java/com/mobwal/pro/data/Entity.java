@@ -2,18 +2,23 @@ package com.mobwal.pro.data;
 
 import android.text.TextUtils;
 
+import com.mobwal.android.library.annotation.TableMetaData;
+import com.mobwal.android.library.util.ReflectionUtil;
+
 import java.util.UUID;
 
 import ru.mobnius.core.data.rpc.FilterItem;
 
 public class Entity implements IEntity {
 
+    public TableMetaData meta;
+
     /**
      * использовать функцию cf_ для получения данных
      */
     public boolean useCFunction;
 
-    public String nameEntity;
+    public String category;
 
     /**
      * Идентификатор сущности. Предназначен для работы с пакетами
@@ -27,7 +32,7 @@ public class Entity implements IEntity {
     /**
      * имя таблицы
      */
-    public final String tableName;
+    public String tableName;
 
     /**
      * список колонок для выборки
@@ -39,12 +44,12 @@ public class Entity implements IEntity {
     /**
      * Передача данных на сервер
      */
-    public final boolean to;
+    public boolean to;
 
     /**
      * Получение данных от сервера
      */
-    public final boolean from;
+    public boolean from;
     /**
      * является справочником
      */
@@ -83,6 +88,18 @@ public class Entity implements IEntity {
         this(tableName, true, false);
     }
 
+    public Entity(Class<?> aClass) {
+        TableMetaData tableMetaData = ReflectionUtil.getTableMetaData(aClass);
+        meta = tableMetaData;
+        if(tableMetaData != null) {
+            this.setSchema(tableMetaData.schema());
+            useCFunction = tableMetaData.useMUIFunction();
+            tableName = tableMetaData.name();
+            to = tableMetaData.to();
+            from = tableMetaData.from();
+        }
+    }
+
     /**
      * Конструктор
      * @param tableName имя таблицы
@@ -94,7 +111,7 @@ public class Entity implements IEntity {
         this.to = to;
         this.from = from;
         this.tid = UUID.randomUUID().toString();
-        nameEntity = "Общие";
+        category = "Общие";
     }
 
     /**

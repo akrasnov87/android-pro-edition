@@ -11,7 +11,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import com.mobwal.android.library.ZipManager;
+import com.mobwal.android.library.ArchiveFileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.Point;
 
@@ -41,11 +42,11 @@ public class ZipReader {
      * @param output куда распаковать
      * @param listeners обработчик событий
      */
-    public ZipReader(@NotNull Context context, @NotNull String zipPath, @Nullable String output, @Nullable ZipManager.ZipListeners listeners) {
+    public ZipReader(@NotNull Context context, @NotNull String zipPath, @Nullable String output, @Nullable ArchiveFileManager.ArchiveFileListeners listeners) {
         mZipFile = new File(zipPath);
 
         if(mZipFile.exists()) {
-            String result = ZipManager.unzip(context, zipPath, output, listeners);
+            String result = ArchiveFileManager.unzip(context, zipPath, output, listeners);
             if(output == null) {
                 mOutputDir = getCatalog(mZipFile);
             } else {
@@ -55,7 +56,7 @@ public class ZipReader {
             if(!TextUtils.isEmpty(result)) {
                 // если была ошибка, то все откатываем
                 if(mOutputDir != null && mOutputDir.exists()) {
-                    FileManager.deleteRecursive(mOutputDir);
+                    SimpleFileManager.deleteRecursive(mOutputDir);
                 }
             }
         }
@@ -273,7 +274,7 @@ public class ZipReader {
         }
 
         if(mOutputDir != null && mOutputDir.exists()) {
-            FileManager.deleteRecursive(mOutputDir);
+            SimpleFileManager.deleteRecursive(mOutputDir);
         }
     }
 }

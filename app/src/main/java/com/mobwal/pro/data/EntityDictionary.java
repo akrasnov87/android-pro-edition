@@ -13,7 +13,7 @@ public class EntityDictionary extends Entity{
      */
     public EntityDictionary(String tableName, boolean to, boolean from) {
         super(tableName, to, from);
-        nameEntity = "Справочники";
+        category = "Справочники";
         isDictionary = true;
     }
 }

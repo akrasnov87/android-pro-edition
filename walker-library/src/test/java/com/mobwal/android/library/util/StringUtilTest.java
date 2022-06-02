@@ -1,4 +1,4 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import static org.junit.Assert.*;
 
@@ -48,5 +48,12 @@ public class StringUtilTest {
 
         String value7 = StringUtil.getFileExtension("image.");
         assertNull(value7);
+    }
+
+    @Test
+    public void exceptionToString() {
+        Exception exception = new Exception("my test exception");
+        String value = StringUtil.exceptionToString(exception);
+        assertTrue(value.contains("java.lang.Exception: my test exception"));
     }
 }

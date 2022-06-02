@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.util.DateUtil;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
@@ -411,7 +412,7 @@ public class ImportUtil {
 
                     // загружаем результаты
                     if(route.b_check) {
-                        FileManager fileManager = new FileManager(context.getFilesDir());
+                        SimpleFileManager fileManager = new SimpleFileManager(context.getFilesDir());
                         if(!fileManager.getRootCatalog(route.id).mkdirs()) {
                             return context.getString(R.string.unknown_error) + "ZIP4";
                         }

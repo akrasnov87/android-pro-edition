@@ -23,4 +23,10 @@ public @interface TableMetaData {
      * @return true - разрещено
      */
     boolean from() default true;
+
+    /**
+     * Использование of_mui при передаче данных
+     * @return true - разрешено
+     */
+    boolean useMUIFunction() default true;
 }

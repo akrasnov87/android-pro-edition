@@ -5,15 +5,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.mobwal.pro.utilits.BitmapCache;
+import com.mobwal.android.library.util.BitmapCache;
+import com.mobwal.pro.utilits.ImageUtil;
 
 import ru.mobnius.core.data.authorization.Authorization;
-import ru.mobnius.core.data.configuration.DefaultPreferencesManager;
 import ru.mobnius.core.data.exception.IExceptionIntercept;
 import ru.mobnius.core.data.exception.MyUncaughtExceptionHandler;
 
@@ -44,6 +46,24 @@ public class WalkerApplication extends Application implements IExceptionIntercep
     @Nullable
     public synchronized static Bitmap getBitmap(@NotNull String key) {
         return sBitmapCache.get(key);
+    }
+
+    /**
+     * Получение изображения
+     * @param key ключ
+     * @param bytes массив байтов
+     * @param desiredWidth предполагаемый размер
+     * @return изображение
+     */
+    public synchronized static Bitmap getBitmap(@NonNull String key, @NonNull byte[] bytes, int desiredWidth) {
+        Bitmap cache = WalkerApplication.getBitmap(key);
+        if(cache == null) {
+            Bitmap bitmap = ImageUtil.getSizedBitmap(bytes, 0, bytes.length, desiredWidth);
+            WalkerApplication.cacheBitmap(key, bitmap);
+            return bitmap;
+        } else {
+            return cache;
+        }
     }
 
     /**

@@ -1,9 +1,11 @@
-/*package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import android.content.Context;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.mobwal.android.library.R;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,9 +26,8 @@ public class StringUtilTest {
         String json = "{\"{0}\":\"Hello\", \"{1}\":\"World!!!\", \"{2}\":true, \"{3}\":10.0}";
         String content = "{0}, {1}. It's: {2} = {3}";
         String formatText = StringUtil.convertTemplate(appContext, content, json);
-        Assert.assertEquals(formatText, "Hello, World!!!. It's: Yes = 10.0");
+        Assert.assertEquals(formatText, "Hello, World!!!. It's: " + appContext.getString(R.string.yes) + " = 10.0");
         formatText = StringUtil.convertTemplate(appContext, content, null);
         Assert.assertEquals(formatText, content);
     }
 }
-*/

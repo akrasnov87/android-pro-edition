@@ -31,7 +31,7 @@ import com.mobwal.pro.models.RouteInfo;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.utilits.ExportToShared;
 import ru.mobnius.core.utils.NewThread;
-import com.mobwal.android.library.ZipManager;
+import com.mobwal.android.library.ArchiveFileManager;
 
 /**
  * Информация по маршруту
@@ -147,7 +147,7 @@ public class RouteInfoFragment extends Fragment {
                 if(f_route != null) {
 
                     ExportToShared exportToShared = new ExportToShared(f_route, mOutputFile);
-                    mResult = exportToShared.generate(requireContext(), new ZipManager.ZipListeners() {
+                    mResult = exportToShared.generate(requireContext(), new ArchiveFileManager.ArchiveFileListeners() {
                         @Override
                         public void onZipPack(int total, int current) {
                             if(!RouteInfoFragment.this.isDetached()) {

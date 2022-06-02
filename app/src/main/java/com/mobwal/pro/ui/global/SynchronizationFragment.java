@@ -63,7 +63,11 @@ public class SynchronizationFragment extends Fragment
     public void onClick(View v) {
         BasicCredentials credentials = Authorization.getInstance().getUser().getCredentials();
         socketManager = SocketManager.createInstance(GlobalSettings.getConnectUrl(), credentials, HardwareUtil.getNumber(requireContext()));
-        socketManager.open(this);
+        if(socketManager.isRegistered()) {
+            onRegistry();
+        } else {
+            socketManager.open(this);
+        }
     }
 
     @Override

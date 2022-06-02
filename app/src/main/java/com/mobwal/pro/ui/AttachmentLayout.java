@@ -50,7 +50,7 @@ import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.utilits.ActivityUtil;
-import com.mobwal.pro.utilits.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.pro.utilits.ImageUtil;
 
 /**
@@ -68,7 +68,7 @@ public class AttachmentLayout extends LinearLayout
     private PointBundle mPointBundle;
     public String FileName;
     private LocationInfo mLocationInfo;
-    private final FileManager mFileManager;
+    private final SimpleFileManager mFileManager;
 
     private SettingRoute mSettingRoute;
     private final DataManager mDataManager;
@@ -83,7 +83,7 @@ public class AttachmentLayout extends LinearLayout
         super(context, attributeSet);
 
         mDataManager = new DataManager(getContext());
-        mFileManager = new FileManager(getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(getContext().getFilesDir());
 
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -7,7 +7,8 @@ import android.text.TextUtils;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.mobwal.android.library.ZipManager;
+import com.mobwal.android.library.ArchiveFileManager;
+import com.mobwal.android.library.SimpleFileManager;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -21,14 +22,14 @@ public class ZipReaderTest {
     private Context mContext;
     private String mFolder;
     private File mOutputFile;
-    private FileManager mFileManager;
+    private SimpleFileManager mFileManager;
 
     @Before
     public void setUp() throws Exception {
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mFolder = "zip-reader";
 
-        mFileManager = new FileManager(new File(mContext.getCacheDir(), mFolder));
+        mFileManager = new SimpleFileManager(new File(mContext.getCacheDir(), mFolder));
 
         mFileManager.writeBytes(mFolder, "METER.txt", ("layout 'vbox'\n" +
                 "    textview 'c_notice' 'Notice'").getBytes(StandardCharsets.UTF_8));
@@ -57,8 +58,8 @@ public class ZipReaderTest {
 
         mOutputFile = new File(mContext.getCacheDir(), mFolder + ".zip");
 
-        ZipManager.zip(mContext, mFileManager.getRootCatalog(null), mOutputFile.getPath());
-        FileManager.deleteRecursive(mFileManager.getRootCatalog(null));
+        ArchiveFileManager.zip(mContext, mFileManager.getRootCatalog(null), mOutputFile.getPath());
+        SimpleFileManager.deleteRecursive(mFileManager.getRootCatalog(null));
     }
 
     @Test

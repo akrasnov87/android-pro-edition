@@ -1,10 +1,12 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library;
 
 import static org.junit.Assert.*;
 
 import android.content.Context;
 
 import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.mobwal.android.library.SimpleFileManager;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -13,15 +15,15 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class FileManagerTest {
-    private FileManager fileManager;
+public class SimpleFileManagerTest {
+    private SimpleFileManager fileManager;
     private Context appContext;
 
     @Before
     public void setUp() {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        fileManager = new FileManager(appContext.getFilesDir());
+        fileManager = new SimpleFileManager(appContext, appContext.getFilesDir());
     }
 
     @Test
@@ -44,6 +46,6 @@ public class FileManagerTest {
 
     @After
     public void tearDown() {
-        fileManager.deleteRecursive(appContext.getFilesDir());
+        SimpleFileManager.deleteRecursive(appContext, appContext.getFilesDir());
     }
 }

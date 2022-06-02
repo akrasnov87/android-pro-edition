@@ -24,7 +24,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * Вспомагательный класс для работы с архивами ZIP
  */
-public class ZipManager {
+public class ArchiveFileManager {
     private static final int BUFFER_SIZE = 4 * 1024;
 
     public static String zip(@NonNull Context context, File dir, String outputFile) {
@@ -62,7 +62,7 @@ public class ZipManager {
      * @return Если пустая строка, то результат обработки прошел без ошибок
      */
     @Nullable
-    public static String zipFiles(@NonNull Context context, @NonNull File[] files, String outputFile, @Nullable ZipListeners listeners) {
+    public static String zipFiles(@NonNull Context context, @NonNull File[] files, String outputFile, @Nullable ArchiveFileListeners listeners) {
         int total = files.length;
         int current = 0;
 
@@ -106,7 +106,7 @@ public class ZipManager {
      * @return Если пустая строка, то результат обработки прошел без ошибок
      */
     @Nullable
-    public static String zip(@NonNull Context context, File dir, String outputFile, @Nullable ZipListeners listeners) {
+    public static String zip(@NonNull Context context, File dir, String outputFile, @Nullable ArchiveFileListeners listeners) {
         if(!dir.exists()) {
             return context.getString(R.string.zip_error);
         }
@@ -168,7 +168,7 @@ public class ZipManager {
      * @return Если пустая строка, то результат обработки прошел без ошибок
      */
     @Nullable
-    public static String unzip(@NonNull Context context, @NonNull String zipFile, @Nullable String output, @Nullable ZipListeners listeners) {
+    public static String unzip(@NonNull Context context, @NonNull String zipFile, @Nullable String output, @Nullable ArchiveFileListeners listeners) {
         try {
             File file = new File(zipFile);
             if(TextUtils.isEmpty(output)) {
@@ -236,7 +236,7 @@ public class ZipManager {
         return null;
     }
 
-    public interface ZipListeners {
+    public interface ArchiveFileListeners {
         default void onZipUnPack(int total, int current) {
 
         }

@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-@TableMetaData(name = "attachments")
+@TableMetaData(name = "attachments", useMUIFunction = false)
 public class Attachment implements Serializable, OnAttachmentListeners {
 
     public Attachment() {

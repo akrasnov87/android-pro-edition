@@ -31,11 +31,11 @@ import com.mobwal.pro.models.db.complex.PointItem;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.utilits.ActivityUtil;
-import com.mobwal.pro.utilits.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.pro.utilits.ImportUtil;
 import ru.mobnius.core.utils.NewThread;
 import com.mobwal.pro.utilits.StreamUtil;
-import com.mobwal.android.library.ZipManager;
+import com.mobwal.android.library.ArchiveFileManager;
 import com.mobwal.pro.utilits.ZipReader;
 
 /**
@@ -49,7 +49,7 @@ public class ZipImportFragment extends BaseFragment
     private File mFile;
     @Nullable
     private PointItem[] mPointItems = null;
-    private FileManager mCacheFileManager;
+    private SimpleFileManager mCacheFileManager;
     private ZipReader mZipReader;
     private NewThread mUnPackThread;
 
@@ -78,7 +78,7 @@ public class ZipImportFragment extends BaseFragment
         WalkerApplication.Log("Импорт. Архива.");
         setHasOptionsMenu(true);
 
-        mCacheFileManager = new FileManager(requireContext().getCacheDir());
+        mCacheFileManager = new SimpleFileManager(requireContext().getCacheDir());
 
         Intent intent = requireActivity().getIntent();
         if(intent != null) {
@@ -145,7 +145,7 @@ public class ZipImportFragment extends BaseFragment
                 String folder = "import";
                 File dir = mCacheFileManager.getRootCatalog(folder);
                 if(dir.exists()) {
-                    FileManager.deleteRecursive(dir);
+                    SimpleFileManager.deleteRecursive(dir);
                 }
 
                 mCacheFileManager.writeBytes(folder, fileName, bytes);
@@ -287,7 +287,7 @@ public class ZipImportFragment extends BaseFragment
                     mZipReader = null;
                 }
 
-                mZipReader = new ZipReader(requireActivity(), mFile.getPath(), null, new ZipManager.ZipListeners() {
+                mZipReader = new ZipReader(requireActivity(), mFile.getPath(), null, new ArchiveFileManager.ArchiveFileListeners() {
                     @Override
                     public void onZipUnPack(int total, int current) {
                         if(!ZipImportFragment.this.isDetached()) {

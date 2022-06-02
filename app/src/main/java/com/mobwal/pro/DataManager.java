@@ -26,7 +26,7 @@ import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.pro.models.db.Template;
 import com.mobwal.android.library.util.DateUtil;
-import com.mobwal.pro.utilits.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 
 public class DataManager {
     private final Context mContext;
@@ -436,7 +436,7 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
         Collection<Attachment> collection = getAttachments(f_result);
-        FileManager mFileManager = new FileManager(mContext.getFilesDir());
+        SimpleFileManager mFileManager = new SimpleFileManager(mContext.getFilesDir());
         if(collection != null) {
             for (Attachment attachment:
                  collection) {
@@ -454,7 +454,7 @@ public class DataManager {
 
     public boolean delRoute(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        FileManager fileManager = new FileManager(mContext.getFilesDir());
+        SimpleFileManager fileManager = new SimpleFileManager(mContext.getFilesDir());
         fileManager.deleteFolder(f_route);
 
         return sqlContext.exec("delete from TEMPLATE where f_route = ?", new String[]{f_route})

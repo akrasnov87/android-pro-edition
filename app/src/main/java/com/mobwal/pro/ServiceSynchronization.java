@@ -109,7 +109,7 @@ public class ServiceSynchronization extends WebSocketSynchronization {
 
     @Override
     protected void initEntities() {
-        addEntity(new Entity(ReflectionUtil.getTableName(Result.class)).setTid(UUID.randomUUID().toString()).setSchema("dbo"));
+        addEntity(new Entity(Result.class).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(AuditsDao.TABLENAME).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(MobileDevicesDao.TABLENAME).setTid(UUID.randomUUID().toString()));
         //addEntity(new Entity(MobileIndicatorsDao.TABLENAME).setTid(UUID.randomUUID().toString()));

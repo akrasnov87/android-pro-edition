@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.mobwal.android.library.ZipManager;
+import com.mobwal.android.library.ArchiveFileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.util.DateUtil;
 import com.mobwal.android.library.util.StringUtil;
 import com.mobwal.pro.DataManager;
@@ -57,10 +58,10 @@ public class ExportToShared {
      * @return Если строка пустая - архив сформирован без ошибок
      */
     @Nullable
-    public String generate(@NotNull Context context, @Nullable ZipManager.ZipListeners listeners) {
+    public String generate(@NotNull Context context, @Nullable ArchiveFileManager.ArchiveFileListeners listeners) {
         DataManager dataManager = new DataManager(context);
         Route route = dataManager.getRoute(mRouteID);
-        FileManager fileManager = new FileManager(context.getCacheDir());
+        SimpleFileManager fileManager = new SimpleFileManager(context.getCacheDir());
 
         if (route != null) {
             String routeName = StringUtil.getNameWithOutExtension(route.c_name);
@@ -73,7 +74,7 @@ public class ExportToShared {
             OutputZip = new File(fileManager.getRootCatalog("export"), exportName + ".zip");
 
             if(rootDir.exists()) {
-                FileManager.deleteRecursive(rootDir);
+                SimpleFileManager.deleteRecursive(rootDir);
             }
 
             if (rootDir.mkdirs()) {
@@ -399,9 +400,9 @@ public class ExportToShared {
                     }
                 }
 
-                ZipManager.zip(context, exportFolder, OutputZip.getPath(), listeners);
+                ArchiveFileManager.zip(context, exportFolder, OutputZip.getPath(), listeners);
 
-                FileManager.deleteRecursive(exportFolder);
+                SimpleFileManager.deleteRecursive(exportFolder);
 
                 if(!OutputZip.exists()) {
                     return context.getString(R.string.export_route_error_not_found_zip);

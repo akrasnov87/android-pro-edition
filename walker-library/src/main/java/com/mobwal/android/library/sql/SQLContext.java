@@ -165,7 +165,7 @@ public abstract class SQLContext
                     db.setTransactionSuccessful();
                     result = true;
                 } catch (Exception e) {
-                    LogUtil.writeText(mContext, "Ошибка запроса для вставкиданных", e);
+                    LogUtil.writeText(mContext, "Ошибка запроса для вставки данных", e);
                 } finally {
                     db.endTransaction();
                 }

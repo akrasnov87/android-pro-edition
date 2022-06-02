@@ -1,8 +1,11 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library;
 
+import android.content.Context;
 import android.text.TextUtils;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
+
+import com.mobwal.android.library.util.LogUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,25 +18,32 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
-import com.mobwal.pro.WalkerApplication;
-
 /**
- * Файловы менеджер
+ * Простой файловый менеджер
  */
-public class FileManager {
-    public static int BUFFER_SIZE = 2048;
+public class SimpleFileManager {
+    private static final int BUFFER_SIZE = 2048;
 
     private final File mEnvironment;
+    private final Context mContext;
 
     /**
      * Хранение данных
+     *
+     * @param context контекст
      * @param environment директория из context.getFileDir() | context.getCacheDir()
      */
-    public FileManager(File environment) {
+    public SimpleFileManager(@NonNull Context context, @NonNull File environment) {
+        mContext = context;
         mEnvironment = environment;
     }
 
-    public File getRootCatalog(String folder) {
+    /**
+     * Возвращается корневой каталог
+     * @param folder основной каталог
+     * @return объект File
+     */
+    public File getRootCatalog(@NonNull String folder) {
         return TextUtils.isEmpty(folder) ? mEnvironment : new File(mEnvironment, folder);
     }
 
@@ -45,7 +55,7 @@ public class FileManager {
      * @param bytes    массив байтов
      * @throws IOException исключение
      */
-    public void writeBytes(String folder, String fileName, byte[] bytes) throws IOException {
+    public void writeBytes(@NonNull String folder, @NonNull String fileName, @NonNull byte[] bytes) throws IOException {
         File dir = getRootCatalog(folder);
 
         writeBytes(dir, fileName, bytes);
@@ -59,11 +69,11 @@ public class FileManager {
      * @param bytes    массив байтов
      * @throws IOException исключение
      */
-    public void writeBytes(File folder, String fileName, byte[] bytes) throws IOException {
+    public void writeBytes(@NonNull File folder, @NonNull String fileName, @NonNull byte[] bytes) throws IOException {
 
         if (!folder.exists()) {
             if(!folder.mkdirs()) {
-                WalkerApplication.Debug("Каталог " + folder + " не создан");
+                LogUtil.debug(mContext, "Каталог " + folder + " не создан");
             }
         }
 
@@ -84,7 +94,7 @@ public class FileManager {
      * @return возвращается массив байтов
      * @throws IOException исключение
      */
-    public byte[] readPath(String folder, String fileName) throws IOException {
+    public byte[] readPath(@NonNull String folder, @NonNull String fileName) throws IOException {
         File dir = getRootCatalog(folder);
         File file = new File(dir, fileName);
         if (file.exists()) {
@@ -110,7 +120,7 @@ public class FileManager {
      * @param source источник
      * @param target назначение
      */
-    public void copy(@NotNull File source, @NotNull File target) {
+    public void copy(@NonNull File source, @NonNull File target) {
         try {
             try (InputStream in = new FileInputStream(source)) {
                 try (OutputStream out = new FileOutputStream(target)) {
@@ -134,7 +144,7 @@ public class FileManager {
      * @param fileName имя файла
      * @return возвращается доступен ли файл
      */
-    public boolean exists(String folder, String fileName) {
+    public boolean exists(@NonNull String folder, @NonNull String fileName) {
         File dir = getRootCatalog(folder);
         File file = new File(dir, fileName);
         return file.exists();
@@ -146,16 +156,16 @@ public class FileManager {
      * @param folder   имя папки
      * @param fileName имя файла
      */
-    public void deleteFile(String folder, String fileName) {
+    public void deleteFile(@NonNull String folder, @NonNull String fileName) {
         File dir = getRootCatalog(folder);
         if (!dir.exists()) {
-            WalkerApplication.Debug( "Корневая директория " + folder + " не найдена.");
+            LogUtil.debug(mContext, "Корневая директория " + folder + " не найдена.");
         }
         File file = new File(dir, fileName);
         if (file.exists()) {
-            deleteRecursive(file);
+            deleteRecursive(mContext, file);
         } else {
-            WalkerApplication.Debug("Файл " + fileName + " в директории " + folder + " не найден.");
+            LogUtil.debug(mContext, "Файл " + fileName + " в директории " + folder + " не найден.");
         }
     }
 
@@ -164,25 +174,26 @@ public class FileManager {
      *
      * @param folder папка
      */
-    public void deleteFolder(String folder) {
+    public void deleteFolder(@NonNull String folder) {
         File dir = getRootCatalog(folder);
         if (dir.exists()) {
-            deleteRecursive(dir);
+            deleteRecursive(mContext, dir);
         } else {
-            WalkerApplication.Debug("Директория " + folder + " не найдена.");
+            LogUtil.debug(mContext, "Директория " + folder + " не найдена.");
         }
     }
 
     /**
      * удаление объекта File
      *
+     * @param context контекст
      * @param fileOrDirectory файл или директория
      */
-    public static boolean deleteRecursive(File fileOrDirectory) {
+    public static boolean deleteRecursive(@NonNull Context context, @NonNull File fileOrDirectory) {
         if (fileOrDirectory.isDirectory()) {
             for (File child : Objects.requireNonNull(fileOrDirectory.listFiles())) {
-                if (!deleteRecursive(child)) {
-                    WalkerApplication.Debug("Директория " + child.getName() + " не удалена.");
+                if (!deleteRecursive(context, child)) {
+                    LogUtil.debug(context, "Директория " + child.getName() + " не удалена.");
                 }
             }
         }

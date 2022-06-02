@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import com.mobwal.pro.R;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
-import com.mobwal.pro.utilits.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 
 /**
  * Элемент галереи
@@ -22,7 +22,7 @@ import com.mobwal.pro.utilits.FileManager;
 public class AttachmentItemHolder extends RecyclerView.ViewHolder {
 
     private final ImageView mImage;
-    private final FileManager mFileManager;
+    private final SimpleFileManager mFileManager;
     private final Context mContext;
     private Attachment mAttachment;
     private final RecycleViewItemListeners mListeners;
@@ -33,7 +33,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         mListeners = listeners;
         mContext = itemView.getContext();
 
-        mFileManager = new FileManager(itemView.getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(itemView.getContext().getFilesDir());
 
         mImage = itemView.findViewById(R.id.attach_item_image);
         ImageButton trash = itemView.findViewById(R.id.attach_item_trash);

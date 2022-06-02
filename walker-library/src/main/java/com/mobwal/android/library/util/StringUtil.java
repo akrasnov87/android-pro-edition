@@ -39,7 +39,7 @@ public class StringUtil {
      * @param input входная строка
      * @return результат сравнения
      */
-    public static boolean isEmptyOrNull(@NonNull String input) {
+    public static boolean isEmptyOrNull(String input) {
         String normal = normalString(input);
         return normal.isEmpty();
     }

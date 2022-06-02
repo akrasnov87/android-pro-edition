@@ -54,9 +54,9 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         dictionaryTid = UUID.randomUUID().toString();
         fileTid = UUID.randomUUID().toString();
 
-        /*TableChangeUtil tableChangeUtil = new TableChangeUtil(isFullSync);
+        //TableChangeUtil tableChangeUtil = new TableChangeUtil(isFullSync);
 
-        addEntity(new EntityDictionary(RouteStatusesDao.TABLENAME, false, true).setChange(tableChangeUtil.getTableChange(RouteStatusesDao.TABLENAME)).setTid(dictionaryTid).setParam(getUserID(), getAppVersion()).setUseCFunction());
+        /*addEntity(new EntityDictionary(RouteStatusesDao.TABLENAME, false, true).setChange(tableChangeUtil.getTableChange(RouteStatusesDao.TABLENAME)).setTid(dictionaryTid).setParam(getUserID(), getAppVersion()).setUseCFunction());
         addEntity(new EntityDictionary(AttachmentTypesDao.TABLENAME, false, true).setChange(tableChangeUtil.getTableChange(AttachmentTypesDao.TABLENAME)).setTid(dictionaryTid).setParam(getUserID(), getAppVersion()).setUseCFunction());
         addEntity(new EntityDictionary(PointTypesDao.TABLENAME, false, true).setChange(tableChangeUtil.getTableChange(PointTypesDao.TABLENAME)).setTid(dictionaryTid).setParam(getUserID(), getAppVersion()).setUseCFunction());
         addEntity(new EntityDictionary(ResultTypesDao.TABLENAME, false, true).setChange(tableChangeUtil.getTableChange(ResultTypesDao.TABLENAME)).setTid(dictionaryTid).setParam(getUserID(), getAppVersion()).setUseCFunction());
@@ -106,11 +106,11 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
 
         addEntity(new EntityDictionary(TableChangeDao.TABLENAME, false, true).setParam(getUserID(), getAppVersion()).setUseCFunction().setTid(totalTid));*/
 
-        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Point.class), true, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
-        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Route.class), false, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
-        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Template.class), false, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
-        addEntity(Entity.createInstance(ReflectionUtil.getTableName(Result.class), true, true).setTid(totalTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
-        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Attachment.class), true, true).setParam(getAppVersion()).setUseCFunction().setTid(totalTid).setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Point.class), true, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Route.class), false, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Template.class), false, true).setParam(getAppVersion()).setUseCFunction().setTid(fileTid).setSchema("dbo"));
+        addEntity(Entity.createInstance(ReflectionUtil.getTableName(Result.class), true, true).setTid(fileTid).setParam(getAppVersion()).setUseCFunction().setSchema("dbo"));
+        addEntity(new EntityAttachment(ReflectionUtil.getTableName(Attachment.class), true, true).setParam(getAppVersion()).setTid(fileTid));
     }
 
     @Override
@@ -121,8 +121,8 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         onProgress(IProgressStep.START, "пакет общих данных " + totalTid, null);
 
         try {
-            byte[] dictionaryBytes = generatePackage(totalTid, (Object) null);
-            sendBytes(totalTid, dictionaryBytes);
+            byte[] dictionaryBytes = generatePackage(fileTid, (Object) null);
+            sendBytes(fileTid, dictionaryBytes);
             //AuditManager.getInstance().write(String.valueOf(dictionaryBytes.length), AuditListeners.TRAFFIC_OUTPUT, OnAuditListeners.Level.HIGH);
         } catch (Exception e) {
             onError(IProgressStep.START, "Ошибка обработки пакета для справочников. " + e.toString(), dictionaryTid);
