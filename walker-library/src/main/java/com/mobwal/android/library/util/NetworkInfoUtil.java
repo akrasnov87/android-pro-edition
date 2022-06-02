@@ -1,4 +1,4 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

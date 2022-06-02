@@ -1,4 +1,4 @@
-package com.mobwal.android.library.util;
+package com.mobwal.android.library;
 
 import android.graphics.Bitmap;
 

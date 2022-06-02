@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import android.content.Context;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.mobwal.android.library.ArchiveFileManager;
@@ -13,12 +14,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+@RunWith(AndroidJUnit4.class)
 public class ArchiveFileManagerTest {
 
     private Context mContext;

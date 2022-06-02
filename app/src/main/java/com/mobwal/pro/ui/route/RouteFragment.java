@@ -58,7 +58,7 @@ import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.ui.RecycleViewItemRemovable;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.ImportUtil;
-import com.mobwal.pro.utilits.NetworkInfoUtil;
+import com.mobwal.android.library.util.NetworkInfoUtil;
 import ru.mobnius.core.utils.NewThread;
 
 public class RouteFragment extends BaseFragment

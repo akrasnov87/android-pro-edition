@@ -51,7 +51,7 @@ import com.mobwal.pro.models.SettingRoute;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.android.library.SimpleFileManager;
-import com.mobwal.pro.utilits.ImageUtil;
+import com.mobwal.android.library.util.ImageUtil;
 
 /**
  * Модуль для отображения вложений
@@ -287,7 +287,7 @@ public class AttachmentLayout extends LinearLayout
                     InputStream iStream = getContext().getContentResolver().openInputStream(finalUri);
                     byte[] bytes = ImageUtil.compress(iStream, (int) (mSettingRoute.image_quality * 100), mSettingRoute.image_height);
                     if(bytes != null) {
-                        Bitmap bitmap = ImageUtil.rotateImage(finalUri.getPath(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                        Bitmap bitmap = ImageUtil.normalRotateImage(finalUri.getPath(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 
                         byte[] byteArray = ImageUtil.bitmapToBytes(bitmap);
 

@@ -23,7 +23,7 @@ import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentLayoutImportBinding;
 import com.mobwal.pro.ui.BaseFragment;
-import com.mobwal.pro.utilits.StreamUtil;
+import com.mobwal.android.library.util.StreamUtil;
 import com.mobwal.android.library.util.StringUtil;
 
 /**

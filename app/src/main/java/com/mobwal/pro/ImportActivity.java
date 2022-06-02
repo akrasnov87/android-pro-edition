@@ -1,7 +1,6 @@
 package com.mobwal.pro;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavInflater;
@@ -27,7 +26,7 @@ import pw.appcode.mimic.SimpleFormLayout;
 import ru.mobnius.core.ui.ExceptionInterceptActivity;
 
 import com.mobwal.pro.databinding.ActivityImportBinding;
-import com.mobwal.pro.utilits.StreamUtil;
+import com.mobwal.android.library.util.StreamUtil;
 
 public class ImportActivity extends ExceptionInterceptActivity {
 

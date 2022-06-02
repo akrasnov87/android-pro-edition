@@ -1,17 +1,17 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
+
+import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.mobwal.android.library.Constants;
 
 import java.util.Hashtable;
 import java.util.Map;
-
-import com.mobwal.pro.WalkerApplication;
 
 public class JsonUtil {
 
@@ -20,8 +20,7 @@ public class JsonUtil {
      * @param json строка в формате JSON
      * @return hashtable
      */
-    @NotNull
-    public static Hashtable<String, Object> toHashObject(@Nullable String json) {
+    public static Hashtable<String, Object> toHashObject(String json) {
         Hashtable<String, Object> variables = new Hashtable<>();
         if(json != null) {
             try {
@@ -41,7 +40,7 @@ public class JsonUtil {
                     }
                 }
             } catch (Exception e) {
-                WalkerApplication.Log("Ошибка преобразования строки JSON в Hashtable", e);
+                Log.d(Constants.TAG, "Ошибка преобразования строки JSON в Hashtable", e);
             }
         }
 
@@ -54,13 +53,13 @@ public class JsonUtil {
      * @return строка в формате JSON
      */
     @Nullable
-    public static String toString(@Nullable Hashtable<String, Object> variables) {
+    public static String toString(Hashtable<String, Object> variables) {
         String jb_data = null;
         if(variables != null) {
             try {
                 jb_data = new Gson().toJson(variables);
-            }catch (Exception e) {
-                WalkerApplication.Log("Ошибка преобразования Hashtable в JSON", e);
+            } catch (Exception e) {
+                Log.d(Constants.TAG,"Ошибка преобразования Hashtable в JSON", e);
             }
         }
 

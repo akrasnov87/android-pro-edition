@@ -1,17 +1,20 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
+
+import androidx.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class StreamUtil {
+
     /**
      * Чтение из потока
      *
      * @param inputStream входной поток
      * @return массив байтов
      */
-    public static byte[] readBytes(InputStream inputStream) throws IOException {
+    public static byte[] readBytes(@NonNull InputStream inputStream) throws IOException {
         // this dynamically extends to take the bytes you read
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 

@@ -1,31 +1,45 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.exifinterface.media.ExifInterface;
+
+import com.mobwal.android.library.Constants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.mobwal.pro.WalkerApplication;
-
+/**
+ * Работа с изображениями
+ */
 public class ImageUtil {
 
-    public static Bitmap rotateImage(String photoPath, Bitmap bitmap) {
+    /**
+     * Повернуть изображение
+     * @param photoPath путь к изображению
+     * @param bitmap изображения
+     * @return скорректированное изображение, если не было ошибок
+     */
+    public static Bitmap normalRotateImage(@NonNull String photoPath, @NonNull Bitmap bitmap) {
         ExifInterface ei;
         try {
             ei = new ExifInterface(photoPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d(Constants.TAG, "Ошибка корректировки изображения (поворот). " + e);
             return bitmap;
         }
+
         int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_UNDEFINED);
 
@@ -51,30 +65,43 @@ public class ImageUtil {
         return rotatedBitmap;
     }
 
-    public static Bitmap getImageRotated(Bitmap source, float angle) {
+    /**
+     * Повернуть изображение на определенный угол в градусах
+     * @param source изображение
+     * @param angle угол поворота
+     * @return результат поворота
+     */
+    public static Bitmap getImageRotated(@NonNull Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
     }
 
-    public static byte[] bitmapToBytes(Bitmap source) throws IOException {
+    /**
+     * Преобрзовать изображение в массив байтов
+     * @param source изображение
+     * @return массив байтов
+     */
+    public static byte[] bitmapToBytes(@NonNull Bitmap source) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         source.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         source.recycle();
         stream.close();
-        return  byteArray;
+        return byteArray;
     }
 
     /**
      * сжатие изображения
      *
-     * @param inputStream поток
-     * @param quality     качество сжатия от о до 100
-     * @return сжатие данные
+     * @param inputStream       поток
+     * @param quality           качество сжатия от 0 до 100
+     * @param MAX_IMAGE_HEIGHT  высота
+     * @return сжатое изображение
      */
-    public static byte[] compress(InputStream inputStream, int quality, int MAX_IMAGE_HEIGHT) {
+    @Nullable
+    public static byte[] compress(@NonNull InputStream inputStream, int quality, int MAX_IMAGE_HEIGHT) {
         try {
             Bitmap bmp = BitmapFactory.decodeStream(inputStream);
             if (bmp == null) {
@@ -87,33 +114,39 @@ public class ImageUtil {
             resizeBmp.compress(Bitmap.CompressFormat.JPEG, quality, bos);
             return bos.toByteArray();
         } catch (Exception e) {
-            WalkerApplication.Log("Ошибка в сжатии изображения", e);
+            Log.d(Constants.TAG, "Ошибка в сжатии изображения", e);
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    WalkerApplication.Log("Ошибка при сжатии изображения. Ошибка закрытия потока.", e);
-                }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                Log.d(Constants.TAG, "Ошибка при сжатии изображения. Ошибка закрытия потока.", e);
             }
         }
 
         return null;
     }
 
-    // Scale and maintain aspect ratio given a desired height
-    // BitmapScale.scaleToFitHeight(bitmap, 100);
-    public static Bitmap scaleToFitHeight(Bitmap b, int height) {
+    /**
+     * Пропорциональное изменение высота изображения
+     * BitmapScale.scaleToFitHeight(bitmap, 100);
+     *
+     * @param b изображение
+     * @param height высота в пикселях
+     * @return скорректированное изображение
+     */
+    public static Bitmap scaleToFitHeight(@NonNull Bitmap b, int height) {
         float factor = height / (float) b.getHeight();
         return Bitmap.createScaledBitmap(b, (int) (b.getWidth() * factor), height, true);
     }
 
     /**
-     * Размытть изображение
+     * Размыть изображение
+     *
+     * @param context контекст
      * @param image изображение
      * @return размытое изображение
      */
-    public static Bitmap blur(Context context, Bitmap image) {
+    public static Bitmap blur(@NonNull Context context, @NonNull Bitmap image) {
         float BITMAP_SCALE = 0.4f;
         int width = Math.round(image.getWidth() * BITMAP_SCALE);
         int height = Math.round(image.getHeight() * BITMAP_SCALE);
@@ -135,14 +168,16 @@ public class ImageUtil {
     }
 
     /**
-     * механизм оптимального сжатия изображения для вывода пользователю
+     * Механизм быстрого сжатия изображения для вывода пользователю. Использовать только для кэширования
+     * Bitmap bitmap = ImageUtil.getSizedBitmap(bytes, 0, bytes.length, desiredWidth);
+     *
      * @param data массив байтов
-     * @param offset
-     * @param length
-     * @param desiredWidth размер изображения
-     * @return
+     * @param offset индекс начала сжатия
+     * @param length длина массива
+     * @param desiredWidth ширина изображения в пикселях
+     * @return изображение
      */
-    public static Bitmap getSizedBitmap(byte[] data, int offset, int length, int desiredWidth) {
+    public static Bitmap getSizedBitmap(@NonNull byte[] data, int offset, int length, int desiredWidth) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(data, 0, data.length, options);

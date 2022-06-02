@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.mobwal.android.library.ArchiveFileManager;
 import com.mobwal.android.library.SimpleFileManager;
+import com.mobwal.android.library.util.StreamUtil;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.Point;
 

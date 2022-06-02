@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import com.mobwal.pro.utilits.StreamUtil;
+import com.mobwal.android.library.util.StreamUtil;
 
 public class CustomLayoutManager {
     private final String mFileName = "CUSTOM.txt";

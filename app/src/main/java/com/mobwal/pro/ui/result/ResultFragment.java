@@ -41,7 +41,7 @@ import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.ui.global.GoogleMapBottomDialogFragment;
 import com.mobwal.pro.ui.GeoLocationLayout;
 import com.mobwal.pro.ui.global.WalkerLocationListeners;
-import com.mobwal.pro.utilits.JsonUtil;
+import com.mobwal.android.library.util.JsonUtil;
 
 public class ResultFragment extends BaseFragment
         implements WalkerLocationListeners, View.OnClickListener {
