@@ -17,7 +17,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -26,9 +28,14 @@ public class FaceExceptionSingleton {
     private final String mExtension = ".exc";
     private final Context mContext;
 
+    /**
+     * Максимальное количество логов
+     */
+    public static int MAX_FILES = 3;
+
     private static FaceExceptionSingleton sFaceExceptionSingleton = null;
 
-    public static FaceExceptionSingleton getInstance(Context context) {
+    public static FaceExceptionSingleton getInstance(@NonNull Context context) {
         if(sFaceExceptionSingleton == null) {
             return sFaceExceptionSingleton = new FaceExceptionSingleton(context);
         }else{
@@ -44,7 +51,33 @@ public class FaceExceptionSingleton {
         mContext = context;
     }
 
-    public void writeBytes(String fileName, byte[] bytes) {
+    public void writeBytes(@NonNull String fileName, @NonNull byte[] bytes) {
+
+        File[] files = mContext.getCacheDir().listFiles(pathname -> {
+            if(pathname.isFile()) {
+                String extension = StringUtil.getFileExtension(pathname.getName());
+                return extension != null && extension.equals(".exc");
+            } else {
+                return false;
+            }
+        });
+
+        if(files != null && files.length > MAX_FILES) {
+            Arrays.sort(files, new Comparator<File>() {
+                public int compare(File f1, File f2) {
+                    return Long.compare(f2.lastModified(), f1.lastModified());
+                }
+            });
+
+            for(int i = MAX_FILES; i < files.length; i++) {
+                if(files[i].delete()) {
+                    Log.d(Constants.TAG, "Файл " + files[i].getName() + " удалён");
+                } else {
+                    LogUtil.writeText(mContext, "Ошибка удаления файла лога: " + files[i].getName());
+                }
+            }
+        }
+
         File file = new File(mContext.getCacheDir(), fileName);
 
         FileOutputStream outputStream;
@@ -109,6 +142,27 @@ public class FaceExceptionSingleton {
                     Log.d(Constants.TAG, "Ошибка удаления файла " + file.getName());
                 }
             }
+        }
+    }
+
+    /**
+     * Получение количества файлов с ошибками
+     * @return количество
+     */
+    public int getCount() {
+        File[] files = mContext.getCacheDir().listFiles(pathname -> {
+            if(pathname.isFile()) {
+                String extension = StringUtil.getFileExtension(pathname.getName());
+                return extension != null && extension.equals(mExtension);
+            } else {
+                return false;
+            }
+        });
+
+        if(files != null) {
+            return files.length;
+        } else {
+            return 0;
         }
     }
 

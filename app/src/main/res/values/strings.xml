@@ -159,7 +159,8 @@
     <string name="without_auth">Доступ без авторизации запрещён.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="menu_synchronization">Синхронизация</string>
-    <string name="send_mail">Отправка сообщений</string>
+    <string name="send_mail">Отправить сообщение</string>
+    <string name="send_error">Информация об ошибке</string>
     <string name="send_mail_placeholder">Ваш текст для отправки сообщения</string>
     <string name="send_mail_journal">Прикрепить системный журнал</string>
     <string name="send_mail_subject">Сообщение с MOBWAL PRO</string>

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
@@ -13,12 +12,14 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
-import androidx.navigation.NavGraph;
-import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -26,11 +27,11 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.mobwal.android.library.exception.ExceptionInterceptActivity;
+import com.mobwal.android.library.exception.FaceExceptionSingleton;
 import com.mobwal.pro.databinding.ActivityMainBinding;
 import com.mobwal.pro.utilits.ActivityUtil;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
-import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 import com.mobwal.android.library.NewThread;
 
@@ -42,7 +43,6 @@ public class MainActivity extends ExceptionInterceptActivity
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
     private SharedPreferences mSharedPreferences;
-    private String pinCode;
     private DrawerLayout mDrawerLayout;
     private NewThread mConfigThread;
 
@@ -67,8 +67,6 @@ public class MainActivity extends ExceptionInterceptActivity
             return;
         }
 
-        //pinCode = PrefUtil.getPinCode(this);
-
         mSharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, Context.MODE_PRIVATE);
 
         com.mobwal.pro.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -89,16 +87,6 @@ public class MainActivity extends ExceptionInterceptActivity
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
         if(navHostFragment != null) {
-            NavInflater inflater = navHostFragment.getNavController().getNavInflater();
-            NavGraph graph = inflater.inflate(R.navigation.mobile_navigation);
-
-            /*if(isNeedAuthorized()) {
-                WalkerApplication.Debug("Вывод экрана безопасности.");
-
-                graph.setStartDestination(R.id.nav_biometry);
-                navHostFragment.getNavController().setGraph(graph);
-            }*/
-
             navController = navHostFragment.getNavController();
 
             NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -183,18 +171,6 @@ public class MainActivity extends ExceptionInterceptActivity
                 || super.onSupportNavigateUp();
     }
 
-    /**
-     * Требуется ли авторизация
-     * @return true - требуется авторизация
-     */
-    private boolean isNeedAuthorized() {
-        if(TextUtils.isEmpty(pinCode)) {
-            return false;
-        } else {
-            return !WalkerApplication.getAuthorized(this);
-        }
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         boolean handled = false;
@@ -205,7 +181,7 @@ public class MainActivity extends ExceptionInterceptActivity
         } else if(item.getItemId() == R.id.nav_exit) {
             android.app.AlertDialog.Builder adb = new android.app.AlertDialog.Builder(this);
             adb.setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
-                WalkerApplication.ExitToApp(this);
+                WalkerApplication.exitToApp(this);
                 finish();
             });
             adb.setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> dialog.dismiss());

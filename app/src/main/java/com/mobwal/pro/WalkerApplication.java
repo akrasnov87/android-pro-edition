@@ -1,10 +1,17 @@
 package com.mobwal.pro;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -15,13 +22,14 @@ import org.jetbrains.annotations.Nullable;
 import com.mobwal.android.library.BitmapCache;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationRequest;
+import com.mobwal.android.library.exception.FaceExceptionSingleton;
 import com.mobwal.android.library.util.ImageUtil;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
-import com.mobwal.android.library.exception.IExceptionIntercept;
+import com.mobwal.android.library.exception.ExceptionInterceptListeners;
 import com.mobwal.android.library.exception.MyUncaughtExceptionHandler;
 
-public class WalkerApplication extends Application implements IExceptionIntercept {
+public class WalkerApplication extends Application implements ExceptionInterceptListeners {
 
     private boolean isAuthorized = false;
     private static boolean ReportSending = false;
@@ -170,10 +178,20 @@ public class WalkerApplication extends Application implements IExceptionIntercep
     }
 
     /**
+     * Авторизация выполнена
+     * @param activity контекст
+     */
+    public static void authorized(@NonNull Activity activity) {
+        activity.finish();
+
+        activity.startActivity(MainActivity.getIntent(activity));
+    }
+
+    /**
      * Выход из приложения
      * @param context контекст
      */
-    public static void ExitToApp(@NotNull Context context) {
+    public static void exitToApp(@NotNull Context context) {
         new PrefManager(context).clearAll();
         BasicAuthorizationSingleton.getInstance().destroy();
     }

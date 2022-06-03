@@ -1,10 +1,7 @@
 package com.mobwal.pro.ui.security;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -23,8 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mobwal.android.library.PrefManager;
-import com.mobwal.pro.MainActivity;
-import com.mobwal.pro.Names;
+import com.mobwal.android.library.util.LogUtil;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentBiometryBinding;
@@ -32,6 +28,9 @@ import com.mobwal.pro.ui.BaseFragment;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 
+/**
+ * Авторизация по ПИН-коду
+ */
 public class BiometryFragment extends BaseFragment
         implements View.OnClickListener, TextWatcher {
 
@@ -43,12 +42,12 @@ public class BiometryFragment extends BaseFragment
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        WalkerApplication.Log("Безопасность. Пин-код.");
+
+        LogUtil.writeText(requireContext(),"Безопасность. Пин-код.");
         mPrefManager = new PrefManager(requireContext());
         pinCode = mPrefManager.get("pin_code", "");
     }
@@ -73,7 +72,7 @@ public class BiometryFragment extends BaseFragment
 
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                WalkerApplication.Log("Пользователь принудительно сбрасывает ПИН-код.");
+                LogUtil.debug(requireContext(),"Пользователь принудительно сбрасывает ПИН-код.");
 
                 mPrefManager.put("pin", false);
                 mPrefManager.put("pin_code", "");
@@ -167,14 +166,15 @@ public class BiometryFragment extends BaseFragment
     }
 
     private void onAuthorized() {
+        LogUtil.debug(requireContext(),"Авторизация по ПИН-коду выполнена");
+
         mBinding.securityPass.setError(null);
 
         // авторизация не требуется
         BasicAuthorizationSingleton authorization = BasicAuthorizationSingleton.getInstance();
         authorization.setUser(authorization.getLastAuthUser());
 
-        requireActivity().finish();
-        startActivity(MainActivity.getIntent(getContext()));
+        WalkerApplication.authorized(requireActivity());
     }
 
     @Override

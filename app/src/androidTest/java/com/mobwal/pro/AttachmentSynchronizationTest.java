@@ -8,18 +8,13 @@ import java.io.IOException;
 import java.util.UUID;
 
 import com.mobwal.android.library.FileManager;
-import ru.mobnius.core.data.GlobalSettings;
-import ru.mobnius.core.data.configuration.PreferencesManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
-import ru.mobnius.core.utils.LongUtil;
 
 import com.mobwal.android.library.data.sync.EntityAttachment;
 import com.mobwal.android.library.data.sync.MultipartUtility;
 import com.mobwal.android.library.util.PackageReadUtils;
 
 import static org.junit.Assert.assertTrue;
-
-import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.pro.models.db.Attachment;
 
 public class AttachmentSynchronizationTest extends DbGenerate {

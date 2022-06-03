@@ -1,6 +1,6 @@
 package com.mobwal.pro;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavInflater;
@@ -12,15 +12,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.exception.ExceptionInterceptActivity;
+import com.mobwal.android.library.util.LogUtil;
 import com.mobwal.pro.databinding.ActivityMailBinding;
 
-public class MailActivity extends ExceptionInterceptActivity {
+public class MailActivity
+        extends ExceptionInterceptActivity {
 
-    public static Intent getIntent(Context context) {
+    public static String EXCEPTION = "EXCEPTION";
+    public static String SELF = "SELF";
+
+    /**
+     *
+     * @param context контекст
+     * @param mode MailActivity.EXCEPTION или MailActivity.SELF
+     * @return Intent
+     */
+    public static Intent getIntent(@NonNull Context context, @NonNull String mode) {
         Intent intent = new Intent(context, MailActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("mode", mode);
         return intent;
     }
 
@@ -37,7 +50,6 @@ public class MailActivity extends ExceptionInterceptActivity {
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_mail);
         if(navHostFragment != null) {
-
             NavInflater inflater = navHostFragment.getNavController().getNavInflater();
             NavGraph graph = inflater.inflate(R.navigation.mail_navigation);
 
@@ -49,7 +61,20 @@ public class MailActivity extends ExceptionInterceptActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if(BasicAuthorizationSingleton.getInstance().isAuthorized()) {
+            LogUtil.debug(this, "Переход на главый экран");
+            startActivity(MainActivity.getIntent(this));
+        } else {
+            LogUtil.debug(this, "Переход на экран авторизации");
+            startActivity(SecurityActivity.getIntent(this));
+        }
+    }
+
+    @Override
     public int getExceptionCode() {
-        return 0;
+        return Codes.MAIL_ACTIVITY;
     }
 }

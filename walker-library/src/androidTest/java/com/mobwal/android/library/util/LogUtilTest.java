@@ -24,7 +24,7 @@ public class LogUtilTest {
     @Before
     public void setUp() {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        LogUtil.clear(appContext);
+        LogUtil.clear(appContext, false);
     }
 
     @Test
@@ -33,12 +33,12 @@ public class LogUtilTest {
             LogUtil.writeText(appContext, i + ": " + StringUtil.getRandomString(1024));
         }
 
-        File file = LogUtil.getArchiveLog(appContext);
+        File file = LogUtil.getArchiveLog(appContext, true);
         Assert.assertNotNull(file);
     }
 
     @After
     public void tearDown() {
-        LogUtil.clear(appContext);
+        LogUtil.clear(appContext, false);
     }
 }

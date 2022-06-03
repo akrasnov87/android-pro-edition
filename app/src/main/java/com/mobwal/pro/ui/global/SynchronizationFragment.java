@@ -59,6 +59,8 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onClick(View v) {
+        double d = 9 / 0;
+
         BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredential();
         //socketManager = SocketManager.createInstance(GlobalSettings.getConnectUrl(), credentials, "");
         socketManager = SocketManager.createInstance("", credentials, "");

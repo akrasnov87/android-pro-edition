@@ -3,6 +3,7 @@ package com.mobwal.android.library.util;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.mobwal.android.library.ArchiveFileManager;
@@ -32,15 +33,16 @@ public class LogUtil {
     static String TAG = "LOG_UTIL";
 
     @Nullable
-    public static File getArchiveLog(Context context) {
+    public static File getArchiveLog(@NonNull Context context, boolean useSystemLog) {
         File[] files = context.getCacheDir().listFiles(pathname -> {
             if(pathname.isFile()) {
                 String extension = StringUtil.getFileExtension(pathname.getName());
-                return extension != null && extension.equals(".log");
+                return extension != null && ((useSystemLog && extension.equals(".log")) || extension.equals(".exc"));
             } else {
                 return false;
             }
         });
+
         if (files != null) {
             File file = new File(context.getCacheDir(), "journal.zip");
             ArchiveFileManager.zipFiles(context, files, file.getAbsolutePath(), null);
@@ -53,19 +55,21 @@ public class LogUtil {
      * Очистка архива с данными
      * @param context контекст
      */
-    public static void clear(Context context) {
-        File[] files = context.getCacheDir().listFiles(pathname -> {
-            if(pathname.isFile()) {
-                String extension = StringUtil.getFileExtension(pathname.getName());
-                return extension != null && extension.equals(".log");
-            } else {
-                return false;
-            }
-        });
+    public static void clear(@NonNull Context context, boolean archiveOnly) {
+        if(!archiveOnly) {
+            File[] files = context.getCacheDir().listFiles(pathname -> {
+                if (pathname.isFile()) {
+                    String extension = StringUtil.getFileExtension(pathname.getName());
+                    return extension != null && extension.equals(".log");
+                } else {
+                    return false;
+                }
+            });
 
-        if(files != null) {
-            for (File file : files) {
-                file.delete();
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
+                }
             }
         }
 
@@ -78,7 +82,7 @@ public class LogUtil {
      * @param context контекст
      * @param message текст сообщения
      */
-    public static void writeText(Context context, String message) {
+    public static void writeText(@NonNull Context context, @NonNull String message) {
         File[] files = context.getCacheDir().listFiles(pathname -> {
             if(pathname.isFile()) {
                 String extension = StringUtil.getFileExtension(pathname.getName());
@@ -133,7 +137,7 @@ public class LogUtil {
      * @param context контекст
      * @param message текст сообщения
      */
-    public static void debug(Context context, String message) {
+    public static void debug(@NonNull Context context, @NonNull String message) {
         writeText(context, message);
     }
 
@@ -143,8 +147,8 @@ public class LogUtil {
      * @param message текст сообщения
      * @param e исключение
      */
-    public static void writeText(Context context, String message, Exception e) {
-        writeText(context, message + " " + e.toString());
+    public static void writeText(@NonNull Context context, @NonNull String message, @NonNull Exception e) {
+        writeText(context, message + " " + e);
     }
 
     /**
@@ -152,7 +156,7 @@ public class LogUtil {
      * @param context контекст
      * @param message текст сообщения
      */
-    private static void createEmptyFile(Context context, String message) {
+    private static void createEmptyFile(@NonNull Context context, @NonNull String message) {
         String fileName = new Date().getTime() + ".log";
         File file = new File(context.getCacheDir(), fileName);
         write(file, message.getBytes(StandardCharsets.UTF_8));
@@ -164,7 +168,7 @@ public class LogUtil {
      * @param file файл
      * @param bytes массив байтов
      */
-    private static void write(File file, byte[] bytes) {
+    private static void write(@NonNull File file, @NonNull byte[] bytes) {
         try {
             FileOutputStream outputStream = new FileOutputStream(file, true);
             BufferedOutputStream bos = new BufferedOutputStream(outputStream);

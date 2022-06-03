@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * абстрактный класс для реализации обработчиков ошибок
  */
 public abstract class ExceptionInterceptActivity extends AppCompatActivity
-        implements IExceptionIntercept {
+        implements ExceptionInterceptListeners {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,6 +24,6 @@ public abstract class ExceptionInterceptActivity extends AppCompatActivity
 
     @Override
     public String getExceptionGroup() {
-        return "UI";
+        return "ACTIVITY";
     }
 }

@@ -3,7 +3,7 @@ package com.mobwal.android.library.exception;
 /**
  * Интерфейс перехвата ошибок
  */
-public interface IExceptionIntercept {
+public interface ExceptionInterceptListeners {
     /**
      * Обработчик перехвата ошибок
      */

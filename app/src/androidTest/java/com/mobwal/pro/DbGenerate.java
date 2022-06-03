@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.mobwal.android.library.FileManager;
-import ru.mobnius.core.data.GlobalSettings;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.authorization.credential.BasicUser;
 
