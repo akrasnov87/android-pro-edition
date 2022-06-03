@@ -14,6 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.authorization.credential.BasicUser;
 
@@ -29,6 +30,8 @@ public class BasicSingletonAuthorizationTest
     public void setUp() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mAuthorization = BasicAuthorizationSingleton.createInstance(appContext, mBaseClaims, this);
+        PrefManager prefManager = new PrefManager(appContext);
+        prefManager.put("login", DEFAULT_USER_NAME);
     }
 
     @After
@@ -71,17 +74,7 @@ public class BasicSingletonAuthorizationTest
     }
 
     @Override
-    public AuthorizationMeta convertResponseToMeta(@NonNull String response) {
+    public AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response) {
         return null;
-    }
-
-    @Override
-    public void onResponseAuthorizationResult(AuthorizationMeta meta) {
-
-    }
-
-    @Override
-    public String getLastAuthUserName() {
-        return DEFAULT_USER_NAME;
     }
 }

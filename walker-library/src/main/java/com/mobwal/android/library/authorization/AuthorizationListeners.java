@@ -4,8 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.mobwal.android.library.data.Meta;
-
 public interface AuthorizationListeners {
     /**
      * Авторизация при наличии интернет соединения
@@ -33,17 +31,5 @@ public interface AuthorizationListeners {
      * @param response ответ от сервера в формате JSON
      * @return мета информация
      */
-    AuthorizationMeta convertResponseToMeta(@NonNull String response);
-
-    /**
-     * результат обработки обратного вызова
-     * @param meta результат
-     */
-    void onResponseAuthorizationResult(AuthorizationMeta meta);
-
-    /**
-     * Получение имени последнего авторизованного пользователя
-     * @return Логин
-     */
-    String getLastAuthUserName();
+    AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response);
 }

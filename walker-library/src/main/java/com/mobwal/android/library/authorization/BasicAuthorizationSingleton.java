@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.mobwal.android.library.NewThread;
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.R;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.authorization.credential.BasicUser;
@@ -90,7 +91,7 @@ public class BasicAuthorizationSingleton {
      * @param password пароль
      * @param mode     режим авторизации: AuthorizationListeners.ONLINE или AuthorizationListeners.OFFLINE
      */
-    public void onSignIn(@NonNull Activity context, @NonNull String login, @NonNull String password, int mode) {
+    public void onSignIn(@NonNull Activity context, @NonNull String login, @NonNull String password, int mode, @NonNull AuthorizationResponseListeners listeners) {
 
         if (mAuthThread != null) {
             mAuthThread.destroy();
@@ -115,13 +116,13 @@ public class BasicAuthorizationSingleton {
                 @Override
                 public void onPostExecute() {
                     if (!mAuthorizationMeta.isSuccess()) {
-                        mAuthorizationListeners.onResponseAuthorizationResult(mAuthorizationMeta);
+                        listeners.onResponseAuthorizationResult(context, mAuthorizationMeta);
                         reset();
                     } else {
                         BasicUser basicUser = new BasicUser(mCredentials, mAuthorizationMeta.getUserId(), mAuthorizationMeta.getClaims());
                         setUser(basicUser);
 
-                        mAuthorizationListeners.onResponseAuthorizationResult(mAuthorizationMeta);
+                        listeners.onResponseAuthorizationResult(context, mAuthorizationMeta);
                     }
                 }
             };
@@ -131,18 +132,18 @@ public class BasicAuthorizationSingleton {
             if (basicUser != null) {
                 setUser(basicUser);
                 if (basicUser.getCredential().isEqualsPassword(password)) {
-                    mAuthorizationListeners.onResponseAuthorizationResult(new AuthorizationMeta(
+                    listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(
                             Meta.OK,
                             context.getString(R.string.authorization_success),
                             basicUser.getCredential().getToken(),
                             basicUser.getClaims(),
                             basicUser.getUserId()));
                 } else {
-                    mAuthorizationListeners.onResponseAuthorizationResult(new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_failed)));
+                    listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_failed)));
                     reset();
                 }
             } else {
-                mAuthorizationListeners.onResponseAuthorizationResult(new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_network)));
+                listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_network)));
                 reset();
             }
         }
@@ -188,13 +189,10 @@ public class BasicAuthorizationSingleton {
      * @return пользователь
      */
     public BasicUser getLastAuthUser() {
-        /*String[] names = mAuthorizationCache.getNames();
-        if (names.length == 1) {
-            String name = names[0];
-            return mAuthorizationCache.read(name);
-        }*/
+        PrefManager prefManager = new PrefManager(mContext);
+        String login = prefManager.get("login", "");
 
-        return mAuthorizationCache.read(mAuthorizationListeners.getLastAuthUserName());
+        return mAuthorizationCache.read(login);
     }
 
     /**

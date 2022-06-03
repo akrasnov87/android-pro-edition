@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mobwal.android.library.BitmapCache;
+import com.mobwal.android.library.PrefManager;
+import com.mobwal.android.library.authorization.AuthorizationRequest;
 import com.mobwal.android.library.util.ImageUtil;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
@@ -114,7 +116,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
             FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
         }
 
-        //BasicAuthorizationSingleton.createInstance(this);
+        BasicAuthorizationSingleton.createInstance(this, Names.CLAIMS, new AuthorizationRequest(Names.getConnectUrl()));
     }
 
     /**
@@ -166,9 +168,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * @param context контекст
      */
     public static void ExitToApp(@NotNull Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
-        sharedPreferences.edit().clear().apply();
-
+        new PrefManager(context).clearAll();
         BasicAuthorizationSingleton.getInstance().destroy();
     }
 

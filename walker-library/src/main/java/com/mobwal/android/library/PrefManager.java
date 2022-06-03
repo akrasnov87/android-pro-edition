@@ -84,4 +84,11 @@ public class PrefManager {
     public boolean get(@NonNull String name, boolean defaultValue) {
         return mSharedPreferences.getBoolean(name, defaultValue);
     }
+
+    /**
+     * Очистка настроек
+     */
+    public void clearAll() {
+        mSharedPreferences.edit().clear().apply();
+    }
 }

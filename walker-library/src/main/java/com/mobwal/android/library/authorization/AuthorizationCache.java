@@ -38,7 +38,7 @@ public class AuthorizationCache {
      *
      * @param context контекст приложения
      */
-    public AuthorizationCache(Context context){
+    public AuthorizationCache(Context context) {
         this.mContext = context;
     }
 

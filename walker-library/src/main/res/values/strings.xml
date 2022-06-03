@@ -15,4 +15,5 @@
     <string name="authorization_failed">Логин или пароль введены не верно</string>
     <string name="authorization_network">У приложения отсутствует доступ к серверу. Проверьте интернет.</string>
     <string name="authorization_error">Ошибка авторизации</string>
+    <string name="authorization_format">Результат авторизации не является JSON</string>
 </resources>

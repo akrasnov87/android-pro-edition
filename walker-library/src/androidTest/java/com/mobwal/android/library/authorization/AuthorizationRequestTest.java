@@ -1,5 +1,6 @@
 package com.mobwal.android.library.authorization;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -7,16 +8,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 @RunWith(AndroidJUnit4.class)
 public class AuthorizationRequestTest {
+    private Context appContext;
+
+    @Before
+    public void setUp() {
+        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    }
 
     @Test
     public void SuccessReadTest() {
         String successResult = "{\"token\": \"cm9vdDpyb290MA==\",\"user\": {\"id\": 1,\"claims\": \".master.admin.filer.\", \"login\":\"\"}}";
         AuthorizationRequest util = new AuthorizationRequest("");
-        AuthorizationMeta meta = util.convertResponseToMeta(successResult);
+        AuthorizationMeta meta = util.convertResponseToMeta(appContext, successResult);
         assertEquals("cm9vdDpyb290MA==", meta.getToken());
         assertEquals((long)1, meta.getUserId().longValue());
         assertEquals(".master.admin.filer.", meta.getClaims());
@@ -29,7 +39,7 @@ public class AuthorizationRequestTest {
         String failResult = "{\"code\": 401,\"meta\": {\"success\": false,\"msg\": \"Пользователь не авторизован.\"}}";
 
         AuthorizationRequest util = new AuthorizationRequest("");
-        AuthorizationMeta meta = util.convertResponseToMeta(failResult);
+        AuthorizationMeta meta = util.convertResponseToMeta(appContext, failResult);
 
         assertFalse(meta.getMessage().isEmpty());
         assertEquals(401, meta.getStatus());

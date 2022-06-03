@@ -13,4 +13,17 @@ public class Names {
     public static final int SECURITY_ACTIVITY = 0;
     public static final int MAIN_ACTIVITY = 1;
     public static final int MAIL_ACTIVITY = 2;
+
+    public static String CLAIMS = "user";
+
+    public static String BASE_URL = "http://10.10.6.100:5007";
+    public static String VIRTUAL_DIR_PATH = "/release";
+
+    /**
+     * Адрес соединения с сервером
+     * @return адрес
+     */
+    public static String getConnectUrl() {
+        return BASE_URL + VIRTUAL_DIR_PATH;
+    }
 }

@@ -1,9 +1,11 @@
 package com.mobwal.android.library.authorization;
 
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.mobwal.android.library.R;
 import com.mobwal.android.library.data.Meta;
 import com.mobwal.android.library.util.VersionUtil;
 
@@ -73,7 +75,7 @@ public class AuthorizationRequest
                 Scanner s = new Scanner(in).useDelimiter("\\A");
                 String responseText = s.hasNext() ? s.next() : "";
                 try {
-                    return convertResponseToMeta(responseText);
+                    return convertResponseToMeta(context, responseText);
                 } catch (Exception formatExc) {
                     return new AuthorizationMeta(Meta.ERROR_SERVER, "Ошибка в преобразовании ответа на авторизацию.");
                 }
@@ -93,7 +95,7 @@ public class AuthorizationRequest
      * @param response ответ от сервера в формате JSON
      * @return мета информация
      */
-    public AuthorizationMeta convertResponseToMeta(@NonNull String response) {
+    public AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response) {
         int status;
         String token = null;
         Long userId = null;
@@ -107,31 +109,16 @@ public class AuthorizationRequest
                 message = jsonObject.getJSONObject("meta").getString("msg");
             } catch (JSONException e) {
                 status = Meta.OK;
-                message = "Пользователь авторизован.";
+                message = context.getString(R.string.authorization_success);
                 token = jsonObject.getString("token");
                 userId = jsonObject.getJSONObject("user").getLong("id");
                 claims = jsonObject.getJSONObject("user").getString("claims");
             }
         } catch (Exception e) {
             status = Meta.ERROR_SERVER;
-            message = "Результат авторизации не является JSON.";
+            message = context.getString(R.string.authorization_format);
         }
         return new AuthorizationMeta(status, message, token, claims, userId);
-    }
-
-    @Override
-    public void onResponseAuthorizationResult(AuthorizationMeta meta) {
-
-    }
-
-    @Override
-    public String getLastAuthUserName() {
-        /*String[] names = mAuthorizationCache.getNames();
-        if (names.length == 1) {
-            String name = names[0];
-            return mAuthorizationCache.read(name);
-        }*/
-        return null;
     }
 
     /**
