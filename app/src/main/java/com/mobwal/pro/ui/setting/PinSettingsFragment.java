@@ -1,7 +1,5 @@
 package com.mobwal.pro.ui.setting;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -16,24 +14,23 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.Objects;
 
-import com.mobwal.pro.Names;
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
-import com.mobwal.pro.utilits.PrefUtil;
 
 public class PinSettingsFragment extends PreferenceFragmentCompat
         implements Preference.OnPreferenceChangeListener {
 
-    private SharedPreferences mSharedPreferences;
 
     private SwitchPreferenceCompat mPinPreference;
     private EditTextPreference mPinCodePreference;
 
+    private PrefManager mPrefManager;
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.pin_pref, rootKey);
-
-        mSharedPreferences = requireContext().getSharedPreferences(Names.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mPrefManager = new PrefManager(requireContext());
 
         mPinPreference = findPreference("pin");
         Objects.requireNonNull(mPinPreference).setOnPreferenceChangeListener(this);
@@ -50,10 +47,10 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
 
         updatePinCodeSummary();
 
-        boolean pin = mSharedPreferences.getBoolean("pin", false);
+        boolean pin = mPrefManager.get("pin", false);
         mPinPreference.setChecked(pin);
 
-        mPinCodePreference.setText(mSharedPreferences.getString("pin_code", ""));
+        mPinCodePreference.setText(mPrefManager.get("pin_code", ""));
     }
 
     @Override
@@ -67,17 +64,18 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
 
         if(preference.getKey().equals("pin")) {
             boolean pinPrefValue = Boolean.parseBoolean(String.valueOf(newValue));
-            mSharedPreferences.edit().putBoolean("pin", pinPrefValue).apply();
+
+            mPrefManager.put("pin", pinPrefValue);
 
             if(!pinPrefValue) {
-                mSharedPreferences.edit().putString("pin_code", "").apply();
+                mPrefManager.put("pin_code", "");
                 updatePinCodeSummary();
             }
         }
 
         if(preference.getKey().equals("pin_code")) {
             String pinCodeValue = String.valueOf(newValue);
-            mSharedPreferences.edit().putString("pin_code", pinCodeValue).apply();
+            mPrefManager.put("pin_code", pinCodeValue);
             updatePinCodeSummary();
         }
 
@@ -88,7 +86,7 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
      * обновление описания блока у кода
      */
     private void updatePinCodeSummary() {
-        String text = mSharedPreferences.getString("pin_code", "");
+        String text = mPrefManager.get("pin_code", "");
         if(TextUtils.isEmpty(text)) {
             mPinCodePreference.setSummary(R.string.pin_code_empty);
         } else {

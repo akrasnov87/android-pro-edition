@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.MainActivity;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -36,7 +37,7 @@ public class BiometryFragment extends BaseFragment
 
     private FragmentBiometryBinding mBinding;
     private String pinCode;
-    private SharedPreferences sharedPreferences;
+    private PrefManager mPrefManager;
 
     public BiometryFragment() {
         // Required empty public constructor
@@ -48,8 +49,8 @@ public class BiometryFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         WalkerApplication.Log("Безопасность. Пин-код.");
-        sharedPreferences = requireActivity().getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
-        pinCode = sharedPreferences.getString("pin_code", "");
+        mPrefManager = new PrefManager(requireContext());
+        pinCode = mPrefManager.get("pin_code", "");
     }
 
     @Override
@@ -74,8 +75,8 @@ public class BiometryFragment extends BaseFragment
             builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                 WalkerApplication.Log("Пользователь принудительно сбрасывает ПИН-код.");
 
-                sharedPreferences.edit().putBoolean("pin", false).apply();
-                sharedPreferences.edit().putString("pin_code", "").apply();
+                mPrefManager.put("pin", false);
+                mPrefManager.put("pin_code", "");
 
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_security);
                 navController.navigate(R.id.nav_login);
@@ -169,14 +170,8 @@ public class BiometryFragment extends BaseFragment
         mBinding.securityPass.setError(null);
 
         // авторизация не требуется
-        //WalkerApplication.setAuthorized(requireContext(), true);
         BasicAuthorizationSingleton authorization = BasicAuthorizationSingleton.getInstance();
         authorization.setUser(authorization.getLastAuthUser());
-
-        /*if (requireActivity().getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(requireActivity().getCurrentFocus().getWindowToken(), 0);
-        }*/
 
         requireActivity().finish();
         startActivity(MainActivity.getIntent(getContext()));

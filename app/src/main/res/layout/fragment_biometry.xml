@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:hint="@string/pin_settings"
-        android:inputType="textPassword"
+        android:inputType="numberPassword"
         android:minHeight="@dimen/size_48"
         android:textAlignment="center"
         app:layout_constraintLeft_toLeftOf="parent"
