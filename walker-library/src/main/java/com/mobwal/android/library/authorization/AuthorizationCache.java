@@ -19,7 +19,9 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -69,7 +71,10 @@ public class AuthorizationCache {
     public BasicUser read(@NonNull String login) {
         BasicUser user = null;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(mContext.openFileInput(login + PART_FILENAME)));
+            File file = new File(mContext.getCacheDir(), login + PART_FILENAME);
+            FileInputStream inputStream = new FileInputStream(file);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             String str;
             StringBuilder builder = new StringBuilder();
             while ((str = br.readLine()) != null) {
@@ -157,7 +162,10 @@ public class AuthorizationCache {
     public Object getData(@NonNull String login, @NonNull String key) {
         Object data = null;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(mContext.openFileInput(login + PART_FILENAME)));
+            File file = new File(mContext.getCacheDir(), login + PART_FILENAME);
+            FileInputStream inputStream = new FileInputStream(file);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             String str;
             StringBuilder builder = new StringBuilder();
             while ((str = br.readLine()) != null) {
@@ -185,7 +193,9 @@ public class AuthorizationCache {
         BasicCredential credential = user.getCredential();
 
         try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(mContext.openFileOutput(credential.login + PART_FILENAME, MODE_PRIVATE)));
+            File file = new File(mContext.getCacheDir(), credential.login + PART_FILENAME);
+            FileOutputStream outputStream = new FileOutputStream(file);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
             JSONObject json = new JSONObject();
             json.put("userId", user.getUserId());
             json.put("claims", user.getClaims());
@@ -194,6 +204,7 @@ public class AuthorizationCache {
 
             bw.write(json.toString());
             bw.close();
+
             result = true;
         } catch (FileNotFoundException e) {
             Log.e(Constants.TAG, "Файл для сохранения авторизации не найден. " + e);

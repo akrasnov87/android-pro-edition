@@ -74,7 +74,7 @@ public class BasicSingletonAuthorizationTest
     }
 
     @Override
-    public AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response) {
+    public AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response, int code) {
         return null;
     }
 }

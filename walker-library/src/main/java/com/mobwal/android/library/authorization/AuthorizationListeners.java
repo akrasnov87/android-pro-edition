@@ -29,7 +29,8 @@ public interface AuthorizationListeners {
      * Преобразование статуса ответа в мета-информацию
      *
      * @param response ответ от сервера в формате JSON
+     * @param code код
      * @return мета информация
      */
-    AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response);
+    AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response, int code);
 }

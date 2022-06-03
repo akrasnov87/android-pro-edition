@@ -42,7 +42,7 @@ public abstract class DbGenerate {
     }
 
     public static String getBaseUrl() {
-        return GlobalSettings.getConnectUrl();
+        return Names.getConnectUrl();
     }
 
     public static BasicCredential getCredentials() {

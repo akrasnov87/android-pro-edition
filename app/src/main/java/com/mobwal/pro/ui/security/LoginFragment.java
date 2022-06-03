@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationListeners;
 import com.mobwal.android.library.authorization.AuthorizationResponseListeners;
 import com.mobwal.android.library.util.NetworkInfoUtil;
@@ -157,13 +158,14 @@ public class LoginFragment extends BaseFragment
     @Override
     public void onResponseAuthorizationResult(Activity activity, AuthorizationMeta meta) {
         if (meta.getStatus() == Meta.OK) {
-            if (BasicAuthorizationSingleton.getInstance().isUser()) {
-                toast(meta.getMessage());
+            PrefManager prefManager = new PrefManager(requireContext());
+            prefManager.put("login", meta.getLogin());
 
-                requireActivity().finish();
-                startActivity(MainActivity.getIntent(getContext()));
-                return;
-            }
+            toast(meta.getMessage());
+
+            requireActivity().finish();
+            startActivity(MainActivity.getIntent(getContext()));
+            return;
         }
 
         toast(meta.getMessage());

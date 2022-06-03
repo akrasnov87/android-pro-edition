@@ -75,7 +75,7 @@ public class AuthorizationRequest
                 Scanner s = new Scanner(in).useDelimiter("\\A");
                 String responseText = s.hasNext() ? s.next() : "";
                 try {
-                    return convertResponseToMeta(context, responseText);
+                    return convertResponseToMeta(context, responseText, urlConnection.getResponseCode());
                 } catch (Exception formatExc) {
                     return new AuthorizationMeta(Meta.ERROR_SERVER, "Ошибка в преобразовании ответа на авторизацию.");
                 }
@@ -95,30 +95,32 @@ public class AuthorizationRequest
      * @param response ответ от сервера в формате JSON
      * @return мета информация
      */
-    public AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response) {
+    public AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response, int code) {
         int status;
         String token = null;
         Long userId = null;
         String claims = null;
         String message;
+        String login = "";
 
         try {
             JSONObject jsonObject = new JSONObject(response);
-            try {
-                status = jsonObject.getInt("code");
-                message = jsonObject.getJSONObject("meta").getString("msg");
-            } catch (JSONException e) {
-                status = Meta.OK;
+            if(code == Meta.OK) {
+                status = code;
                 message = context.getString(R.string.authorization_success);
                 token = jsonObject.getString("token");
                 userId = jsonObject.getJSONObject("user").getLong("id");
                 claims = jsonObject.getJSONObject("user").getString("claims");
+                login = jsonObject.getJSONObject("user").getString("login");
+            } else {
+                status = Meta.NOT_AUTHORIZATION;
+                message = jsonObject.getJSONObject("meta").getString("msg");
             }
         } catch (Exception e) {
             status = Meta.ERROR_SERVER;
             message = context.getString(R.string.authorization_format);
         }
-        return new AuthorizationMeta(status, message, token, claims, userId);
+        return new AuthorizationMeta(status, message, token, claims, userId, login);
     }
 
     /**

@@ -121,8 +121,11 @@ public class BasicAuthorizationSingleton {
                     } else {
                         BasicUser basicUser = new BasicUser(mCredentials, mAuthorizationMeta.getUserId(), mAuthorizationMeta.getClaims());
                         setUser(basicUser);
-
-                        listeners.onResponseAuthorizationResult(context, mAuthorizationMeta);
+                        if(isUser()) {
+                            listeners.onResponseAuthorizationResult(context, mAuthorizationMeta);
+                        } else {
+                            listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_denied)));
+                        }
                     }
                 }
             };
@@ -131,15 +134,22 @@ public class BasicAuthorizationSingleton {
             BasicUser basicUser = mAuthorizationCache.read(login);
             if (basicUser != null) {
                 setUser(basicUser);
-                if (basicUser.getCredential().isEqualsPassword(password)) {
-                    listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(
-                            Meta.OK,
-                            context.getString(R.string.authorization_success),
-                            basicUser.getCredential().getToken(),
-                            basicUser.getClaims(),
-                            basicUser.getUserId()));
+
+                if (isUser()) {
+                    if (basicUser.getCredential().isEqualsPassword(password)) {
+                        listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(
+                                Meta.OK,
+                                context.getString(R.string.authorization_success),
+                                basicUser.getCredential().getToken(),
+                                basicUser.getClaims(),
+                                basicUser.getUserId(),
+                                basicUser.getCredential().login));
+                    } else {
+                        listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_failed)));
+                        reset();
+                    }
                 } else {
-                    listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_failed)));
+                    listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_denied)));
                     reset();
                 }
             } else {

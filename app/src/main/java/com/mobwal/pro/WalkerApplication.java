@@ -73,6 +73,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * @param context контекст
      * @param authorized признак авторизации
      */
+    @Deprecated
     public static void setAuthorized(Context context, boolean authorized) {
         WalkerApplication app = (WalkerApplication)context.getApplicationContext();
         app.isAuthorized = authorized;
@@ -83,6 +84,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * @param context текущий контекст
      * @return возвращается признак авторизации
      */
+    @Deprecated
     public static boolean getAuthorized(Context context) {
         WalkerApplication app = (WalkerApplication)context.getApplicationContext();
         return app.isAuthorized;
@@ -123,6 +125,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * Логирование действий пользователя
      * @param message сообщение
      */
+    @Deprecated
     public static void Log(String message) {
         Log(message, null);
     }
@@ -132,6 +135,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * @param message сообщение
      * @param exception исключение
      */
+    @Deprecated
     public static void Log(String message, @Nullable Exception exception) {
         if(ReportSending) {
             if(exception != null) {
@@ -145,6 +149,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * Логирование действий пользователя в режиме отладки
      * @param message сообщение
      */
+    @Deprecated
     public static void Debug(@NotNull String message) {
         Debug(message, null);
     }
@@ -154,6 +159,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
      * @param message сообщение
      * @param exception исключение
      */
+    @Deprecated
     public static void Debug(@NotNull String message, @Nullable Exception exception) {
         if(Debug && ReportSending) {
             if(exception != null) {
