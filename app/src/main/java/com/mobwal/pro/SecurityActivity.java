@@ -13,9 +13,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.mobwal.android.library.exception.ExceptionInterceptActivity;
 import com.mobwal.pro.databinding.ActivitySecurityBinding;
-
-import ru.mobnius.core.ui.ExceptionInterceptActivity;
 
 public class SecurityActivity extends ExceptionInterceptActivity {
 

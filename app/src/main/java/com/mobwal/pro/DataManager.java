@@ -436,7 +436,7 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
         Collection<Attachment> collection = getAttachments(f_result);
-        SimpleFileManager mFileManager = new SimpleFileManager(mContext.getFilesDir());
+        SimpleFileManager mFileManager = new SimpleFileManager(mContext, mContext.getFilesDir());
         if(collection != null) {
             for (Attachment attachment:
                  collection) {
@@ -454,7 +454,7 @@ public class DataManager {
 
     public boolean delRoute(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        SimpleFileManager fileManager = new SimpleFileManager(mContext.getFilesDir());
+        SimpleFileManager fileManager = new SimpleFileManager(mContext, mContext.getFilesDir());
         fileManager.deleteFolder(f_route);
 
         return sqlContext.exec("delete from TEMPLATE where f_route = ?", new String[]{f_route})

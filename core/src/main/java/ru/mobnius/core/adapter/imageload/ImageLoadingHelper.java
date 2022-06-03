@@ -19,7 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.ui.image.ImageItem;
 
 public class ImageLoadingHelper {
@@ -56,7 +55,7 @@ public class ImageLoadingHelper {
                     if (bitmap == null) {
                         handler.post(() -> imageLoadedCallback.onErrorLoading(imageItem.getId()));
                     } else {
-                        final File dir = FileManager.getInstance().getTemporaryFolder();
+                        /*final File dir = FileManager.getInstance().getTemporaryFolder();
                         if (dir == null){
                             handler.post(() -> imageLoadedCallback.onErrorLoading(imageItem.getId()));
                             return;
@@ -74,7 +73,7 @@ public class ImageLoadingHelper {
                             e.printStackTrace();
                             handler.post(() -> imageLoadedCallback.onErrorLoading(imageItem.getId()));
                             return;
-                        }
+                        }*/
                         handler.post(() -> imageLoadedCallback.onPhotoLoaded(imageItem.getId()));
 
                     }

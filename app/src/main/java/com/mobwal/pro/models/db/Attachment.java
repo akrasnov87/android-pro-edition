@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.mobwal.android.library.annotation.TableMetaData;
-import com.mobwal.pro.data.OnAttachmentListeners;
+import com.mobwal.android.library.data.sync.OnAttachmentListeners;
 
 import java.io.Serializable;
 import java.util.Date;

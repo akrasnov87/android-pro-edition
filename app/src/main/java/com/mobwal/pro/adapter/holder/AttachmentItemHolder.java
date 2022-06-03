@@ -1,20 +1,27 @@
 package com.mobwal.pro.adapter.holder;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.mobwal.android.library.BitmapCache;
+import com.mobwal.android.library.util.ImageUtil;
 import com.mobwal.pro.R;
+import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.android.library.SimpleFileManager;
+
+import java.io.IOException;
 
 /**
  * Элемент галереи
@@ -33,7 +40,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         mListeners = listeners;
         mContext = itemView.getContext();
 
-        mFileManager = new SimpleFileManager(itemView.getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(mContext, itemView.getContext().getFilesDir());
 
         mImage = itemView.findViewById(R.id.attach_item_image);
         ImageButton trash = itemView.findViewById(R.id.attach_item_trash);
@@ -47,16 +54,16 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
     public void bind(@NotNull Attachment item) {
         mAttachment = item;
 
-        /*try {
-            byte[] bytes = mFileManager.readPath(item.f_route, item.c_name);
+        try {
+            byte[] bytes = mFileManager.readPath(item.fn_route, item.c_path);
             if(bytes != null) {
-                Bitmap bitmap = BitmapCache.getBitmap(item.c_name, bytes, 80);
+                Bitmap bitmap = ImageUtil.getSizedBitmap(bytes, 0, bytes.length, 80);
                 mImage.setImageBitmap(bitmap);
             } else {
                 mImage.setImageDrawable(AppCompatResources.getDrawable(mContext, R.drawable.ic_attach_empty_96));
             }
         } catch (IOException e) {
             WalkerApplication.Log("Ошибка сжатия изображения для галереи.", e);
-        }*/
+        }
     }
 }

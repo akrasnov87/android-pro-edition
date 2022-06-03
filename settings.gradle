@@ -7,6 +7,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MobileWalker"
 include ':mimic-library'
-include ':core'
+//include ':core'
 include ':app'
 include ':walker-library'

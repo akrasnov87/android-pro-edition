@@ -23,8 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import pw.appcode.mimic.SimpleFormLayout;
-import ru.mobnius.core.ui.ExceptionInterceptActivity;
 
+import com.mobwal.android.library.exception.ExceptionInterceptActivity;
 import com.mobwal.pro.databinding.ActivityImportBinding;
 import com.mobwal.android.library.util.StreamUtil;
 
@@ -119,6 +119,6 @@ public class ImportActivity extends ExceptionInterceptActivity {
 
     @Override
     public int getExceptionCode() {
-        return 2;
+        return 0;
     }
 }

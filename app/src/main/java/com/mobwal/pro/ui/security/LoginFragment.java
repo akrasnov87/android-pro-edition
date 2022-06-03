@@ -2,6 +2,7 @@ package com.mobwal.pro.ui.security;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mobwal.android.library.authorization.AuthorizationListeners;
+import com.mobwal.android.library.util.NetworkInfoUtil;
 import com.mobwal.pro.MainActivity;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -26,13 +29,12 @@ import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.authorization.AuthorizationMeta;
 
 import com.mobwal.android.library.authorization.credential.BasicUser;
-import ru.mobnius.core.ui.BaseLoginActivity;
-import ru.mobnius.core.utils.NetworkInfoUtil;
 
 /**
  * Экран авторизации по логину и паролю
  */
-public class LoginFragment extends BaseFragment {
+public class LoginFragment extends BaseFragment
+    implements AuthorizationListeners {
 
     private BasicAuthorizationSingleton mAuthorization;
     private BasicUser mBasicUser;
@@ -129,7 +131,7 @@ public class LoginFragment extends BaseFragment {
      * @param mode режим авторизации Authorization.ONLINE | Authorization.OFFLINE
      */
     void onAuthorizationSuccess(int mode) {
-        WalkerApplication.Debug("Авторизация выполнена в режиме: " + (mode == BasicAuthorizationSingleton.ONLINE ? "ONLINE" : "OFFLINE"));
+        WalkerApplication.Debug("Авторизация выполнена в режиме: " + (mode == AuthorizationListeners.ONLINE ? "ONLINE" : "OFFLINE"));
 
         requireActivity().finish();
         startActivity(MainActivity.getIntent(getContext()));
@@ -152,36 +154,16 @@ public class LoginFragment extends BaseFragment {
     }
 
     void onSignOnline(final String login, final String password) {
-        mAuthorization.onSignIn(requireActivity(), login, password, BasicAuthorizationSingleton.ONLINE, meta -> {
-            AuthorizationMeta authorizationMeta = (AuthorizationMeta) meta;
-
-            switch (authorizationMeta.getStatus()) {
-                case Meta.NOT_AUTHORIZATION:
-                    onAuthorizationFailed(meta.getMessage());
-                    break;
-                case Meta.OK:
-                    if (mAuthorization.isUser()) {
-                        toast(authorizationMeta.getMessage());
-                        onAuthorizationSuccess(BasicAuthorizationSingleton.ONLINE);
-                    } else {
-                        onAuthorizationFailed(getString(ru.mobnius.core.R.string.accessDenied));
-                    }
-                    break;
-
-                default:
-                    onAuthorizationFailed(getString(ru.mobnius.core.R.string.serverNotAvailable));
-                    break;
-            }
-        });
+        //mAuthorization.onSignIn(requireActivity(), login, password, AuthorizationListeners.ONLINE, this);
     }
 
     void onSignOffline(String login, String password) {
-        mBasicUser = mAuthorization.getOfflineAuthUser(login);
+        /*mBasicUser = mAuthorization.getOfflineAuthUser(login);
         if (mBasicUser == null) {
-            onAuthorizationFailed(getString(ru.mobnius.core.R.string.offlineDenied));
+            onAuthorizationFailed(getString(R.string.offlineDenied));
             return;
         }
-        mAuthorization.onSignIn((BaseLoginActivity) requireActivity(), login, password, BasicAuthorizationSingleton.OFFLINE, meta -> {
+        mAuthorization.onSignIn((BaseLoginActivity) requireActivity(), login, password, AuthorizationListeners.OFFLINE, meta -> {
 
             AuthorizationMeta authorizationMeta = (AuthorizationMeta) meta;
             switch (authorizationMeta.getStatus()) {
@@ -201,7 +183,7 @@ public class LoginFragment extends BaseFragment {
                     onAuthorizationFailed(getString(ru.mobnius.core.R.string.serverNotAvailable));
                     break;
             }
-        });
+        });*/
     }
 
     /**
@@ -228,5 +210,41 @@ public class LoginFragment extends BaseFragment {
             colorAnim.setDuration(2000);
             colorAnim.start();
         }
+    }
+
+    @Override
+    public AuthorizationMeta authorization(@NonNull Context context, @NonNull String login, @NonNull String password) {
+        return null;
+    }
+
+    @Override
+    public AuthorizationMeta convertResponseToMeta(@NonNull String response) {
+        return null;
+    }
+
+    @Override
+    public void onResponseAuthorizationResult(AuthorizationMeta meta) {
+        /*switch (meta.getStatus()) {
+            case Meta.NOT_AUTHORIZATION:
+                onAuthorizationFailed(meta.getMessage());
+                break;
+            case Meta.OK:
+                if (mAuthorization.isUser()) {
+                    toast(meta.getMessage());
+                    onAuthorizationSuccess(AuthorizationListeners.ONLINE);
+                } else {
+                    onAuthorizationFailed(getString(R.string.accessDenied));
+                }
+                break;
+
+            default:
+                onAuthorizationFailed(getString(R.string.serverNotAvailable));
+                break;
+        }*/
+    }
+
+    @Override
+    public String getLastAuthUserName() {
+        return null;
     }
 }

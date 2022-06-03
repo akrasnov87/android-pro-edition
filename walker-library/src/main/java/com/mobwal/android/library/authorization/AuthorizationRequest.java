@@ -126,6 +126,11 @@ public class AuthorizationRequest
 
     @Override
     public String getLastAuthUserName() {
+        /*String[] names = mAuthorizationCache.getNames();
+        if (names.length == 1) {
+            String name = names[0];
+            return mAuthorizationCache.read(name);
+        }*/
         return null;
     }
 

@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
@@ -22,7 +21,6 @@ import java.util.Objects;
 
 import ru.mobnius.core.data.FileManager;
 import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.ui.image.ImageViewActivity;
 
 public class UpdateUtil {
 

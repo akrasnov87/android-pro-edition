@@ -412,7 +412,7 @@ public class ImportUtil {
 
                     // загружаем результаты
                     if(route.b_check) {
-                        SimpleFileManager fileManager = new SimpleFileManager(context.getFilesDir());
+                        SimpleFileManager fileManager = new SimpleFileManager(context, context.getFilesDir());
                         if(!fileManager.getRootCatalog(route.id).mkdirs()) {
                             return context.getString(R.string.unknown_error) + "ZIP4";
                         }

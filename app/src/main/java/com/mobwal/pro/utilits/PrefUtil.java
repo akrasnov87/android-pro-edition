@@ -15,7 +15,7 @@ public class PrefUtil {
      * @return пин-код
      */
     public static String getPinCode(Context context) {
-        SimpleFileManager fileManager = new SimpleFileManager(context.getCacheDir());
+        SimpleFileManager fileManager = new SimpleFileManager(context, context.getCacheDir());
         if(fileManager.exists("security", "pin.txt")) {
             try {
                 return new String(fileManager.readPath("security", "pin.txt"));
@@ -34,7 +34,7 @@ public class PrefUtil {
      * @param pinCode пин-код
      */
     public static void setPinCode(Context context, String pinCode) {
-        SimpleFileManager fileManager = new SimpleFileManager(context.getCacheDir());
+        SimpleFileManager fileManager = new SimpleFileManager(context, context.getCacheDir());
         try {
             fileManager.writeBytes("security", "pin.txt", pinCode.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {

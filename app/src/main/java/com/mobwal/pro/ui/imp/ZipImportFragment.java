@@ -78,7 +78,7 @@ public class ZipImportFragment extends BaseFragment
         WalkerApplication.Log("Импорт. Архива.");
         setHasOptionsMenu(true);
 
-        mCacheFileManager = new SimpleFileManager(requireContext().getCacheDir());
+        mCacheFileManager = new SimpleFileManager(requireContext(), requireContext().getCacheDir());
 
         Intent intent = requireActivity().getIntent();
         if(intent != null) {
@@ -145,7 +145,7 @@ public class ZipImportFragment extends BaseFragment
                 String folder = "import";
                 File dir = mCacheFileManager.getRootCatalog(folder);
                 if(dir.exists()) {
-                    SimpleFileManager.deleteRecursive(dir);
+                    SimpleFileManager.deleteRecursive(requireContext(), dir);
                 }
 
                 mCacheFileManager.writeBytes(folder, fileName, bytes);

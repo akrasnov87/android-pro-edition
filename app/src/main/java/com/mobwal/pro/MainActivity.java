@@ -25,18 +25,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.mobwal.android.library.exception.ExceptionInterceptActivity;
 import com.mobwal.pro.databinding.ActivityMainBinding;
 import com.mobwal.pro.utilits.ActivityUtil;
 
-import java.util.List;
-
-import ru.mobnius.core.data.GlobalSettings;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
-import ru.mobnius.core.data.configuration.ConfigurationSetting;
-import ru.mobnius.core.data.configuration.ConfigurationSettingUtil;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
-import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.ui.ExceptionInterceptActivity;
+
 import com.mobwal.android.library.NewThread;
 
 public class MainActivity extends ExceptionInterceptActivity
@@ -116,7 +111,7 @@ public class MainActivity extends ExceptionInterceptActivity
             @Override
             public void onBackgroundExecute() {
                 if(BasicAuthorizationSingleton.getInstance().isAuthorized()) {
-                    BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredentials();
+                    /*BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredentials();
 
                     try {
                         List<ConfigurationSetting> configurationSettings = ConfigurationSettingUtil.getSettings(GlobalSettings.getConnectUrl(), credentials);
@@ -141,7 +136,7 @@ public class MainActivity extends ExceptionInterceptActivity
                         }
                     } catch (Exception ignore) {
                         Logger.error("Ошибка чтения настроек", ignore);
-                    }
+                    }*/
                 }
             }
 

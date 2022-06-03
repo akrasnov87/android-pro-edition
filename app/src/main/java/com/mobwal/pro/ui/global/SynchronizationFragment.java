@@ -12,17 +12,15 @@ import com.mobwal.pro.ManualSynchronization;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentSynchronizationBinding;
 
-import ru.mobnius.core.data.GlobalSettings;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.socket.OnSocketListeners;
 import com.mobwal.android.library.socket.SocketManager;
-import com.mobwal.pro.data.IProgress;
-import com.mobwal.pro.data.OnSynchronizationListeners;
-import com.mobwal.pro.data.utils.transfer.Transfer;
-import com.mobwal.pro.data.utils.transfer.TransferProgress;
-import ru.mobnius.core.utils.HardwareUtil;
+import com.mobwal.android.library.data.sync.ProgressListeners;
+import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
+import com.mobwal.android.library.data.sync.util.transfer.Transfer;
+import com.mobwal.android.library.data.sync.util.transfer.TransferProgress;
 
 public class SynchronizationFragment extends Fragment
     implements View.OnClickListener, OnSocketListeners {
@@ -61,8 +59,9 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onClick(View v) {
-        BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredentials();
-        socketManager = SocketManager.createInstance(GlobalSettings.getConnectUrl(), credentials, HardwareUtil.getNumber(requireContext()));
+        BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredential();
+        //socketManager = SocketManager.createInstance(GlobalSettings.getConnectUrl(), credentials, "");
+        socketManager = SocketManager.createInstance("", credentials, "");
         if(socketManager.isRegistered()) {
             onRegistry();
         } else {
@@ -93,7 +92,7 @@ public class SynchronizationFragment extends Fragment
     @Override
     public void onRegistry() {
         ManualSynchronization synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), false);
-        synchronization.start(requireActivity(), new IProgress() {
+        synchronization.start(requireActivity(), new ProgressListeners() {
             @Override
             public void onStart(OnSynchronizationListeners synchronization) {
 

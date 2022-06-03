@@ -5,15 +5,14 @@ import android.app.Activity;
 
 import java.util.UUID;
 
-import ru.mobnius.core.data.FileManager;
-import ru.mobnius.core.data.logger.Logger;
+import com.mobwal.android.library.FileManager;
 
-import com.mobwal.pro.data.Entity;
-import com.mobwal.pro.data.EntityAttachment;
-import com.mobwal.pro.data.FileTransferWebSocketSynchronization;
-import com.mobwal.pro.data.IProgress;
-import com.mobwal.pro.data.IProgressStep;
-import com.mobwal.pro.data.utils.FullServerSidePackage;
+import com.mobwal.android.library.data.sync.Entity;
+import com.mobwal.android.library.data.sync.EntityAttachment;
+import com.mobwal.pro.sync.FileTransferWebSocketSynchronization;
+import com.mobwal.android.library.data.sync.ProgressListeners;
+import com.mobwal.android.library.data.sync.IProgressStep;
+import com.mobwal.android.library.data.sync.util.FullServerSidePackage;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
@@ -114,7 +113,7 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
     }
 
     @Override
-    public void start(Activity activity, IProgress progress) {
+    public void start(Activity activity, ProgressListeners progress) {
         super.start(activity, progress);
 
         onProgress(IProgressStep.START, "пакет со справочниками " + dictionaryTid, null);
@@ -153,7 +152,7 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
             //AuditManager.getInstance().write(String.valueOf(utils.getLength()), AuditListeners.TRAFFIC_INPUT, OnAuditListeners.Level.HIGH);
             //AuditManager.getInstance().write(String.valueOf(utils.getLength()), AuditListeners.SYNC_MNL_IN, OnAuditListeners.Level.LOW);
         } catch (Exception e) {
-            Logger.error(e);
+            //Logger.error(e);
         }
     }
 

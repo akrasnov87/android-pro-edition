@@ -31,6 +31,7 @@ public class ZipReader {
 
     private File mOutputDir;
     private final File mZipFile;
+    private final Context mContext;
 
     public File getOutputDir() {
         return mOutputDir;
@@ -44,6 +45,7 @@ public class ZipReader {
      * @param listeners обработчик событий
      */
     public ZipReader(@NotNull Context context, @NotNull String zipPath, @Nullable String output, @Nullable ArchiveFileManager.ArchiveFileListeners listeners) {
+        mContext = context;
         mZipFile = new File(zipPath);
 
         if(mZipFile.exists()) {
@@ -57,7 +59,7 @@ public class ZipReader {
             if(!TextUtils.isEmpty(result)) {
                 // если была ошибка, то все откатываем
                 if(mOutputDir != null && mOutputDir.exists()) {
-                    SimpleFileManager.deleteRecursive(mOutputDir);
+                    SimpleFileManager.deleteRecursive(context, mOutputDir);
                 }
             }
         }
@@ -275,7 +277,7 @@ public class ZipReader {
         }
 
         if(mOutputDir != null && mOutputDir.exists()) {
-            SimpleFileManager.deleteRecursive(mOutputDir);
+            SimpleFileManager.deleteRecursive(mContext, mOutputDir);
         }
     }
 }

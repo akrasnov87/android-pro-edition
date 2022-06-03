@@ -114,7 +114,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
             FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
         }
 
-        BasicAuthorizationSingleton.createInstance(this);
+        //BasicAuthorizationSingleton.createInstance(this);
     }
 
     /**
@@ -174,7 +174,7 @@ public class WalkerApplication extends Application implements IExceptionIntercep
 
     @Override
     public void onExceptionIntercept() {
-        Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler(), getExceptionGroup(), getExceptionCode(), this));
+        Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(this, Thread.getDefaultUncaughtExceptionHandler(), getExceptionGroup(), getExceptionCode()));
     }
 
     @Override

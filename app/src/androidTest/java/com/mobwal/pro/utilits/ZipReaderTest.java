@@ -29,7 +29,7 @@ public class ZipReaderTest {
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mFolder = "zip-reader";
 
-        mFileManager = new SimpleFileManager(new File(mContext.getCacheDir(), mFolder));
+        mFileManager = new SimpleFileManager(mContext, new File(mContext.getCacheDir(), mFolder));
 
         mFileManager.writeBytes(mFolder, "METER.txt", ("layout 'vbox'\n" +
                 "    textview 'c_notice' 'Notice'").getBytes(StandardCharsets.UTF_8));
@@ -59,7 +59,7 @@ public class ZipReaderTest {
         mOutputFile = new File(mContext.getCacheDir(), mFolder + ".zip");
 
         ArchiveFileManager.zip(mContext, mFileManager.getRootCatalog(null), mOutputFile.getPath());
-        SimpleFileManager.deleteRecursive(mFileManager.getRootCatalog(null));
+        SimpleFileManager.deleteRecursive(mContext, mFileManager.getRootCatalog(null));
     }
 
     @Test

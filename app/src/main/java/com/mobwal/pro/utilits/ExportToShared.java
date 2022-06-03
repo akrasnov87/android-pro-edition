@@ -61,7 +61,7 @@ public class ExportToShared {
     public String generate(@NotNull Context context, @Nullable ArchiveFileManager.ArchiveFileListeners listeners) {
         DataManager dataManager = new DataManager(context);
         Route route = dataManager.getRoute(mRouteID);
-        SimpleFileManager fileManager = new SimpleFileManager(context.getCacheDir());
+        SimpleFileManager fileManager = new SimpleFileManager(context, context.getCacheDir());
 
         if (route != null) {
             String routeName = StringUtil.getNameWithOutExtension(route.c_name);
@@ -74,7 +74,7 @@ public class ExportToShared {
             OutputZip = new File(fileManager.getRootCatalog("export"), exportName + ".zip");
 
             if(rootDir.exists()) {
-                SimpleFileManager.deleteRecursive(rootDir);
+                SimpleFileManager.deleteRecursive(context, rootDir);
             }
 
             if (rootDir.mkdirs()) {
@@ -402,7 +402,7 @@ public class ExportToShared {
 
                 ArchiveFileManager.zip(context, exportFolder, OutputZip.getPath(), listeners);
 
-                SimpleFileManager.deleteRecursive(exportFolder);
+                SimpleFileManager.deleteRecursive(context, exportFolder);
 
                 if(!OutputZip.exists()) {
                     return context.getString(R.string.export_route_error_not_found_zip);

@@ -58,7 +58,7 @@ android {
 dependencies {
     implementation project(path: ':walker-library')
     implementation project(path: ':mimic-library')
-    implementation project(path: ':core')
+    //implementation project(path: ':core')
     implementation platform('com.google.firebase:firebase-bom:28.3.1')
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'

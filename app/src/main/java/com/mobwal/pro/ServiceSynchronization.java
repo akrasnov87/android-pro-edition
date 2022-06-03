@@ -3,12 +3,12 @@ package com.mobwal.pro;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 
-import com.mobwal.pro.data.Entity;
-import com.mobwal.pro.data.IProgress;
-import com.mobwal.pro.data.IProgressStep;
-import com.mobwal.pro.data.WebSocketSynchronization;
-import com.mobwal.pro.data.utils.PackageResult;
-import com.mobwal.pro.data.utils.ToServerOnly;
+import com.mobwal.android.library.data.sync.Entity;
+import com.mobwal.android.library.data.sync.ProgressListeners;
+import com.mobwal.android.library.data.sync.IProgressStep;
+import com.mobwal.pro.sync.WebSocketSynchronization;
+import com.mobwal.android.library.data.sync.util.PackageResult;
+import com.mobwal.android.library.data.sync.util.ToServerOnly;
 import com.mobwal.pro.models.db.Result;
 
 import java.util.Date;
@@ -48,7 +48,7 @@ public class ServiceSynchronization extends WebSocketSynchronization {
     }
 
     @Override
-    public void start(Activity activity, IProgress progress) {
+    public void start(Activity activity, ProgressListeners progress) {
         super.start(activity, progress);
         long currentTime = new Date().getTime();
         if (currentTime < lastStartTime) {

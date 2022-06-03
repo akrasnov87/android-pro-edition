@@ -2,21 +2,11 @@ package com.mobwal.pro.utilits;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.mobwal.pro.WalkerSQLContext;
-import com.mobwal.pro.data.Entity;
-import com.mobwal.pro.data.IProgressStep;
-import com.mobwal.pro.data.OnSynchronizationListeners;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import ru.mobnius.core.data.logger.Logger;
-import ru.mobnius.core.data.storage.FieldNames;
-/*import ru.mobnius.core.data.synchronization.Entity;
-import ru.mobnius.core.data.synchronization.IProgressStep;
-import ru.mobnius.core.data.synchronization.OnSynchronizationListeners;*/
-
+import com.mobwal.android.library.FieldNames;
+import com.mobwal.android.library.data.sync.Entity;
+import com.mobwal.android.library.data.sync.IProgressStep;
+import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
+import com.mobwal.android.library.util.LogUtil;
 
 public class SyncUtil {
 
@@ -57,7 +47,7 @@ public class SyncUtil {
             result = true;
         } catch (Exception e){
             result = false;
-            Logger.error(e);
+            LogUtil.writeText(context.getContext().getContext(), e.toString());
         } finally {
             db.endTransaction();
         }
@@ -83,8 +73,8 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+FieldNames.TID+" = ? where "+FieldNames.TID+" is null OR "+FieldNames.TID+" = ?", params);
             result = true;
         } catch (Exception e) {
-            Logger.error(e);
-            //context.onError(IProgressStep.START, e, tid);
+            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            context.onError(IProgressStep.START, e, tid);
         }
         return result;
     }
@@ -110,7 +100,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID + " = ? where " + linkName + " = ?", params);
             result = true;
         }catch (Exception e){
-            Logger.error(e);
+            LogUtil.writeText(context.getContext().getContext(), e.toString());
             context.onError(IProgressStep.START, e, tid);
         }
         return result;
@@ -137,7 +127,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID+" = ? where " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " = ?", params);
             result = true;
         }catch (Exception e){
-            Logger.error(e);
+            LogUtil.writeText(context.getContext().getContext(), e.toString());
             context.onError(IProgressStep.START, e, tid);
         }
         return result;
@@ -163,7 +153,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID+" = ?, " + FieldNames.OBJECT_OPERATION_TYPE + " = ? where " + FieldNames.TID + " = ? ", params);
             result = true;
         }catch (Exception e){
-            Logger.error(e);
+            LogUtil.writeText(context.getContext().getContext(), e.toString());
             context.onError(IProgressStep.STOP, e, tid);
         }
         return result;
@@ -190,7 +180,7 @@ public class SyncUtil {
             result = true;
         }catch (Exception e){
             result = false;
-            Logger.error(e);
+            LogUtil.writeText(context.getContext().getContext(), e.toString());
         }finally {
             db.endTransaction();
         }

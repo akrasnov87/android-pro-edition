@@ -83,7 +83,7 @@ public class AttachmentLayout extends LinearLayout
         super(context, attributeSet);
 
         mDataManager = new DataManager(getContext());
-        mFileManager = new SimpleFileManager(getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(getContext(), getContext().getFilesDir());
 
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
