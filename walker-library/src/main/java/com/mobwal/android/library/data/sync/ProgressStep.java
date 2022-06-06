@@ -3,7 +3,7 @@ package com.mobwal.android.library.data.sync;
 /**
  * шаг выполнения
  */
-public interface IProgressStep {
+public interface ProgressStep {
     int NONE = 0;
 
     /**

@@ -18,8 +18,6 @@ public class RouteItem {
     public int n_fail;
     public Date d_date;
     public boolean b_export;
-    public String c_readme;
-    public int n_anomaly;
     public boolean b_check;
 
     public String toUserString(Context context) {

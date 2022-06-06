@@ -7,12 +7,11 @@ public class EntityAttachment extends Entity {
 
     /**
      * Конструктор
-     * @param tableName имя таблицы
-     * @param to разрешена отправка данных на сервер
-     * @param from разрешена возможность получения данных с сервера
+     * @param aClass сущность
      */
-    public EntityAttachment(String tableName, boolean to, boolean from) {
-        super(tableName, to, from);
+    public EntityAttachment(Class<?> aClass) {
+        super(aClass);
+
         category = "Вложения";
     }
 }

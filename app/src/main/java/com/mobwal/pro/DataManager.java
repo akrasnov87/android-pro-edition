@@ -7,12 +7,15 @@ import android.text.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
+import com.mobwal.android.library.FileManager;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.pro.models.PointInfo;
 import com.mobwal.pro.models.db.complex.PointItem;
 import com.mobwal.pro.models.db.complex.ResultExportItem;
@@ -46,7 +49,16 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
         Collection<RouteItem> collection;
 
-        String query = "SELECT r.id as ID, r.c_name as C_NUMBER, (select count(*) from POINT as p where p.f_route = r.id) as N_TASK, (select count(*) from POINT as p where p.f_route = r.id and p.b_anomaly = 1) as N_ANOMALY, (select count (*) from (select p.id from POINT as p inner join RESULT as rr on rr.f_point = p.id where p.f_route = r.id and p.b_check = 1 group by p.id) as t) as N_DONE, (select count (*) from (select p.id from POINT as p where p.f_route = r.id and p.b_check = 0) as t) as N_FAIL, r.d_date as D_DATE, r.B_EXPORT, r.c_readme as C_README, r.b_check as B_CHECK from Route as r" + (TextUtils.isEmpty(search) ? "" : " where r.c_name like '%' || ? || '%'") + " order by r.n_date desc";
+        String query = "SELECT \n" +
+                "\tr.id as ID, \n" +
+                "\tr.c_name as C_NUMBER, \n" +
+                "\t(select count(*) from cd_points as p where p.fn_route = r.id) as N_TASK, \n" +
+                "\t(select count(*) from cd_points as p where p.fn_route = r.id and p.b_anomaly = 1) as N_ANOMALY, \n" +
+                "\t(select count(*) from (select p.id from cd_points as p inner join cd_results as rr on rr.fn_point = p.id where p.fn_route = r.id and p.b_check = 1 group by p.id) as t) as N_DONE, \n" +
+                "\t(select count (*) from (select p.id from cd_points as p where p.fn_route = r.id and p.b_check = 0) as t) as N_FAIL, " +
+                "\tr.d_date as D_DATE, \n" +
+                "\tr.b_check as B_CHECK \n" +
+                "from cd_routes as r" + (TextUtils.isEmpty(search) ? "" : " where r.c_name like '%' || ? || '%'");
 
         if(TextUtils.isEmpty(search)) {
             collection = sqlContext.select(query, null, RouteItem.class);
@@ -62,13 +74,12 @@ public class DataManager {
 
     /**
      * Получение настроек маршрута
-     * @param f_route идентификатор маршрута
      * @return список настроек
      */
     @NotNull
-    public Hashtable<String, String> getRouteSettings(String f_route) {
+    public Hashtable<String, String> getRouteSettings() {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Setting> settings = sqlContext.select("select * from setting where f_route = ?", new String[] { f_route }, Setting.class);
+        Collection<Setting> settings = sqlContext.select("select * from cd_settings", null, Setting.class);
 
         Hashtable<String, String> hashtable = new Hashtable<>();
         if (settings != null) {
@@ -98,7 +109,7 @@ public class DataManager {
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Route> routeCollection = sqlContext.select("select * from Route as r where r.id = ?", new String[] { f_route }, Route.class);
+        Collection<Route> routeCollection = sqlContext.select("select * from cd_routes as r where r.id = ?", new String[] { f_route }, Route.class);
 
         List<RouteInfo> items = new ArrayList<>();
 
@@ -109,24 +120,15 @@ public class DataManager {
                 items.add(new RouteInfo(mContext, mContext.getString(R.string.in_work), DateUtil.toDateTimeString(routes[0].d_date)));
             }
 
-            /*if(routes[0].d_export != null) {
-                items.add(new RouteInfo(mContext, mContext.getString(R.string.exported), DateUtil.toDateTimeString(routes[0].d_export)));
-            }*/
-
             results[0] = items.toArray(new RouteInfo[0]);
 
             items.clear();
-
-            /*if(routes[0].c_readme != null) {
-                items.add(new RouteInfo(mContext, mContext.getString(R.string.description), routes[0].c_readme));
-            }*/
         }
 
-        Collection<Setting> settingCollection = sqlContext.select("select * from Setting as s where s.f_route = ? order by s.c_key", new String[] { f_route }, Setting.class);
+        Collection<Setting> settingCollection = sqlContext.select("select * from cd_settings as s order by s.c_key", null, Setting.class);
         
         if(settingCollection != null && settingCollection.size() > 0) {
-            for (Setting setting:
-                 settingCollection) {
+            for (Setting setting: settingCollection) {
                 items.add(new RouteInfo(mContext, setting.toKeyName(mContext), setting.c_value));
             }
 
@@ -154,7 +156,7 @@ public class DataManager {
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Route> routeCollection = sqlContext.select("SELECT * from Route as r where r.id = ?", new String[] { f_route }, Route.class);
+        Collection<Route> routeCollection = sqlContext.select("SELECT * from cd_routes as r where r.id = ?", new String[] { f_route }, Route.class);
 
         if(routeCollection != null && routeCollection.size() > 0) {
             return routeCollection.toArray(new Route[0])[0];
@@ -176,7 +178,7 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
         Point point = new Point();
-        //point.f_route = f_route;
+        point.fn_route = f_route;
         point.c_address = name;
         point.c_description = desc;
         if(location != null) {
@@ -204,7 +206,7 @@ public class DataManager {
     @Nullable
     private Point getPointMaxOrder(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Point> pointCollection = sqlContext.select("SELECT * from Point as p where p.f_route = ? order by p.n_order desc limit 1", new String[] { f_route }, Point.class);
+        Collection<Point> pointCollection = sqlContext.select("SELECT * from cd_points as p where p.fn_route = ? order by p.n_order desc limit 1", new String[] { f_route }, Point.class);
 
         if(pointCollection != null && !pointCollection.isEmpty()) {
             return pointCollection.toArray(new Point[0])[0];
@@ -225,7 +227,15 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
         Collection<PointItem> collection;
 
-        String query = "SELECT p.ID, p.C_DESCRIPTION, p.JB_DATA, p.C_ADDRESS, (select count(*) from RESULT as rr where rr.f_point = p.id) > 0 as B_DONE, p.B_ANOMALY, p.B_CHECK from Point as p where p.f_route = ?" + (TextUtils.isEmpty(search) ? "" : " and p.c_address like '%' || ? || '%'") + " order by p.n_order";
+        String query = "SELECT \n" +
+                "\tp.ID, \n" +
+                "\tp.C_DESCRIPTION, \n" +
+                "\tp.JB_DATA, \n" +
+                "\tp.C_ADDRESS, \n" +
+                "\t(select count(*) from cd_results as rr where rr.fn_point = p.id) > 0 as B_DONE, \n" +
+                "\tp.B_ANOMALY, \n" +
+                "\tp.B_CHECK \n" +
+                "from cd_points as p where p.fn_route = ?" + (TextUtils.isEmpty(search) ? "" : " and p.c_address like '%' || ? || '%'") + " order by p.n_order";
 
         if(TextUtils.isEmpty(search)) {
             collection = sqlContext.select(query, new String[] { f_route }, PointItem.class);
@@ -246,7 +256,7 @@ public class DataManager {
      */
     public Point[] getPoints(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Point> collection = sqlContext.select("SELECT * from Point as p where p.f_route = ? order by p.n_order", new String[] { f_route }, Point.class);
+        Collection<Point> collection = sqlContext.select("SELECT * from cd_points as p where p.fn_route = ? order by p.n_order", new String[] { f_route }, Point.class);
 
         if(collection != null) {
             return collection.toArray(new Point[0]);
@@ -271,7 +281,15 @@ public class DataManager {
 
 
             WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-            Collection<ResultTemplate> collection =  sqlContext.select("select t.id as F_TEMPLATE, t.C_NAME as C_TEMPLATE, t.C_TEMPLATE as C_CONST, r.id as F_RESULT, r.d_date as D_DATE from RESULT as r left join TEMPLATE as t on r.c_template = t.c_template where t.f_route = ? and r.f_point = ? and r.id is not null", new String[] { point.fn_route, f_point }, ResultTemplate.class);
+            Collection<ResultTemplate> collection =  sqlContext.select("select \n" +
+                    "\tt.id as F_TEMPLATE, \n" +
+                    "\tt.C_NAME as C_TEMPLATE, \n" +
+                    "\tt.C_TEMPLATE as C_CONST, \n" +
+                    "\tr.id as F_RESULT, \n" +
+                    "\tr.d_date as D_DATE \n" +
+                    "from cd_results as r \n" +
+                    "left join cd_templates as t on r.fn_template = t.id \n" +
+                    "where r.fn_point = ? and r.id is not null", new String[] { f_point }, ResultTemplate.class);
 
             if(collection != null && !collection.isEmpty()) {
                 ResultTemplate[] templates = collection.toArray(new ResultTemplate[0]);
@@ -300,7 +318,7 @@ public class DataManager {
     public Result[] getResults(@NotNull String f_point) {
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Result> collection = sqlContext.select("SELECT * from Result as r where r.f_point = ? order by r.n_date", new String[] { f_point }, Result.class);
+        Collection<Result> collection = sqlContext.select("SELECT * from cd_results as r where r.fn_point = ?", new String[] { f_point }, Result.class);
 
         if(collection != null) {
             return collection.toArray(new Result[0]);
@@ -330,7 +348,14 @@ public class DataManager {
     public ResultTemplate[] getResultTemplates(@NotNull String f_route, @NotNull String f_point) {
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<ResultTemplate> collection = sqlContext.select("select t.id as F_TEMPLATE, t.C_NAME as C_TEMPLATE, t.C_TEMPLATE as C_CONST, r.id as F_RESULT, r.d_date as D_DATE from TEMPLATE as t left join RESULT as r on r.c_template = t.c_template and r.f_point = ? where t.f_route = ?", new String[] { f_point, f_route }, ResultTemplate.class);
+        Collection<ResultTemplate> collection = sqlContext.select("select \n" +
+                "\tt.id as F_TEMPLATE, \n" +
+                "\tt.C_NAME as C_TEMPLATE, \n" +
+                "\tt.C_TEMPLATE as C_CONST, \n" +
+                "\tr.id as F_RESULT, \n" +
+                "\tr.d_date as D_DATE \n" +
+                "from cd_templates as t \n" +
+                "left join cd_results as r on r.fn_template = t.id and r.fn_point = ?", new String[] { f_point }, ResultTemplate.class);
 
         if(collection != null && !collection.isEmpty()) {
             return collection.toArray(new ResultTemplate[0]);
@@ -342,7 +367,7 @@ public class DataManager {
     @Nullable
     public Template[] getTemplates(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Template> resultCollection = sqlContext.select("SELECT * from Template as t where t.f_route = ?", new String[] { f_route }, Template.class);
+        Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t", new String[] { f_route }, Template.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
             return resultCollection.toArray(new Template[0]);
@@ -364,7 +389,7 @@ public class DataManager {
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Result> resultCollection = sqlContext.select("SELECT * from Result as r where r.id = ?", new String[] { f_result }, Result.class);
+        Collection<Result> resultCollection = sqlContext.select("SELECT * from cd_results as r where r.id = ?", new String[] { f_result }, Result.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
             return resultCollection.toArray(new Result[0])[0];
@@ -385,7 +410,7 @@ public class DataManager {
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Point> pointCollection = sqlContext.select("SELECT * from Point as p where p.id = ?", new String[] { f_point }, Point.class);
+        Collection<Point> pointCollection = sqlContext.select("SELECT * from cd_points as p where p.id = ?", new String[] { f_point }, Point.class);
 
         if(pointCollection!= null && !pointCollection.isEmpty()) {
             return pointCollection.toArray(new Point[0])[0];
@@ -414,14 +439,14 @@ public class DataManager {
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        return sqlContext.select("SELECT * from ATTACHMENT as a where a.f_result = ? order by a.n_date asc", new String[] { f_result }, Attachment.class);
+        return sqlContext.select("SELECT * from attachments as a where a.fn_result = ?", new String[] { f_result }, Attachment.class);
     }
 
     @Nullable
     public Collection<Attachment> getRouteAttachments(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        return sqlContext.select("SELECT * from ATTACHMENT as a where a.f_route = ? order by a.n_date asc", new String[] { f_route }, Attachment.class);
+        return sqlContext.select("SELECT * from attachments as a where a.fn_route = ?", new String[] { f_route }, Attachment.class);
     }
 
     /**
@@ -440,12 +465,12 @@ public class DataManager {
         if(collection != null) {
             for (Attachment attachment:
                  collection) {
-                //mFileManager.deleteFile(attachment.f_route, attachment.c_name + ".jpg");
+                mFileManager.deleteFile(attachment.fn_route, attachment.c_path + ".jpg");
             }
         }
 
         for (Attachment attachment : attachments) {
-            //attachment.f_result = f_result;
+            attachment.fn_result = f_result;
         }
 
         return sqlContext.exec("delete from ATTACHMENT where f_result = ?;", new String[] { f_result }) &&
@@ -457,55 +482,55 @@ public class DataManager {
         SimpleFileManager fileManager = new SimpleFileManager(mContext, mContext.getFilesDir());
         fileManager.deleteFolder(f_route);
 
-        return sqlContext.exec("delete from TEMPLATE where f_route = ?", new String[]{f_route})
-                && sqlContext.exec("delete from SETTING where f_route = ?", new String[]{f_route})
-                && sqlContext.exec("delete from ATTACHMENT where f_route = ?;", new String[]{f_route})
+        return sqlContext.exec("delete from ATTACHMENT where f_route = ?;", new String[]{f_route})
                 && sqlContext.exec("delete from RESULT where f_route = ?;", new String[]{f_route})
                 && sqlContext.exec("delete from POINT where f_route = ?;", new String[]{f_route})
                 && sqlContext.exec("delete from ROUTE where id = ?;", new String[]{f_route});
     }
 
-    public boolean delPoint(@NotNull String f_point) {
+    public boolean delPoint(@NotNull String f_point) throws FileNotFoundException {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Attachment> collection = sqlContext.select("select * from ATTACHMENT where f_point = ?;", new String[] { f_point }, Attachment.class);
+        Collection<Attachment> collection = sqlContext.select("select * from attachments where fn_point = ?;", new String[] { f_point }, Attachment.class);
 
         if(collection != null) {
             Attachment[] array = collection.toArray(new Attachment[0]);
             if(array.length > 0) {
-                /*String f_route = array[0].f_route;
-                FileManager fileManager = new FileManager(mContext.getFilesDir());
+                String f_route = array[0].fn_route;
+                FileManager fileManager = new FileManager(
+                        BasicAuthorizationSingleton.getInstance().getUser().getCredential(),
+                        mContext);
                 for (Attachment item: array) {
-                    fileManager.deleteFile(f_route, item.c_name);
-                }*/
+                    fileManager.deleteFile(f_route, item.c_path);
+                }
             }
         }
 
-        if(sqlContext.exec("delete from ATTACHMENT where f_point = ?;", new String[] { f_point })) {
-            if(sqlContext.exec("delete from RESULT where f_point = ?;", new String[] { f_point })) {
-                return sqlContext.exec("delete from POINT where id = ?;", new String[] { f_point });
+        if(sqlContext.exec("delete from attachments where fn_point = ?;", new String[] { f_point })) {
+            if(sqlContext.exec("delete from cd_results where fn_point = ?;", new String[] { f_point })) {
+                return sqlContext.exec("delete from cd_points where id = ?;", new String[] { f_point });
             }
         }
 
         return false;
     }
 
-    public boolean delResult(@NotNull String f_result) {
+    public boolean delResult(@NotNull String f_result) throws FileNotFoundException {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Attachment> collection = sqlContext.select("select * from ATTACHMENT where f_result = ?;", new String[] { f_result }, Attachment.class);
+        Collection<Attachment> collection = sqlContext.select("select * from attachments where fn_result = ?;", new String[] { f_result }, Attachment.class);
 
         if(collection != null) {
             Attachment[] array = collection.toArray(new Attachment[0]);
             if(array.length > 0) {
-                /*String f_route = array[0].f_route;
-                FileManager fileManager = new FileManager(mContext.getFilesDir());
+                String f_route = array[0].fn_route;
+                FileManager fileManager = new FileManager(BasicAuthorizationSingleton.getInstance().getUser().getCredential(), mContext);
                 for (Attachment item: array) {
-                    fileManager.deleteFile(f_route, item.c_name);
-                }*/
+                    fileManager.deleteFile(f_route, item.c_path);
+                }
             }
         }
 
-        if(sqlContext.exec("delete from ATTACHMENT where f_result = ?;", new String[] { f_result })) {
-            return sqlContext.exec("delete from RESULT where id = ?;", new String[] { f_result });
+        if(sqlContext.exec("delete from attachments where fn_result = ?;", new String[] { f_result })) {
+            return sqlContext.exec("delete from cd_results where id = ?;", new String[] { f_result });
         }
 
         return false;
@@ -543,7 +568,7 @@ public class DataManager {
                 "                left join RESULT as rr on p.id = rr.f_point\n" +
                 "                left join TEMPLATE as t on t.C_TEMPLATE = rr.C_TEMPLATE and t.f_route = ?\n" +
                 "                where p.f_route = ?\n" +
-                "                order by p.n_order, rr.n_date", new String[] { f_route, f_route }, ResultExportItem.class);
+                "                order by p.n_order", new String[] { f_route, f_route }, ResultExportItem.class);
         if(collection != null) {
             return collection.toArray(new ResultExportItem[0]);
         }
@@ -570,7 +595,7 @@ public class DataManager {
     @Nullable
     public Template getTemplate(@NotNull String f_route, @NotNull String c_template) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Template> resultCollection = sqlContext.select("SELECT * from Template as t where t.f_route = ? and t.c_template = ?", new String[] { f_route, c_template }, Template.class);
+        Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t where t.c_template = ?", new String[] { c_template }, Template.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
             return resultCollection.toArray(new Template[0])[0];

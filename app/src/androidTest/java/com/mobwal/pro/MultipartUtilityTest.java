@@ -17,7 +17,6 @@ import com.mobwal.android.library.util.PackageReadUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.mobwal.pro.data.DbGenerate;
 import com.mobwal.android.library.data.sync.MultipartUtility;
 
 @RunWith(AndroidJUnit4.class)

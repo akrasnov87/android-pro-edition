@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import com.mobwal.android.library.data.rpc.FilterItem;
 
-public class Entity implements IEntity {
+public class Entity implements EntityListeners {
 
     public TableMetaData meta;
 
@@ -80,6 +80,8 @@ public class Entity implements IEntity {
      */
     public Object[] filters;
 
+    public String pKey;
+
     /**
      * Конструктор. По умолчанию указывается что разрешена отправка данных на сервер to = true
      * @param tableName имя таблицы
@@ -93,10 +95,12 @@ public class Entity implements IEntity {
         meta = tableMetaData;
         if(tableMetaData != null) {
             this.setSchema(tableMetaData.schema());
+
             useCFunction = tableMetaData.useMUIFunction();
             tableName = tableMetaData.name();
             to = tableMetaData.to();
             from = tableMetaData.from();
+            pKey = tableMetaData.pKey();
         }
     }
 

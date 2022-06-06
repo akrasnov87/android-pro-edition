@@ -6,6 +6,7 @@ import com.mobwal.android.library.data.packager.FileBinary;
 import com.mobwal.android.library.data.packager.MetaPackage;
 import com.mobwal.android.library.data.rpc.RPCItem;
 import com.mobwal.android.library.data.rpc.SingleItemQuery;
+import com.mobwal.android.library.data.sync.BaseSynchronization;
 import com.mobwal.android.library.util.PackageCreateUtils;
 import com.mobwal.android.library.util.PackageReadUtils;
 
@@ -24,7 +25,7 @@ public class PackageUtilUtilsTest {
         RPCItem item1 = new RPCItem("shell.getServerTime", null);
         Info info = new Info();
         info.name = "Test";
-        RPCItem item2 = new RPCItem("shell.getItems", new SingleItemQuery(100000, info));
+        RPCItem item2 = new RPCItem("shell.getItems", new SingleItemQuery(BaseSynchronization.MAX_COUNT_IN_QUERY, info));
         PackageReadUtils packageReadUtils = new PackageReadUtils(packageCreateUtils.addTo(item1).addTo(item2).addFrom(new RPCItem("users.Query", null)).generatePackage(UUID.randomUUID().toString()), false);
         Assert.assertEquals(packageReadUtils.getMetaSize().status, 0);
         MetaPackage metaPackage = packageReadUtils.getMeta();

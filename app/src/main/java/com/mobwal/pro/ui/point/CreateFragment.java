@@ -72,13 +72,9 @@ public class CreateFragment extends Fragment
         mGoogleMapBottomDialogFragment = new GoogleMapBottomDialogFragment();
         mDataManager = new DataManager(requireContext());
 
-        if(getArguments() != null) {
-            f_route = getArguments().getString("f_route");
-
-            SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings(f_route));
-            mLocationRequire = settingRoute.geo;
-            mLocationLevel = settingRoute.geo_quality;
-        }
+        SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
+        mLocationRequire = settingRoute.geo;
+        mLocationLevel = settingRoute.geo_quality;
     }
 
     @Override

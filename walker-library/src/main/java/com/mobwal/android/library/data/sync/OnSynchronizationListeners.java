@@ -2,6 +2,9 @@ package com.mobwal.android.library.data.sync;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
+
+import com.mobwal.android.library.socket.SocketManager;
 import com.mobwal.android.library.sql.SQLContext;
 
 import java.util.List;
@@ -52,7 +55,7 @@ public interface OnSynchronizationListeners {
      * @param activity экран
      * @param progress результат выполнения
      */
-    void start(Activity activity, ProgressListeners progress);
+    void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress);
 
     /**
      * Принудительная остановка выполнения

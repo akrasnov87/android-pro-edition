@@ -20,6 +20,7 @@ import io.socket.emitter.Emitter;
 /**
  * Создание websocket подключения к серверу
  * Подробнее читать тут
+ *
  * https://socket.io/blog/native-socket-io-and-android/
  * https://github.com/socketio/socket.io-client-java
  */
@@ -28,13 +29,11 @@ public class SocketManager {
      * Имя события регистрации на сервере
      */
     public final static String EVENT_REGISTRY = "registry";
+
     /**
      * Событие не авторизации
      */
     public final static String EVENT_NOT_AUTH = "not_auth";
-    public final static String EVENT_MAIL_FROM = "mailer-from";
-    public final static String EVENT_GROUP_MAIL_FROM = "mailer-group-from";
-    private static SocketManager socketManager;
 
     private Socket socket;
     private boolean isRegistry;
@@ -45,7 +44,7 @@ public class SocketManager {
      * @param credentials безопасность
      * @param imei IMEI
      */
-    private SocketManager(String url, BasicCredential credentials, String imei) {
+    public SocketManager(String url, BasicCredential credentials, String imei) {
         /*
           Поддерживаемые протоколы транспорта
          */
@@ -77,29 +76,6 @@ public class SocketManager {
     }
 
     /**
-     * создает и возвращается текущий экземпляр подключения
-     * @param url адресная строка подключения
-     * @param credentials безопасность
-     * @param imei IMEI
-     * @return Объект socket-подключения
-     */
-    public static SocketManager createInstance(String url, BasicCredential credentials, String imei) {
-        if(socketManager != null){
-            return socketManager;
-        }else{
-            return socketManager = new SocketManager(url, credentials, imei);
-        }
-    }
-
-    /**
-     * возвращается текущий экземпляр подключения
-     * @return Объект socket-подключения
-     */
-    public static SocketManager getInstance(){
-        return socketManager;
-    }
-
-    /**
      * Открытие подключения к серверу
      * @param listeners обработчик уведомлений
      */
@@ -111,7 +87,7 @@ public class SocketManager {
             }
         });
 
-        socket.on(EVENT_REGISTRY, new Emitter.Listener(){
+        socket.on(EVENT_REGISTRY, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 isRegistry = true;
@@ -119,23 +95,7 @@ public class SocketManager {
             }
         });
 
-        socket.on(EVENT_MAIL_FROM, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                listeners.onPushMessage(EVENT_MAIL_FROM, (byte[])args[0]);
-                readPushBuffer((byte[])args[0], listeners);
-            }
-        });
-
-        socket.on(EVENT_GROUP_MAIL_FROM, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                listeners.onPushMessage(EVENT_GROUP_MAIL_FROM, (byte[])args[0]);
-                readPushBuffer((byte[])args[0], listeners);
-            }
-        });
-
-        socket.on(EVENT_NOT_AUTH, new Emitter.Listener(){
+        socket.on(EVENT_NOT_AUTH, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 JSONObject jsonObject = (JSONObject) args[0];
@@ -186,37 +146,23 @@ public class SocketManager {
         return false;
     }
 
-    private void readPushBuffer(byte[] buffer, OnSocketListeners listeners) {
-        try {
-            MetaSize metaSize = PackageUtil.readSize(buffer);
-            if(metaSize.status == MetaSize.UN_DELIVERED) {
-                // не доставлено
-                listeners.onPushUnDelivered(buffer);
-                return;
-            }
-            if(metaSize.status == MetaSize.DELIVERED) {
-                // доставлено
-                listeners.onPushDelivered(buffer);
-            }
-        } catch (Exception e) {
-            Log.e(Constants.TAG, e.toString());
-        }
-    }
-
     /**
      * Закрытие подключения
      */
-    public void close(){
+    public void close() {
         if(socket != null) {
             socket.off();
             socket.close();
         }
+
         isRegistry = false;
     }
 
+    /**
+     * Удаление объекта
+     */
     public void destroy() {
         close();
         socket = null;
-        socketManager = null;
     }
 }

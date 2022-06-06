@@ -1,4 +1,4 @@
-package com.mobwal.pro.ui.route;
+package com.mobwal.pro.ui.point;
 
 import android.content.Context;
 import android.graphics.Canvas;

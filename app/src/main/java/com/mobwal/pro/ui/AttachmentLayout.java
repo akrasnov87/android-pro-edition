@@ -136,7 +136,7 @@ public class AttachmentLayout extends LinearLayout
     }
 
     public void setPointBundle(PointBundle bundle) {
-        mSettingRoute = new SettingRoute(mDataManager.getRouteSettings(bundle.f_route));
+        mSettingRoute = new SettingRoute(mDataManager.getRouteSettings());
         mPointBundle = bundle;
 
         if (mAttachmentList == null) {

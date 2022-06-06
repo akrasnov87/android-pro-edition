@@ -1,21 +1,18 @@
-package com.mobwal.pro.sync;
+package com.mobwal.android.library.data.sync;
 
 import android.app.Activity;
 
-import com.mobwal.android.library.data.sync.EndTransferResult;
-import com.mobwal.android.library.data.sync.Entity;
-import com.mobwal.android.library.data.sync.ProgressListeners;
-import com.mobwal.android.library.data.sync.IProgressStep;
-import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
+import androidx.annotation.NonNull;
+
 import com.mobwal.android.library.data.sync.util.transfer.DownloadTransfer;
 import com.mobwal.android.library.data.sync.util.transfer.Transfer;
 import com.mobwal.android.library.data.sync.util.transfer.TransferListeners;
 import com.mobwal.android.library.data.sync.util.transfer.TransferProgress;
 import com.mobwal.android.library.data.sync.util.transfer.TransferStatusListeners;
 import com.mobwal.android.library.data.sync.util.transfer.UploadTransfer;
+import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.DoubleUtil;
 import com.mobwal.android.library.util.LogUtil;
-import com.mobwal.pro.WalkerSQLContext;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +29,7 @@ import io.socket.emitter.Emitter;
 import io.socket.engineio.client.EngineIOException;
 import com.mobwal.android.library.socket.SocketManager;
 
-import com.mobwal.pro.utilits.SyncUtil;
+import com.mobwal.android.library.util.SyncUtil;
 
 /**
  * Механизм обработки синхронизации через websocket
@@ -54,56 +51,41 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
      * конструктор
      * @param name имя
      */
-    public WebSocketSynchronization(WalkerSQLContext context, String name, boolean zip) {
+    public WebSocketSynchronization(SQLContext context, String name, boolean zip) {
         super(context, name, zip);
         transfers = new HashMap<>();
         mEndTransferResults = new ArrayList<>();
     }
 
-    /**
-     * Сокет соединение с сервером
-     * @return текущее соединение
-     */
-    public SocketManager getSocketManager() {
-        return SocketManager.getInstance();
-    }
-
     @Override
-    public void start(Activity activity, ProgressListeners progress) {
-        super.start(activity, progress);
+    public void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress) {
+        super.start(socketManager, activity, progress);
 
-        onProgress(IProgressStep.START, "Проверка подключения к серверу.", null);
+        onProgress(ProgressStep.START, "Проверка подключения к серверу.", null);
 
-        if(getSocketManager() != null && getSocketManager().isRegistered()) {
+        if(socketManager.isRegistered()) {
             synchronizationListener = new WebSocketSynchronization.SynchronizationListener();
             synchronizationConnectListener = new SynchronizationConnectListener();
 
-            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_FAILED, synchronizationConnectListener);
-            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECTING, synchronizationConnectListener);
-            //getSocketManager().getSocket().on(Socket.EVENT_ERROR, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_DISCONNECT, synchronizationConnectListener);
-            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT, synchronizationConnectListener);
-            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_ATTEMPT, synchronizationConnectListener);
-            //getSocketManager().getSocket().on(Socket.EVENT_RECONNECT_ERROR, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_CONNECT, synchronizationConnectListener);
-            //getSocketManager().getSocket().on(Socket.EVENT_CONNECT_TIMEOUT, synchronizationConnectListener);
-            getSocketManager().getSocket().on(Socket.EVENT_CONNECT_ERROR, synchronizationConnectListener);
+            socketManager.getSocket().on(Socket.EVENT_DISCONNECT, synchronizationConnectListener);
+            socketManager.getSocket().on(Socket.EVENT_CONNECT, synchronizationConnectListener);
+            socketManager.getSocket().on(Socket.EVENT_CONNECT_ERROR, synchronizationConnectListener);
 
-            getSocketManager().getSocket().on("synchronization", synchronizationListener);
-            getSocketManager().getSocket().on("synchronization-status", synchronizationListener);
+            socketManager.getSocket().on("synchronization", synchronizationListener);
+            socketManager.getSocket().on("synchronization-status", synchronizationListener);
 
             // устанавливаем идентификаторы
             for(Entity entity : getEntityToList()){
-                onProgress(IProgressStep.START, "select " + entity.tableName + " change=" + DoubleUtil.toStringValue(entity.change), entity.tid);
+                onProgress(ProgressStep.START, "select " + entity.tableName + " change=" + DoubleUtil.toStringValue(entity.change), entity.tid);
 
                 if (!SyncUtil.updateTid(this, entity.tableName, entity.tid)) {
-                    onError(IProgressStep.START, "Ошибка обнуления tid для таблицы " + entity.tableName, entity.tid);
+                    onError(ProgressStep.START, "Ошибка обнуления tid для таблицы " + entity.tableName, entity.tid);
                     stop();
                     return;
                 }
             }
         }else{
-            onError(IProgressStep.START, "Подключение к серверу по websocket не доступно.", null);
+            onError(ProgressStep.START, "Подключение к серверу по websocket не доступно.", null);
             stop();
         }
     }
@@ -111,7 +93,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     @Override
     protected Object sendBytes(final String tid, byte[] bytes) {
         if(bytes != null && getSocketManager() != null) {
-            onProgress(IProgressStep.UPLOAD, "", tid);
+            onProgress(ProgressStep.UPLOAD, "", tid);
             UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), "v2", getActivity(), tid);
             transfers.put(tid, uploadTransfer);
 
@@ -145,7 +127,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 @Override
                 public void onErrorTransfer(String tid, String message, Transfer transfer) {
                     onProgressTransfer(TransferListeners.ERROR, tid, transfer, message);
-                    onError(IProgressStep.UPLOAD, message, tid);
+                    onError(ProgressStep.UPLOAD, message, tid);
                 }
             });
         }
@@ -156,7 +138,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     @Override
     protected Object sendBytes(final String tid, byte[] bytes, FileTransferFinishedCallback fileTransferFinishedCallback) {
         if(bytes != null && getSocketManager() != null) {
-            onProgress(IProgressStep.UPLOAD, "", tid);
+            onProgress(ProgressStep.UPLOAD, "", tid);
             UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), "v2", getActivity(), tid);
             transfers.put(tid, uploadTransfer);
 
@@ -191,7 +173,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 @Override
                 public void onErrorTransfer(String tid, String message, Transfer transfer) {
                     onProgressTransfer(TransferListeners.ERROR, tid, transfer, message);
-                    onError(IProgressStep.UPLOAD, message, tid);
+                    onError(ProgressStep.UPLOAD, message, tid);
                 }
             });
         }
@@ -207,16 +189,9 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
         }
 
         if(synchronizationConnectListener != null && getSocketManager() != null){
-            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_FAILED, synchronizationConnectListener);
-            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECTING, synchronizationConnectListener);
-            //getSocketManager().getSocket().off(Socket.EVENT_ERROR, synchronizationConnectListener);
             getSocketManager().getSocket().off(Socket.EVENT_DISCONNECT, synchronizationConnectListener);
-            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT, synchronizationConnectListener);
-            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_ATTEMPT, synchronizationConnectListener);
-            //getSocketManager().getSocket().off(Socket.EVENT_RECONNECT_ERROR, synchronizationConnectListener);
 
             getSocketManager().getSocket().off(Socket.EVENT_CONNECT, synchronizationConnectListener);
-            //getSocketManager().getSocket().off(Socket.EVENT_CONNECT_TIMEOUT, synchronizationConnectListener);
             getSocketManager().getSocket().off(Socket.EVENT_CONNECT_ERROR, synchronizationConnectListener);
         }
 
@@ -346,8 +321,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                     processing(args);
                 }catch (Exception e){
                     LogUtil.writeText(getContext().getContext(), e.toString());
-                    //Logger.error(e);
-                    onError(IProgressStep.UPLOAD, e, null);
+                    onError(ProgressStep.UPLOAD, e, null);
                 }
             //}
         }
@@ -359,16 +333,16 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
             if(args != null && args.length > 0){
                 Object item = args[0];
                 if(item instanceof String){
-                    onProgress(IProgressStep.NONE, (String)item, null);
+                    onProgress(ProgressStep.NONE, (String)item, null);
                 }else if(item instanceof SocketIOException){
-                    onError(IProgressStep.NONE, ((SocketIOException)item).getMessage(), null);
+                    onError(ProgressStep.NONE, ((SocketIOException)item).getMessage(), null);
                 } else if(item instanceof EngineIOException){
-                    onError(IProgressStep.NONE, ((EngineIOException)item).getMessage(), null);
+                    onError(ProgressStep.NONE, ((EngineIOException)item).getMessage(), null);
                 } else if(item instanceof Integer){
-                    onProgress(IProgressStep.NONE, String.valueOf(item), null);
+                    onProgress(ProgressStep.NONE, String.valueOf(item), null);
                 }
             }else {
-                onProgress(IProgressStep.NONE, "ERROR", null);
+                onProgress(ProgressStep.NONE, "ERROR", null);
             }
         }
     }
@@ -402,7 +376,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 }catch (Exception e){
                     LogUtil.writeText(getContext().getContext(), e.toString());
                     //Logger.error(e);
-                    onError(IProgressStep.UPLOAD, e, null);
+                    onError(ProgressStep.UPLOAD, e, null);
                 }
             //}
         }
@@ -416,7 +390,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
             final String errorMsg = "Переданный объект не является JSONObject";
 
             if(!valid) {
-                onError(IProgressStep.RESTORE, errorMsg, null);
+                onError(ProgressStep.RESTORE, errorMsg, null);
                 return;
             }
 
@@ -425,7 +399,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 // данный кусок кода нужен для вывода сообщений от сервера см. modules/synchronization/v1.js метод socketSend
                 String tid = jsonObject.getString("tid");
                 if(getSynchronization().getEntities(tid).length > 0) {
-                    onProgress(IProgressStep.UPLOAD, jsonObject.getString("result"), tid);
+                    onProgress(ProgressStep.UPLOAD, jsonObject.getString("result"), tid);
                 }
                 return;
             } catch (JSONException ignored) {
@@ -506,17 +480,17 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                             @Override
                             public void onErrorTransfer(String tid, String message, Transfer transfer) {
                                 onProgressTransfer(TransferListeners.ERROR, tid, transfer, message);
-                                onError(IProgressStep.DOWNLOAD, message, tid);
+                                onError(ProgressStep.DOWNLOAD, message, tid);
                             }
                         });
                     }
                 }else{
                     // тут текст ошибки
-                    onError(IProgressStep.RESTORE, jsonData.getString("msg"), null);
+                    onError(ProgressStep.RESTORE, jsonData.getString("msg"), null);
                     stop();
                 }
             } catch (JSONException e) {
-                onError(IProgressStep.RESTORE, e, null);
+                onError(ProgressStep.RESTORE, e, null);
                 stop();
             }
         }

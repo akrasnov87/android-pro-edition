@@ -1,20 +1,17 @@
-package com.mobwal.pro.sync;
+package com.mobwal.android.library.data.sync;
 
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.mobwal.android.library.Constants;
-import com.mobwal.android.library.data.sync.Entity;
-import com.mobwal.android.library.data.sync.ProgressListeners;
-import com.mobwal.android.library.data.sync.IProgressStep;
-import com.mobwal.android.library.data.sync.OnAttachmentListeners;
-import com.mobwal.android.library.data.sync.OnFileListeners;
 import com.mobwal.android.library.data.sync.util.FullServerSidePackage;
 import com.mobwal.android.library.data.sync.util.PackageResult;
 import com.mobwal.android.library.data.sync.util.TableQuery;
+import com.mobwal.android.library.socket.SocketManager;
+import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.StringUtil;
-import com.mobwal.pro.WalkerSQLContext;
-import com.mobwal.pro.models.db.Attachment;
 
 import java.io.IOException;
 
@@ -51,7 +48,7 @@ public abstract class FileTransferWebSocketSynchronization
      * @param name        имя
      * @param fileManager файловый менеджер
      */
-    public FileTransferWebSocketSynchronization(WalkerSQLContext context, String name, FileManager fileManager, boolean zip) {
+    public FileTransferWebSocketSynchronization(SQLContext context, String name, FileManager fileManager, boolean zip) {
         super(context, name, zip);
 
         this.fileManager = fileManager;
@@ -67,9 +64,9 @@ public abstract class FileTransferWebSocketSynchronization
     }
 
     @Override
-    public void start(Activity activity, ProgressListeners progress) {
-        super.start(activity, progress);
-        onProgress(IProgressStep.START, "пакет file=" + StringUtil.getShortGuid(fileTid), fileTid);
+    public void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress) {
+        super.start(socketManager, activity, progress);
+        onProgress(ProgressStep.START, "пакет file=" + StringUtil.getShortGuid(fileTid), fileTid);
     }
 
     @Override
@@ -78,7 +75,7 @@ public abstract class FileTransferWebSocketSynchronization
         for (Entity entity : getEntities()) {
             // обработка только элемента с указанным ключом
             if (entity.tid.equals(tid)) {
-                if (tid.equals(fileTid) && useAttachments) {
+                if (tid.equals(fileTid) && useAttachments && entity instanceof EntityAttachment) {
                     // тут только обрабатывается добавление
                     Object[] records = getRecords(entity.tableName, tid).toArray();
                     FileManager manager = getFileManager();
@@ -98,30 +95,32 @@ public abstract class FileTransferWebSocketSynchronization
                                         Log.e(Constants.TAG, "Найден файл длина которого равна null", new Exception());
                                     }
                                 } catch (IOException e) {
-                                    onError(IProgressStep.PACKAGE_CREATE, "При обработке файла " + file.getC_name() + " возникла ошибка", tid);
+                                    onError(ProgressStep.PACKAGE_CREATE, "При обработке файла " + file.getC_name() + " возникла ошибка", tid);
                                 }
                             }
 
                             if (record instanceof OnAttachmentListeners) {
-                                Attachment attachment = (Attachment) record;
-                                if (attachment.__IS_DELETE) {
+                                OnAttachmentListeners attachment = (OnAttachmentListeners) record;
+                                if (attachment.isDelete()) {
                                     continue;
                                 }
                                 try {
-                                    byte[] bytes = manager.readPath(FileManager.PHOTOS, attachment.c_path);
+                                    byte[] bytes = manager.readPath(FileManager.PHOTOS, attachment.getPath());
                                     if (bytes != null) {
-                                        utils.addFile(attachment.id, attachment.id, bytes);
+                                        utils.addFile(attachment.getId(), attachment.getId(), bytes);
                                     }
                                 } catch (IOException e) {
-                                    onError(IProgressStep.PACKAGE_CREATE, "При обработке вложения " + attachment.c_path + " возникла ошибка", tid);
+                                    onError(ProgressStep.PACKAGE_CREATE, "При обработке вложения " + attachment.getPath() + " возникла ошибка", tid);
                                 }
                             }
                         }
                     }
                 }
+
                 if (entity.to) {
                     processingPackageTo(utils, entity.tableName, tid);
                 }
+
                 if (entity.from) {
                     TableQuery tableQuery = new TableQuery(entity.tableName, entity.change, entity.select);
                     RPCItem rpcItem;
@@ -151,7 +150,7 @@ public abstract class FileTransferWebSocketSynchronization
 
                 PackageResult packageResult = serverSidePackage.to(getContext(), result, tid, entity.clearable);
                 if (!packageResult.success) {
-                    onError(IProgressStep.RESTORE, packageResult.message, tid);
+                    onError(ProgressStep.RESTORE, packageResult.message, tid);
                 }
                 if (success && !packageResult.success) {
                     success = false;
@@ -159,7 +158,7 @@ public abstract class FileTransferWebSocketSynchronization
             }
         } catch (Exception e) {
             Log.e(Constants.TAG, e.toString());
-            onError(IProgressStep.RESTORE, e, tid);
+            onError(ProgressStep.RESTORE, e, tid);
             success = false;
         }
 
@@ -176,7 +175,7 @@ public abstract class FileTransferWebSocketSynchronization
 
             for (RPCResult result : utils.getFromResult()) {
                 if (!result.meta.success) {
-                    onError(IProgressStep.PACKAGE_CREATE, result.meta.msg, tid);
+                    onError(ProgressStep.PACKAGE_CREATE, result.meta.msg, tid);
                     continue;
                 }
 
@@ -191,7 +190,7 @@ public abstract class FileTransferWebSocketSynchronization
                 }
 
                 if (!packageResult.success) {
-                    onError(IProgressStep.PACKAGE_CREATE, packageResult.message, tid);
+                    onError(ProgressStep.PACKAGE_CREATE, packageResult.message, tid);
 
                     if (packageResult.result instanceof Exception) {
                         Log.e(Constants.TAG, String.valueOf((Exception) packageResult.result));
@@ -200,7 +199,7 @@ public abstract class FileTransferWebSocketSynchronization
             }
         } catch (Exception e) {
             Log.e(Constants.TAG, String.valueOf(e));
-            onError(IProgressStep.PACKAGE_CREATE, e, tid);
+            onError(ProgressStep.PACKAGE_CREATE, e, tid);
         }
     }
 }

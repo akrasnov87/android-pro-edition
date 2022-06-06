@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mobwal.pro.R;
@@ -15,6 +16,8 @@ import com.mobwal.pro.models.db.complex.PointItem;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.ui.RecycleViewItemRemovable;
 import com.mobwal.pro.utilits.ActivityUtil;
+
+import java.text.MessageFormat;
 
 public class PointItemHolder extends RecyclerView.ViewHolder
     implements View.OnClickListener, RecycleViewItemRemovable {
@@ -48,7 +51,9 @@ public class PointItemHolder extends RecyclerView.ViewHolder
         mTitle.setText(item.c_address);
         String desc = item.toUserString(mContext);
         mDescription.setVisibility(TextUtils.isEmpty(desc) ? View.GONE : View.VISIBLE);
-        mDescription.setText(desc);
+        if(desc != null) {
+            mDescription.setText(HtmlCompat.fromHtml(desc, HtmlCompat.FROM_HTML_MODE_LEGACY));
+        }
 
         mInfo.setImageDrawable(item.b_done
                 ? AppCompatResources.getDrawable(mContext, R.drawable.ic_baseline_check_circle_24)

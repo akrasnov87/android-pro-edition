@@ -3,6 +3,7 @@ package com.mobwal.android.library.data.sync.util;
 import com.mobwal.android.library.data.rpc.QueryData;
 import com.mobwal.android.library.data.rpc.RPCItem;
 import com.mobwal.android.library.data.rpc.SingleItemQuery;
+import com.mobwal.android.library.data.sync.BaseSynchronization;
 
 public class TableQuery {
     /**
@@ -89,7 +90,7 @@ public class TableQuery {
         item.action = action;
         item.method = "Select";
         item.data = new Object[1];
-        item.data[0] = new SingleItemQuery(100000, obj);
+        item.data[0] = new SingleItemQuery(BaseSynchronization.MAX_COUNT_IN_QUERY, obj);
         item.change = change;
 
         return item;

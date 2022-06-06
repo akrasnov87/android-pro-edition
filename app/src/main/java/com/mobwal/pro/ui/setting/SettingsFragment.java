@@ -18,6 +18,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.Objects;
 
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.CustomLayoutManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -30,19 +31,18 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     private int clickToVersion = 0;
 
-    private SharedPreferences mSharedPreferences;
+    private PrefManager mPrefManager;
 
     private Preference mVersionPreference;
     private SwitchPreferenceCompat mErrorReportingPreference;
     private Preference mDebugModePreference;
     private Preference mPinPreference;
-    private Preference mLayoutPreference;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.main_pref, rootKey);
 
-        mSharedPreferences = requireContext().getSharedPreferences(Names.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mPrefManager = new PrefManager(requireContext());
 
         mVersionPreference = findPreference("app_version");
         Objects.requireNonNull(mVersionPreference).setOnPreferenceClickListener(this);
@@ -58,9 +58,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         mPinPreference = findPreference("pin");
         Objects.requireNonNull(mPinPreference).setOnPreferenceClickListener(this);
-
-        mLayoutPreference = findPreference("layout");
-        Objects.requireNonNull(mLayoutPreference).setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -80,15 +77,13 @@ public class SettingsFragment extends PreferenceFragmentCompat
     }
 
     private void setup() {
-        boolean debug = mSharedPreferences.getBoolean("debug", false);
+        boolean debug = mPrefManager.get("debug", false);
         mDebugModePreference.setVisible(debug);
 
-        boolean pinPrefValue = mSharedPreferences.getBoolean("pin", false);
+        boolean pinPrefValue = mPrefManager.get("pin", false);
         Objects.requireNonNull(mPinPreference).setSummary(pinPrefValue ? R.string.pin_settings_summary_on: R.string.pin_settings_summary_off);
 
-        mLayoutPreference.setTitle(new CustomLayoutManager(requireContext()).getDefaultLayoutName());
-
-        boolean errorReportingPrefValue = mSharedPreferences.getBoolean("error_reporting", false);
+        boolean errorReportingPrefValue = mPrefManager.get("error_reporting", false);
         mErrorReportingPreference.setChecked(errorReportingPrefValue);
     }
 
@@ -105,7 +100,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if(preference.getKey().equals("error_reporting")) {
             boolean errorReportingPrefValue = Boolean.parseBoolean(String.valueOf(newValue));
-            mSharedPreferences.edit().putBoolean("error_reporting", errorReportingPrefValue).apply();
+            mPrefManager.put("error_reporting", errorReportingPrefValue);
         }
         return true;
     }
@@ -122,7 +117,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     Toast.makeText(getActivity(), R.string.layout_remove_error, Toast.LENGTH_LONG).show();
                 }
 
-                mSharedPreferences.edit().clear().apply();
+                mPrefManager.clearAll();
                 Toast.makeText(getActivity(), R.string.reset_setting_success, Toast.LENGTH_SHORT).show();
                 setup();
             });
@@ -142,7 +137,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 clickToVersion = 0;
                 mDebugModePreference.setVisible(true);
 
-                mSharedPreferences.edit().putBoolean("debug", true).apply();
+                mPrefManager.put("debug", true);
             }
         } else {
             clickToVersion = 0;
@@ -156,10 +151,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
         if(preference.getKey().equals("pin")) {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.nav_pin_settings);
-        }
-
-        if(preference.getKey().equals("layout")) {
-            ActivityUtil.openLayout(requireActivity());
         }
 
         return false;

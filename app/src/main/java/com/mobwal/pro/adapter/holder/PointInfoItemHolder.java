@@ -5,6 +5,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mobwal.pro.R;
@@ -48,7 +49,7 @@ public class PointInfoItemHolder extends RecyclerView.ViewHolder
     public void bind(PointInfo item) {
         mPointInfo = item;
 
-        mText.setText(item.text);
+        mText.setText(HtmlCompat.fromHtml(item.text, HtmlCompat.FROM_HTML_MODE_LEGACY));
         mLabel.setText(item.label);
         mDelete.setVisibility(mPointInfo.isResult() ? View.VISIBLE : View.GONE);
     }

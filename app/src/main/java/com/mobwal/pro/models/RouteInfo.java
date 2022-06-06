@@ -13,6 +13,7 @@ public class RouteInfo {
 
     public RouteInfo(Context context, String label, String text) {
         mContext = context;
+
         this.label = label;
         this.text = translate(text);
     }
@@ -28,6 +29,7 @@ public class RouteInfo {
         switch (text.toLowerCase()) {
             case "true":
                 return mContext.getString(R.string.yes);
+
             case "false":
                 return mContext.getString(R.string.no);
 

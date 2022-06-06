@@ -1,6 +1,8 @@
 package com.mobwal.pro;
 
-import com.mobwal.pro.data.DbGenerate;
+import com.mobwal.android.library.FileManager;
+import com.mobwal.android.library.data.DbOperationType;
+import com.mobwal.android.library.util.ReflectionUtil;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -10,14 +12,12 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import ru.mobnius.core.data.DbOperationType;
-import ru.mobnius.core.data.configuration.PreferencesManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 import com.mobwal.android.library.data.sync.Entity;
 import com.mobwal.android.library.data.sync.MultipartUtility;
 import com.mobwal.pro.models.db.Result;
-import com.mobwal.pro.utilits.SyncUtil;
+import com.mobwal.android.library.util.SyncUtil;
 
 public class BaseSynchronizationTest extends DbGenerate {
     private MySynchronization synchronization;
@@ -26,9 +26,9 @@ public class BaseSynchronizationTest extends DbGenerate {
 
     @Before
     public void setUp() {
-        synchronization = new MySynchronization(getSQLContext(), DbGenerate.getCredentials());
+        synchronization = new MySynchronization(getSQLContext(), getFileManager(), DbGenerate.getCredentials());
 
-        getSQLContext().exec("DELETE FROM " + Result.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + ReflectionUtil.getTableMetaData(Result.class).name(), new Object[0]);
     }
 
     @After
@@ -50,30 +50,30 @@ public class BaseSynchronizationTest extends DbGenerate {
     @Test
     public void oneTable() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(Result.Meta.table).setTid(tid));
+        synchronization.addEntity(new Entity(Result.class).setTid(tid));
 
         generateData();
 
-        int length = synchronization.getRecords(Result.Meta.table, "").toArray().length;
+        int length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), "").toArray().length;
         Assert.assertEquals(length, 10);
 
-        SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
+        SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Result.class), tid);
 
-        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), tid).toArray().length;
         Assert.assertEquals(length, 10);
         boolean reset = SyncUtil.resetTid(synchronization);
         Assert.assertTrue(reset);
-        boolean update = SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
+        boolean update = SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Result.class), tid);
         Assert.assertTrue(update);
-        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), tid).toArray().length;
         Assert.assertEquals(length, 10);
 
-        byte[] bytes = synchronization.generatePackage(tid, Result.Meta.table);
+        byte[] bytes = synchronization.generatePackage(tid, ReflectionUtil.getTableName(Result.class));
         byte[] results = (byte[]) synchronization.sendBytes(tid, bytes);
         String[] array = new String[1];
         array[0] = tid;
         synchronization.processingPackage(array, results);
-        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), tid).toArray().length;
         Assert.assertEquals(length, 0);
 
         synchronization.destroy();
@@ -82,18 +82,18 @@ public class BaseSynchronizationTest extends DbGenerate {
     @Test
     public void duplicateRecords() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(Result.Meta.table).setTid(tid));
+        synchronization.addEntity(new Entity(ReflectionUtil.getTableName(Result.class)).setTid(tid));
         generateData();
 
-        SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
-        byte[] bytes = synchronization.generatePackage(tid, Result.Meta.table);
+        SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Result.class), tid);
+        byte[] bytes = synchronization.generatePackage(tid, ReflectionUtil.getTableName(Result.class));
         byte[] results = (byte[]) synchronization.sendBytes(tid, bytes);
         String[] array = new String[1];
         array[0] = tid;
         synchronization.processingPackage(array, results);
-        int length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
+        int length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), tid).toArray().length;
         Assert.assertEquals(length, 0);
-        getSQLContext().exec("delete from " + Result.Meta.table, new Object[0]);
+        getSQLContext().exec("delete from " + ReflectionUtil.getTableName(Result.class), new Object[0]);
 
         // тут повторно отправляем
         for (Result item : mResults) {
@@ -101,20 +101,20 @@ public class BaseSynchronizationTest extends DbGenerate {
         }
         // принудительно указывается, что нужно передать данные в другом режиме
         synchronization.oneOnlyMode = true;
-        SyncUtil.updateTid(synchronization, Result.Meta.table, tid);
-        bytes = synchronization.generatePackage(tid, Result.Meta.table);
+        SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Result.class), tid);
+        bytes = synchronization.generatePackage(tid, ReflectionUtil.getTableName(Result.class));
         results = (byte[]) synchronization.sendBytes(tid, bytes);
         array = new String[1];
         array[0] = tid;
         synchronization.processingPackage(array, results);
-        length = synchronization.getRecords(Result.Meta.table, tid).toArray().length;
+        length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), tid).toArray().length;
         Assert.assertEquals(length, 0);
     }
 
     @Test
     public void twoTable() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(Result.Meta.table).setTid(tid).setSchema("dbo"));
+        synchronization.addEntity(new Entity(ReflectionUtil.getTableName(Result.class)).setTid(tid).setSchema("dbo"));
 
         generateData();
 
@@ -123,7 +123,7 @@ public class BaseSynchronizationTest extends DbGenerate {
         Assert.assertTrue(b);
 
         // передача первого пакета
-        byte[] bytes = synchronization.generatePackage(tid, Result.Meta.table);
+        byte[] bytes = synchronization.generatePackage(tid, ReflectionUtil.getTableName(Result.class));
         byte[] results = (byte[]) synchronization.sendBytes(tid, bytes);
         String[] array = new String[1];
         array[0] = tid;
@@ -136,7 +136,7 @@ public class BaseSynchronizationTest extends DbGenerate {
         array[0] = tid;
         synchronization.processingPackage(array, results);*/
 
-        int length = synchronization.getRecords(Result.Meta.table, "").toArray().length;
+        int length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), "").toArray().length;
         Assert.assertEquals(length, 0);
         //length = synchronization.getRecords(AuditsDao.TABLENAME, "").toArray().length;
         //Assert.assertEquals(length, 2);//потому что в методе onProcessingPackage класса ServiceSynchronization добавилась строчка
@@ -146,13 +146,12 @@ public class BaseSynchronizationTest extends DbGenerate {
         synchronization.destroy();
     }
 
-    static class MySynchronization extends ServiceSynchronization {
-
+    public static class MySynchronization extends ManualSynchronization {
         private final BasicCredential mCredentials;
+        private static long DEFAULT_USER_ID = 4;
 
-        public MySynchronization(WalkerSQLContext context, BasicCredential credentials) {
-            super(context, false);
-
+        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials) {
+            super(context, fileManager, false);
             mCredentials = credentials;
         }
 
@@ -161,12 +160,17 @@ public class BaseSynchronizationTest extends DbGenerate {
             super.sendBytes(tid, bytes);
 
             try {
-                MultipartUtility multipartUtility = new MultipartUtility(DbGenerate.getBaseUrl() + "/synchronization/" + PreferencesManager.SYNC_PROTOCOL_v2, mCredentials);
+                MultipartUtility multipartUtility = new MultipartUtility(DbGenerate.getBaseUrl() + "/synchronization/v2", mCredentials);
                 multipartUtility.addFilePart("synchronization", bytes);
                 return multipartUtility.finish();
-            } catch (Exception exc) {
-                return null;
+            }catch (Exception exc){
+                return  null;
             }
+        }
+
+        @Override
+        public long getUserID() {
+            return DEFAULT_USER_ID;
         }
     }
 }

@@ -16,6 +16,7 @@ import com.mobwal.android.library.data.packager.MetaPackage;
 import com.mobwal.android.library.data.packager.MetaSize;
 import com.mobwal.android.library.data.rpc.RPCItem;
 import com.mobwal.android.library.data.rpc.SingleItemQuery;
+import com.mobwal.android.library.data.sync.BaseSynchronization;
 
 @RunWith(AndroidJUnit4.class)
 public class PackageUtilUtilsTest {
@@ -29,7 +30,7 @@ public class PackageUtilUtilsTest {
         RPCItem item1 = new RPCItem("shell.getServerTime", null);
         Info info = new Info();
         info.name = "Test";
-        SingleItemQuery query = new SingleItemQuery(100000, info);
+        SingleItemQuery query = new SingleItemQuery(BaseSynchronization.MAX_COUNT_IN_QUERY, info);
 
         RPCItem item2 = new RPCItem("shell.getItems", query);
 

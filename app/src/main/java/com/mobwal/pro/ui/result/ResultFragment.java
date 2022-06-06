@@ -123,7 +123,7 @@ public class ResultFragment extends BaseFragment
             f_result = getArguments().getString("f_result");
             c_template = getArguments().getString("c_template");
 
-            SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings(f_route));
+            SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
             mLocationRequire = settingRoute.geo;
             mLocationLevel = settingRoute.geo_quality;
             mImageRequire = settingRoute.image;

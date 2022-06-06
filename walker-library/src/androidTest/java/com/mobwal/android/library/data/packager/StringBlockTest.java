@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.mobwal.android.library.data.rpc.RPCItem;
 import com.mobwal.android.library.data.rpc.SingleItemQuery;
+import com.mobwal.android.library.data.sync.BaseSynchronization;
 
 @RunWith(AndroidJUnit4.class)
 public class StringBlockTest {
@@ -20,7 +21,7 @@ public class StringBlockTest {
         to[1] = new RPCItem("setting.getMobileSettings", null);
 
         RPCItem[] from = new RPCItem[1];
-        SingleItemQuery singleItemQuery = new SingleItemQuery(100000);
+        SingleItemQuery singleItemQuery = new SingleItemQuery(BaseSynchronization.MAX_COUNT_IN_QUERY);
 
         from[0] = new RPCItem("shell.getServerTime", singleItemQuery);
 
@@ -30,6 +31,6 @@ public class StringBlockTest {
 
         block = new StringBlock(to, from);
         str = block.toJsonString();
-        assertEquals(str, "{\"from\":[{\"action\":\"shell\",\"change\":null,\"data\":[[{\"filter\":null,\"limit\":100000,\"params\":[]}]],\"method\":\"getServerTime\",\"schema\":null,\"tid\":"+from[0].tid+",\"type\":\"rpc\"}],\"to\":[{\"action\":\"shell\",\"change\":null,\"data\":[[null]],\"method\":\"getServerTime\",\"schema\":null,\"tid\":"+to[0].tid+",\"type\":\"rpc\"},{\"action\":\"setting\",\"change\":null,\"data\":[[null]],\"method\":\"getMobileSettings\",\"schema\":null,\"tid\":"+to[1].tid+",\"type\":\"rpc\"}]}");
+        assertEquals(str, "{\"from\":[{\"action\":\"shell\",\"change\":null,\"data\":[[{\"filter\":null,\"limit\":" + BaseSynchronization.MAX_COUNT_IN_QUERY + ",\"params\":[]}]],\"method\":\"getServerTime\",\"schema\":null,\"tid\":"+from[0].tid+",\"type\":\"rpc\"}],\"to\":[{\"action\":\"shell\",\"change\":null,\"data\":[[null]],\"method\":\"getServerTime\",\"schema\":null,\"tid\":"+to[0].tid+",\"type\":\"rpc\"},{\"action\":\"setting\",\"change\":null,\"data\":[[null]],\"method\":\"getMobileSettings\",\"schema\":null,\"tid\":"+to[1].tid+",\"type\":\"rpc\"}]}");
     }
 }

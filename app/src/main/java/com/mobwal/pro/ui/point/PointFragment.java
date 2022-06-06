@@ -34,7 +34,8 @@ import com.mobwal.pro.ui.BaseFragment;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.ui.RecycleViewItemRemovable;
 import com.mobwal.pro.ui.global.ResultChoiceBottomDialogFragment;
-import com.mobwal.pro.ui.route.SwipeToDeleteCallback;
+
+import java.io.FileNotFoundException;
 
 public class PointFragment extends BaseFragment
         implements SearchView.OnQueryTextListener,
@@ -45,7 +46,6 @@ public class PointFragment extends BaseFragment
 
     private FragmentPointBinding binding;
     private String f_route = null;
-    private String f_point = null;
     private PointItemAdapter mPointItemAdapter;
     private DataManager mDataManager;
     private SearchView mSearchView;
@@ -129,12 +129,17 @@ public class PointFragment extends BaseFragment
                 builder.setCancelable(false);
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                     // ДА
-                    if(mDataManager.delPoint(pointItem.id)) {
-                        mPointItemAdapter.removeItem(position);
-                    } else {
-                        Toast.makeText(requireContext(), R.string.remove_point_error, Toast.LENGTH_SHORT).show();
+                    try {
+                        if(mDataManager.delPoint(pointItem.id)) {
+                            mPointItemAdapter.removeItem(position);
+                        } else {
+                            Toast.makeText(requireContext(), R.string.remove_point_error, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
                 });
+
                 builder.setNegativeButton(R.string.no, (dialog, which) -> {
                     // НЕТ
                     mPointItemAdapter.removeItem(position);
@@ -218,8 +223,6 @@ public class PointFragment extends BaseFragment
 
     @Override
     public void onViewItemClick(String id) {
-        f_point = id;
-
         ResultTemplate[] resultTemplates = mDataManager.getResultTemplates(f_route, id);
 
         if(resultTemplates != null) {

@@ -1,7 +1,9 @@
-package com.mobwal.pro.sync;
+package com.mobwal.android.library.data.sync;
 
 import android.app.Activity;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -15,18 +17,14 @@ import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.data.packager.MetaSize;
 import com.mobwal.android.library.data.rpc.RPCItem;
 
-import com.mobwal.android.library.data.sync.Entity;
-import com.mobwal.android.library.data.sync.FinishStatus;
-import com.mobwal.android.library.data.sync.ProgressListeners;
-import com.mobwal.android.library.data.sync.IProgressStep;
-import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
 import com.mobwal.android.library.data.sync.util.ServerSidePackageListeners;
+import com.mobwal.android.library.socket.SocketManager;
+import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.PackageCreateUtils;
 import com.mobwal.android.library.util.PackageReadUtils;
 
+import com.mobwal.android.library.util.SyncUtil;
 import com.mobwal.android.library.util.VersionUtil;
-import com.mobwal.pro.WalkerSQLContext;
-import com.mobwal.pro.utilits.SyncUtil;
 
 /**
  * Базовый абстрактный класс синхронизации
@@ -46,7 +44,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     /**
      * имя синхронизации
      */
-    private String name;
+    private final String name;
 
     /**
      * статус при завершения синхронизации
@@ -56,7 +54,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     /**
      * Список сущностей участвующих в синхронизации
      */
-    private ArrayList<Entity> entities;
+    private final ArrayList<Entity> entities;
 
     /**
      * Обработчик реузльтат синхронизации
@@ -83,10 +81,13 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      */
     protected boolean isRunning = false;
 
-    private boolean zip;
-    private WalkerSQLContext mContext;
+    private final boolean zip;
 
-    public WalkerSQLContext getContext() {
+    private final SQLContext mContext;
+
+    private SocketManager mSocketManager;
+
+    public SQLContext getContext() {
         return mContext;
     }
 
@@ -101,7 +102,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param name    имя
      * @param zip     сжатие данных при синхронизации
      */
-    protected BaseSynchronization(WalkerSQLContext context, String name, boolean zip) {
+    protected BaseSynchronization(SQLContext context, String name, boolean zip) {
         mContext = context;
         this.zip = zip;
         entities = new ArrayList<>();
@@ -169,7 +170,9 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param activity экран
      * @param progress результат выполнения
      */
-    public void start(Activity activity, ProgressListeners progress) {
+    public void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress) {
+        mSocketManager = socketManager;
+
         Log.e("SYNC", "BaseSynchronization start");
         if (isRunning) {
             this.stop();
@@ -182,7 +185,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         this.progressListener = progress;
         //resetTid(this);
 
-        onProgress(IProgressStep.START, "", null);
+        onProgress(ProgressStep.START, "", null);
         Log.e("SYNC", "BaseSynchronization onProgress");
         progressListener.onStart(this);
         Log.e("SYNC", "BaseSynchronization progressListener.onStart");
@@ -291,7 +294,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param bytes массив байтов
      */
     public void processingPackage(String[] tid, byte[] bytes) {
-        onProgress(IProgressStep.PACKAGE_CREATE, "", null);
+        onProgress(ProgressStep.PACKAGE_CREATE, "", null);
         PackageReadUtils utils = new PackageReadUtils(bytes, isZip());
         try {
             String currentTid = utils.getMeta().id;
@@ -300,11 +303,11 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
                 if (utils.getMetaSize().status == MetaSize.CREATED) {
                     onProcessingPackage(utils, currentTid);
                 } else {
-                    onError(IProgressStep.PACKAGE_CREATE, "Статус пакета " + utils.getMetaSize().status + " не равен " + MetaSize.CREATED, currentTid);
+                    onError(ProgressStep.PACKAGE_CREATE, "Статус пакета " + utils.getMetaSize().status + " не равен " + MetaSize.CREATED, currentTid);
                 }
             }
         } catch (Exception e) {
-            onError(IProgressStep.PACKAGE_CREATE, e, null);
+            onError(ProgressStep.PACKAGE_CREATE, e, null);
         }
 
         utils.destroy();
@@ -321,16 +324,6 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         Object[] createRecords = getRecords(tableName, tid, DbOperationType.CREATED).toArray();
         Object[] updateRecords = getRecords(tableName, tid, DbOperationType.UPDATED).toArray();
         Object[] removeRecords = getRecords(tableName, tid, DbOperationType.REMOVED).toArray();
-        /*AbstractDao abstractDao = null;
-        for (AbstractDao ad : session.getAllDaos()) {
-            if (ad.getTablename().equals(tableName)) {
-                abstractDao = ad;
-                break;
-            }
-        }
-        if (abstractDao == null) {
-            return;
-        }*/
 
         String linkName = "id";
 
@@ -560,7 +553,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         if (FinishStatus.FAIL != finishStatus) {
             successStop();
         }
-        onProgress(IProgressStep.STOP, "Синхронизация завершена.", null);
+        onProgress(ProgressStep.STOP, "Синхронизация завершена.", null);
 
         SyncUtil.resetTid(this);
         entities.clear();
@@ -608,7 +601,11 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         changeFinishStatus(FinishStatus.NONE);
     }
 
-    protected interface FileTransferFinishedCallback{
+    public SocketManager getSocketManager() {
+        return mSocketManager;
+    }
+
+    protected interface FileTransferFinishedCallback {
         void onFileTransferFinish();
     }
 }

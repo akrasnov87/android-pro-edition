@@ -8,12 +8,6 @@
             app:summaryOn="@string/debug_mode_summary_on"
             app:summaryOff="@string/debug_mode_summary_off"/>
 
-        <Preference
-            app:key="demo"
-            app:title="@string/demo_route"
-            app:summary="@string/demo_route_create"
-            app:icon="@drawable/ic_baseline_playlist_play_24"/>
-
     </PreferenceCategory>
 
 </PreferenceScreen>

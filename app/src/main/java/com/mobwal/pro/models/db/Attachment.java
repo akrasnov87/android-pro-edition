@@ -75,4 +75,19 @@ public class Attachment implements Serializable, OnAttachmentListeners {
      * идентификатор блока
      */
     public String __BLOCK_TID;
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean isDelete() {
+        return __IS_DELETE;
+    }
+
+    @Override
+    public String getPath() {
+        return c_path;
+    }
 }

@@ -4,12 +4,6 @@
     <PreferenceCategory app:title="@string/sync_header">
 
         <Preference
-            app:key="layout"
-            app:title="@string/layout"
-            app:summary="@string/layout_summary"
-            app:icon="@drawable/ic_baseline_layers_24"/>
-
-        <Preference
             app:key="pin"
             app:title="@string/pin_settings"
             app:summary="@string/pin_settings_summary_off"

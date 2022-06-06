@@ -139,15 +139,6 @@ public class ActivityUtil {
     }
 
     /**
-     * Открыть экран шаблона формы
-     * @param activity активность
-     */
-    public static void openLayout(@NotNull Activity activity) {
-        NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_main);
-        navController.navigate(R.id.nav_layout);
-    }
-
-    /**
      * Открыть экран маршрутов
      * @param activity активность
      */

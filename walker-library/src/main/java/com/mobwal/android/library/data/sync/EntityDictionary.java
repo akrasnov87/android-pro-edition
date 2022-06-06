@@ -3,7 +3,7 @@ package com.mobwal.android.library.data.sync;
 /**
  * Справочник сущности
  */
-public class EntityDictionary extends Entity{
+public class EntityDictionary extends Entity {
 
     /**
      * Конструктор

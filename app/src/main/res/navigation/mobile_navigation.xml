@@ -62,9 +62,4 @@
         android:name="com.mobwal.pro.ui.setting.PinSettingsFragment"
         android:label="@string/pin_settings" />
 
-    <fragment
-        android:id="@+id/nav_layout"
-        android:name="com.mobwal.pro.ui.setting.LayoutFragment"
-        android:label="@string/layout" />
-
 </navigation>

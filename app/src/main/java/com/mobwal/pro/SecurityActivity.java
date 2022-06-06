@@ -64,7 +64,7 @@ public class SecurityActivity
         }
 
         if(FaceExceptionSingleton.getInstance(this).getCount() > 0) {
-            startActivity(MailActivity.getIntent(this, MailActivity.EXCEPTION));
+            //startActivity(MailActivity.getIntent(this, MailActivity.EXCEPTION));
         }
     }
 

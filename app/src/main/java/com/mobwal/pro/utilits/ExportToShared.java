@@ -106,7 +106,7 @@ public class ExportToShared {
                     }
 
                     // формирование settings.csv
-                    Hashtable<String, String> settings = dataManager.getRouteSettings(mRouteID);
+                    Hashtable<String, String> settings = dataManager.getRouteSettings();
                     if (!settings.isEmpty()) {
                         StringBuilder settingsCSV = new StringBuilder();
                         for (Map.Entry<String, String> item: settings.entrySet()) {

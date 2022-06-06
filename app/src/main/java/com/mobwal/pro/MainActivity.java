@@ -26,6 +26,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.exception.ExceptionInterceptActivity;
 import com.mobwal.android.library.exception.FaceExceptionSingleton;
 import com.mobwal.pro.databinding.ActivityMainBinding;
@@ -38,13 +39,10 @@ import com.mobwal.android.library.NewThread;
 public class MainActivity extends ExceptionInterceptActivity
      implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int REQUEST_CODE_OPEN = 777;
-
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
-    private SharedPreferences mSharedPreferences;
+    private PrefManager mPrefManager;
     private DrawerLayout mDrawerLayout;
-    private NewThread mConfigThread;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -67,7 +65,7 @@ public class MainActivity extends ExceptionInterceptActivity
             return;
         }
 
-        mSharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mPrefManager = new PrefManager(this);
 
         com.mobwal.pro.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -94,57 +92,15 @@ public class MainActivity extends ExceptionInterceptActivity
 
             navigationView.setNavigationItemSelectedListener(this);
         }
-
-        mConfigThread = new NewThread(this) {
-            @Override
-            public void onBackgroundExecute() {
-                if(BasicAuthorizationSingleton.getInstance().isAuthorized()) {
-                    /*BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredentials();
-
-                    try {
-                        List<ConfigurationSetting> configurationSettings = ConfigurationSettingUtil.getSettings(GlobalSettings.getConnectUrl(), credentials);
-                        if (configurationSettings != null) {
-                            SharedPreferences sharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                            for(ConfigurationSetting configurationSetting : configurationSettings) {
-                                try {
-                                    if (configurationSetting.type.equals(ConfigurationSetting.INTEGER)) {
-                                        editor.putInt(configurationSetting.key, Integer.parseInt(configurationSetting.value));
-                                    } else if (configurationSetting.type.equals(ConfigurationSetting.BOOLEAN)) {
-                                        editor.putBoolean(configurationSetting.key, Boolean.parseBoolean(configurationSetting.value));
-                                    } else {
-                                        editor.putString(configurationSetting.key, configurationSetting.value);
-                                    }
-                                }catch (Exception e) {
-                                    Logger.error("Ошибка применения настроек", e);
-                                }
-                            }
-                            editor.apply();
-                        }
-                    } catch (Exception ignore) {
-                        Logger.error("Ошибка чтения настроек", ignore);
-                    }*/
-                }
-            }
-
-            @Override
-            public void onPostExecute() {
-
-            }
-        };
-
-        mConfigThread.run();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        boolean isWelcome = mSharedPreferences.getBoolean("welcome", false);
-        boolean isDemo = mSharedPreferences.getBoolean("demo", false);
+        boolean isWelcome = mPrefManager.get("welcome", false);
 
-        if(!isWelcome && isDemo) {
+        if(!isWelcome) {
             WalkerApplication.Log("Приветствие!");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -153,14 +109,14 @@ public class MainActivity extends ExceptionInterceptActivity
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                 // ДА
-                mSharedPreferences.edit().putBoolean("error_reporting", true).apply();
+                mPrefManager.put("error_reporting", true);
             });
             builder.setNegativeButton(R.string.no, null);
 
             AlertDialog alert = builder.create();
             alert.show();
 
-            mSharedPreferences.edit().putBoolean("welcome", true).apply();
+            mPrefManager.put("welcome", true);
         }
     }
 
@@ -198,32 +154,12 @@ public class MainActivity extends ExceptionInterceptActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_OPEN && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                startActivity(ImportActivity.getIntent(this, data.getData()));
-            }
-        }
-    }
-
-    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (mConfigThread != null) {
-            mConfigThread.destroy();
-            mConfigThread = null;
-        }
     }
 
     @Override

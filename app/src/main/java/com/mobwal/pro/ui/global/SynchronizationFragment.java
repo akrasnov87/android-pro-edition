@@ -2,6 +2,7 @@ package com.mobwal.pro.ui.global;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mobwal.pro.ManualSynchronization;
+import com.mobwal.pro.Names;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentSynchronizationBinding;
 
@@ -39,7 +41,7 @@ public class SynchronizationFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSynchronizationBinding.inflate(inflater, container, false);
@@ -59,11 +61,8 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onClick(View v) {
-        double d = 9 / 0;
-
         BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredential();
-        //socketManager = SocketManager.createInstance(GlobalSettings.getConnectUrl(), credentials, "");
-        socketManager = SocketManager.createInstance("", credentials, "");
+        socketManager = new SocketManager(Names.getConnectUrl(), credentials, "");
         if(socketManager.isRegistered()) {
             onRegistry();
         } else {
@@ -94,7 +93,7 @@ public class SynchronizationFragment extends Fragment
     @Override
     public void onRegistry() {
         ManualSynchronization synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), false);
-        synchronization.start(requireActivity(), new ProgressListeners() {
+        synchronization.start(socketManager, requireActivity(), new ProgressListeners() {
             @Override
             public void onStart(OnSynchronizationListeners synchronization) {
 

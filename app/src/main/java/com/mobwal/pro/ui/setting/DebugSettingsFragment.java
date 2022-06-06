@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -27,7 +28,7 @@ import com.mobwal.pro.utilits.ActivityUtil;
 public class DebugSettingsFragment extends PreferenceFragmentCompat
         implements Preference.OnPreferenceChangeListener {
 
-    private SharedPreferences mSharedPreferences;
+    private PrefManager mPrefManager;
 
     private SwitchPreferenceCompat mDebugModePreference;
 
@@ -35,17 +36,10 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.debug_pref, rootKey);
 
-        mSharedPreferences = requireContext().getSharedPreferences(Names.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mPrefManager = new PrefManager(requireContext());
 
         mDebugModePreference = findPreference("debug");
         Objects.requireNonNull(mDebugModePreference).setOnPreferenceChangeListener(this);
-
-        Preference demoPreference = findPreference("demo");
-        Objects.requireNonNull(demoPreference).setOnPreferenceClickListener(preference -> {
-            mSharedPreferences.edit().putBoolean("demo", false).apply();
-            Snackbar.make(requireView(), getString(R.string.demo_route_created), Snackbar.LENGTH_LONG).setAction(requireContext().getString(R.string.go), v -> ActivityUtil.openRoutes(requireActivity())).show();
-            return false;
-        });
     }
 
     @Override
@@ -54,7 +48,7 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat
         WalkerApplication.Log("Настройки. Режим отладки.");
         setHasOptionsMenu(true);
 
-        boolean debug = mSharedPreferences.getBoolean("debug", false);
+        boolean debug = mPrefManager.get("debug", false);
         mDebugModePreference.setChecked(debug);
     }
 
@@ -68,7 +62,7 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if(preference.getKey().equals("debug")) {
             boolean debugPrefValue = Boolean.parseBoolean(String.valueOf(newValue));
-            mSharedPreferences.edit().putBoolean("debug", debugPrefValue).apply();
+            mPrefManager.put("debug", debugPrefValue);
         }
 
         return true;

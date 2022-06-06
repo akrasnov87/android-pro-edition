@@ -2,6 +2,8 @@ package com.mobwal.pro.models.db.complex;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
@@ -34,7 +36,8 @@ public class PointItem implements Serializable {
     public boolean b_anomaly;
     public boolean b_check;
 
-    public String toUserString(Context context) {
+    @Nullable
+    public String toUserString(@NonNull Context context) {
         return StringUtil.convertTemplate(context, c_description, jb_data);
     }
 }

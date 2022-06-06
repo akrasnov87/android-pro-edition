@@ -1,9 +1,10 @@
 package com.mobwal.pro;
 
+import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.data.sync.EntityAttachment;
-import com.mobwal.pro.sync.FileTransferWebSocketSynchronization;
+import com.mobwal.android.library.data.sync.FileTransferWebSocketSynchronization;
 import com.mobwal.android.library.data.sync.MultipartUtility;
-import com.mobwal.pro.data.DbGenerate;
+import com.mobwal.android.library.util.ReflectionUtil;
 import com.mobwal.android.library.data.sync.util.FullServerSidePackage;
 import com.mobwal.pro.models.db.Attachment;
 
@@ -17,14 +18,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
-import ru.mobnius.core.data.DbOperationType;
 import com.mobwal.android.library.FileManager;
-import ru.mobnius.core.data.configuration.PreferencesManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.data.rpc.FilterItem;
 import com.mobwal.android.library.util.PackageReadUtils;
 
-import com.mobwal.pro.utilits.SyncUtil;
+import com.mobwal.android.library.util.SyncUtil;
 
 public class DeleteSynchronizationTest extends DbGenerate {
     private DeleteSynchronizationTest.MySynchronization synchronization;
@@ -32,7 +31,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
 
     @Before
     public void setUp() {
-        getSQLContext().exec("DELETE FROM " + Attachment.Meta.table, new Object[0]);
+        getSQLContext().exec("DELETE FROM " + ReflectionUtil.getTableName(Attachment.class), new Object[0]);
         fileId = UUID.randomUUID().toString();
         synchronization = new DeleteSynchronizationTest.MySynchronization(getSQLContext(), getFileManager(), DbGenerate.getCredentials(), DbGenerate.getBaseUrl());
         synchronization.initEntities();
@@ -57,13 +56,13 @@ public class DeleteSynchronizationTest extends DbGenerate {
         file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
         getSQLContext().insert(file);
-        SyncUtil.updateTid(synchronization, Attachment.Meta.table, synchronization.fileTid);
+        SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Attachment.class), synchronization.fileTid);
 
         byte[] bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        Object[] array = synchronization.getRecords(Attachment.Meta.table, "").toArray();
+        Object[] array = synchronization.getRecords(ReflectionUtil.getTableName(Attachment.class), "").toArray();
 
         Attachment resultFile = getFile(array, file.c_path);
 
@@ -72,13 +71,13 @@ public class DeleteSynchronizationTest extends DbGenerate {
 
         removeFile(file.id);
 
-        SyncUtil.updateTid(synchronization, Attachment.Meta.table, synchronization.fileTid);
+        SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Attachment.class), synchronization.fileTid);
 
         bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
         results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        array = synchronization.getRecords(Attachment.Meta.table, "").toArray();
+        array = synchronization.getRecords(ReflectionUtil.getTableName(Attachment.class), "").toArray();
 
         resultFile = getFile(array, file.c_path);
         Assert.assertNull(resultFile);
@@ -105,7 +104,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
      * @param fileId идентификтаор
      */
     public void removeFile(String fileId) {
-        Collection<Attachment> files = getSQLContext().select("select * from " + Attachment.Meta.table + " where id = ?", new String[] { fileId }, Attachment.class);
+        Collection<Attachment> files = getSQLContext().select("select * from " + ReflectionUtil.getTableName(Attachment.class) + " where id = ?", new String[] { fileId }, Attachment.class);
         if (files != null) {
             Attachment file = files.iterator().next();
             if (file.__IS_SYNCHRONIZATION) {
@@ -116,7 +115,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
                 getSQLContext().insert(file);
                 //daoSession.getFilesDao().update(files);
             } else {
-                getSQLContext().exec("delete from " + Attachment.Meta.table + " where id = ?", new Object[] { fileId });
+                getSQLContext().exec("delete from " + ReflectionUtil.getTableName(Attachment.class) + " where id = ?", new Object[] { fileId });
             }
             FileManager fileManager = FileManager.getInstance();
             try {
@@ -146,7 +145,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
             super.sendBytes(tid, bytes);
 
             try {
-                MultipartUtility multipartUtility = new MultipartUtility(mBaseUrl + "/synchronization/" + PreferencesManager.SYNC_PROTOCOL_v2, mCredentials);
+                MultipartUtility multipartUtility = new MultipartUtility(mBaseUrl + "/synchronization/v2", mCredentials);
                 multipartUtility.addFilePart("synchronization", bytes);
                 return multipartUtility.finish();
             } catch (Exception exc) {
@@ -157,7 +156,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
         @Override
         protected void initEntities() {
             fileTid = UUID.randomUUID().toString();
-            addEntity(new EntityAttachment(Attachment.Meta.table, true, true)
+            addEntity(new EntityAttachment(Attachment.class)
                     .setSelect("id", "c_path", "fn_user", "fn_result", "fn_point", "fn_route", "n_longitude", "n_latitude", "d_date", "c_mime", "c_extension", "jb_data", "n_distance", "fn_storage")
                     .setFilter(new FilterItem("id", fileId))
                     .setTid(fileTid)

@@ -20,7 +20,6 @@ import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.WalkerSQLContext;
-import com.mobwal.pro.models.DemoPlaceItem;
 import com.mobwal.pro.models.db.complex.PointItem;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.pro.models.db.Point;
@@ -77,7 +76,7 @@ public class ImportUtil {
                 Setting setting = new Setting();
                 setting.c_key = row[0].toLowerCase();
                 setting.c_value = row[1].toLowerCase();
-                setting.f_route = f_route;
+                //setting.f_route = f_route;
 
                 settings.add(setting);
             }
@@ -279,67 +278,6 @@ public class ImportUtil {
                 Template template = new Template();
                 template.setDefault(context, route.id);
                 if(db.insertMany(new Template[] { template })) {
-                    return null;
-                }
-            }
-        }
-
-        DataManager dataManager = new DataManager(context);
-        if(!dataManager.delRoute(route.id)) {
-            return context.getString(R.string.import_error1);
-        }
-
-        return context.getString(R.string.import_error2);
-    }
-
-    /**
-     * Создание демонстрационного маршрута
-     * @param context контекст
-     * @param places точки
-     * @param routeName имя маршрута
-     * @return данные по маршруту
-     */
-    @Nullable
-    public static String generateRouteFormDemo(@NotNull Context context, @NotNull DemoPlaceItem[] places, @NotNull String routeName) {
-
-        if(places.length == 0) {
-            return context.getString(R.string.demo_route_empty);
-        }
-
-        Route route = new Route();
-        //route.c_catalog = "demo";
-        route.c_name = routeName;
-        //route.b_export = true;
-        //route.d_export = new Date();
-        //route.c_readme = MessageFormat.format(context.getString(R.string.create_route_docs), Names.ROUTE_DOCS);
-
-        List<Point> list = new ArrayList<>();
-        int i = 0;
-        for (DemoPlaceItem item: places) {
-            Point point = new Point();
-            //point.f_route = route.id;
-            point.c_address = item.name;
-            //point.c_description = item.kinds;
-            point.n_latitude = item.latitude;
-            point.n_longitude = item.longitude;
-            point.n_order = ++i;
-            list.add(point);
-        }
-
-        Point[] points = list.toArray(new Point[0]);
-        WalkerSQLContext db = WalkerApplication.getWalkerSQLContext(context);
-
-        if(db.insertMany(new Route[] { route })) {
-            if(db.insertMany(points)) {
-                Template template = new Template();
-                template.setDefault(context, route.id);
-                template.n_order = 1;
-
-                Template template2 = new Template();
-                template2.setDemo(context, route.id);
-                template2.n_order = 2;
-
-                if(db.insertMany(new Template[] { template, template2 })) {
                     return null;
                 }
             }

@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,20 +154,24 @@ public class InfoFragment extends Fragment
                 if(mResults != null) {
                     boolean b = true;
                     for (Result result : mResults) {
-                        if (mDataManager.delResult(result.id)) {
-                            List<PointInfo> items = mPointInfoItemAdapter.getData();
-                            int i = 0;
-                            for (PointInfo pointInfo : items) {
-                                if (pointInfo.result != null && pointInfo.result.equals(result.id)) {
-                                    mPointInfoItemAdapter.removeItem(i);
-                                    break;
+                        try {
+                            if (mDataManager.delResult(result.id)) {
+                                List<PointInfo> items = mPointInfoItemAdapter.getData();
+                                int i = 0;
+                                for (PointInfo pointInfo : items) {
+                                    if (pointInfo.result != null && pointInfo.result.equals(result.id)) {
+                                        mPointInfoItemAdapter.removeItem(i);
+                                        break;
+                                    }
+                                    i++;
                                 }
-                                i++;
+                            } else {
+                                if (b) {
+                                    b = false;
+                                }
                             }
-                        } else {
-                            if (b) {
-                                b = false;
-                            }
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                         }
                     }
 
@@ -338,12 +343,16 @@ public class InfoFragment extends Fragment
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             // ДА
-            if (pointItem.result != null && mDataManager.delResult(pointItem.result)) {
-                mPointInfoItemAdapter.removeItem(position);
-                updateLocations(mLocation);
-                updateResults();
-            } else {
-                Toast.makeText(requireContext(), R.string.remove_result_error, Toast.LENGTH_SHORT).show();
+            try {
+                if (pointItem.result != null && mDataManager.delResult(pointItem.result)) {
+                    mPointInfoItemAdapter.removeItem(position);
+                    updateLocations(mLocation);
+                    updateResults();
+                } else {
+                    Toast.makeText(requireContext(), R.string.remove_result_error, Toast.LENGTH_SHORT).show();
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         });
         builder.setNegativeButton(R.string.no, null);

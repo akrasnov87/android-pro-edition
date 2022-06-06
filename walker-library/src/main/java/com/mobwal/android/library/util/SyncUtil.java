@@ -1,12 +1,11 @@
-package com.mobwal.pro.utilits;
+package com.mobwal.android.library.util;
 
 import android.database.sqlite.SQLiteDatabase;
 
 import com.mobwal.android.library.FieldNames;
 import com.mobwal.android.library.data.sync.Entity;
-import com.mobwal.android.library.data.sync.IProgressStep;
+import com.mobwal.android.library.data.sync.ProgressStep;
 import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
-import com.mobwal.android.library.util.LogUtil;
 
 public class SyncUtil {
 
@@ -64,8 +63,6 @@ public class SyncUtil {
      */
     public static boolean updateTid(OnSynchronizationListeners context, String tableName, String tid) {
         boolean result = false;
-        //AbstractDaoSession daoSession = context;
-        //Database db = daoSession.getDatabase();
         try {
             Object[] params = new Object[2];
             params[0] = tid;
@@ -74,7 +71,7 @@ public class SyncUtil {
             result = true;
         } catch (Exception e) {
             LogUtil.writeText(context.getContext().getContext(), e.toString());
-            context.onError(IProgressStep.START, e, tid);
+            context.onError(ProgressStep.START, e, tid);
         }
         return result;
     }
@@ -101,7 +98,7 @@ public class SyncUtil {
             result = true;
         }catch (Exception e){
             LogUtil.writeText(context.getContext().getContext(), e.toString());
-            context.onError(IProgressStep.START, e, tid);
+            context.onError(ProgressStep.START, e, tid);
         }
         return result;
     }
@@ -128,7 +125,7 @@ public class SyncUtil {
             result = true;
         }catch (Exception e){
             LogUtil.writeText(context.getContext().getContext(), e.toString());
-            context.onError(IProgressStep.START, e, tid);
+            context.onError(ProgressStep.START, e, tid);
         }
         return result;
     }
@@ -154,7 +151,7 @@ public class SyncUtil {
             result = true;
         }catch (Exception e){
             LogUtil.writeText(context.getContext().getContext(), e.toString());
-            context.onError(IProgressStep.STOP, e, tid);
+            context.onError(ProgressStep.STOP, e, tid);
         }
         return result;
     }

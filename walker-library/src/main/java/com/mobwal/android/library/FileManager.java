@@ -56,7 +56,7 @@ public class FileManager {
      * @param context     контекст
      * @param credentials информация о пользователе
      */
-    private FileManager(BasicCredential credentials, Context context) {
+    public FileManager(BasicCredential credentials, Context context) {
         this.credentials = credentials;
         this.context = context;
     }
