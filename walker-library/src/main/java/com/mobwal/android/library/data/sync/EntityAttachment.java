@@ -12,6 +12,6 @@ public class EntityAttachment extends Entity {
     public EntityAttachment(Class<?> aClass) {
         super(aClass);
 
-        category = "Вложения";
+        category = "FILES";
     }
 }

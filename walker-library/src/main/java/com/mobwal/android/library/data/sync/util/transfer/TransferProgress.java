@@ -49,8 +49,7 @@ public class TransferProgress {
         return mTransferData;
     }
 
-    @NonNull
-    public String toString(Context context) {
+    public String toString(@NonNull Context context) {
         if(getPercent() >= 100) {
             return "обработка данных...";
         } else {

@@ -32,4 +32,12 @@
         <item name="android:textSize">@dimen/font_14</item>
     </style>
 
+    <style name="Theme.MobileWalker.ProgressBarHorizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">40dip</item>
+        <item name="android:maxHeight">60dip</item>
+        <item name="android:scaleY">8</item>
+        <item name="android:progressTint">@color/colorSuccess</item>
+        <item name="android:secondaryProgressTint">@color/colorHintLight</item>
+    </style>
+
 </resources>

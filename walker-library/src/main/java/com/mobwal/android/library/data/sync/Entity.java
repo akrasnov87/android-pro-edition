@@ -102,6 +102,7 @@ public class Entity implements EntityListeners {
             from = tableMetaData.from();
             pKey = tableMetaData.pKey();
         }
+        category = "DATA";
     }
 
     /**
@@ -115,7 +116,7 @@ public class Entity implements EntityListeners {
         this.to = to;
         this.from = from;
         this.tid = UUID.randomUUID().toString();
-        category = "Общие";
+        category = "DATA";
     }
 
     /**

@@ -1,37 +1,21 @@
 package com.mobwal.pro.ui.route;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ShareCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.io.File;
 
 import com.mobwal.pro.DataManager;
-import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.RouteInfoCategoryAdapter;
 import com.mobwal.pro.databinding.FragmentRouteInfoBinding;
 import com.mobwal.pro.models.RouteInfo;
-import com.mobwal.pro.models.db.Route;
-import com.mobwal.pro.utilits.ExportToShared;
-import com.mobwal.android.library.NewThread;
-import com.mobwal.android.library.ArchiveFileManager;
 
 /**
  * Информация по маршруту

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/synchronizationLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="справочники"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="@dimen/font_16"
+        android:textColor="@color/colorHintDark"/>
+
+    <ProgressBar
+        android:id="@+id/synchronizationProgress"
+        style="@style/Theme.MobileWalker.ProgressBarHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:layout_marginTop="4dp"
+        android:progressTint="@color/colorSuccess"
+        android:secondaryProgressTint="@color/colorHintLight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/synchronizationLabel"/>
+
+    <!-- информация о скорости и прочее -->
+    <TextView
+        android:id="@+id/synchronizationStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/font_16"
+        android:textColor="@color/colorSecondaryText"
+        tools:textColor="@color/colorHint"
+        android:gravity="end"
+        tools:text="3 мин. (65 кбит\\сек.)"
+        app:layout_constraintTop_toTopOf="@id/synchronizationProgress"
+        android:layout_marginEnd="@dimen/indent_8"
+        android:layout_marginStart="@dimen/indent_8"
+        app:layout_constraintBottom_toBottomOf="@id/synchronizationProgress"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

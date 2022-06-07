@@ -22,7 +22,6 @@ public class TransferData {
      * Создани экземпляра объекта
      * @param position текущай позиция
      * @param total общий размер данных
-     * @return Данные
      */
     public TransferData(int position, int total) {
         this.mPosition = position;

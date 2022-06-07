@@ -20,7 +20,7 @@ public abstract class Transfer {
      * размер передоваемых данных
      */
     // TODO: должно быть вычисляемым
-    private final int CHUNK = 1024;
+    public static int CHUNK = 1024;
     public static boolean STATUS_TRANSFER_SPEED = false;
 
     /**

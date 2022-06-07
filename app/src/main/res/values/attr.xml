@@ -5,4 +5,9 @@
         <attr name="description" format="string" />
         <attr name="indeterminate" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="SynchronizationProgressView">
+        <attr name="nameText" format="string" />
+        <attr name="groupText" format="string" />
+    </declare-styleable>
 </resources>

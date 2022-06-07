@@ -569,17 +569,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      */
     public void successStop() {
         if (progressListener != null) {
-            final OnSynchronizationListeners synchronization = this;
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressListener.onStop(synchronization);
-                    }
-                });
-            } else {
-                progressListener.onStop(this);
-            }
+            progressListener.onStop(this);
         }
 
         changeFinishStatus(FinishStatus.SUCCESS);

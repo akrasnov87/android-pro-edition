@@ -6,19 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".ui.global.SynchronizationFragment">
 
+    <com.mobwal.pro.ui.SynchronizationProgressView
+        android:id="@+id/synchronization_data_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:groupText="DATA"
+        app:nameText="Данные"
+        android:layout_margin="@dimen/indent_16"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone" />
+
+    <com.mobwal.pro.ui.SynchronizationProgressView
+        android:id="@+id/synchronization_file_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:groupText="FILES"
+        app:nameText="Файлы"
+        android:layout_margin="@dimen/indent_16"
+        app:layout_constraintTop_toBottomOf="@id/synchronization_data_category"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/sync_logs"
+        android:id="@+id/synchronization_logs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         tools:text="Текст"
         tools:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/indent_16"
+        app:layout_constraintTop_toBottomOf="@id/synchronization_file_category"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/sync_action"
+        android:id="@+id/synchronization_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

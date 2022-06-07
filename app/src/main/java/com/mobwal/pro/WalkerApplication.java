@@ -20,8 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mobwal.android.library.BitmapCache;
+import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationRequest;
+import com.mobwal.android.library.data.sync.util.transfer.Transfer;
 import com.mobwal.android.library.exception.FaceExceptionSingleton;
 import com.mobwal.android.library.util.ImageUtil;
 
@@ -112,6 +114,9 @@ public class WalkerApplication extends Application implements ExceptionIntercept
     public void onCreate() {
         super.onCreate();
 
+        Transfer.CHUNK = 8;
+        Transfer.STATUS_TRANSFER_SPEED = true;
+
         mWalkerSQLContext = new WalkerSQLContext(this, "walker");
 
         SharedPreferences sharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
@@ -183,6 +188,8 @@ public class WalkerApplication extends Application implements ExceptionIntercept
      */
     public static void authorized(@NonNull Activity activity) {
         activity.finish();
+
+        FileManager.createInstance(BasicAuthorizationSingleton.getInstance().getUser().getCredential(), activity);
 
         activity.startActivity(MainActivity.getIntent(activity));
     }

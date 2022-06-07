@@ -124,9 +124,11 @@ public abstract class FileTransferWebSocketSynchronization
                 if (entity.from) {
                     TableQuery tableQuery = new TableQuery(entity.tableName, entity.change, entity.select);
                     RPCItem rpcItem;
-                    if (entity.useCFunction) {
+                    if (entity.useCFunction || entity instanceof EntityAttachment) {
                         rpcItem = tableQuery.toRPCSelect(entity.params);
-                        rpcItem.action = rpcItem.getFunctionName();
+                        if(!(entity instanceof EntityAttachment)) {
+                            rpcItem.action = rpcItem.getFunctionName();
+                        }
                     } else {
                         rpcItem = tableQuery.toRPCQuery(MAX_COUNT_IN_QUERY, entity.filters);
                     }
@@ -193,7 +195,7 @@ public abstract class FileTransferWebSocketSynchronization
                     onError(ProgressStep.PACKAGE_CREATE, packageResult.message, tid);
 
                     if (packageResult.result instanceof Exception) {
-                        Log.e(Constants.TAG, String.valueOf((Exception) packageResult.result));
+                        onError(ProgressStep.PACKAGE_CREATE, String.valueOf((Exception) packageResult.result), tid);
                     }
                 }
             }

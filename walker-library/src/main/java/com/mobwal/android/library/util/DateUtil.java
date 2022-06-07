@@ -50,6 +50,19 @@ public class DateUtil {
     }
 
     /**
+     * Дата преобразуется в строку с определнным форматом
+     * @param date дата
+     * @param format формат даты
+     * @return возврщается строка
+     */
+    public static String convertDateToUserString(Date date, String format) {
+        if(date == null) {
+            return "";
+        }
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
+    }
+
+    /**
      * Генерация TID
      * @return уникальный идентификатор
      */
