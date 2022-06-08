@@ -313,11 +313,11 @@ public class AttachmentLayout extends LinearLayout
         }
         Attachment attachment = new Attachment();
         attachment.id = id;
-        //attachment.f_point = mPointBundle.f_point;
-        //attachment.f_route = mPointBundle.f_route;
-        //attachment.f_result = mPointBundle.f_result;
+        attachment.fn_point = mPointBundle.f_point;
+        attachment.fn_route = mPointBundle.f_route;
+        attachment.fn_result = mPointBundle.f_result;
 
-        //attachment.c_name = id + ".jpg";
+        attachment.c_path = id + ".jpg";
         attachment.d_date = new Date();
 
         if(mLocationInfo != null) {

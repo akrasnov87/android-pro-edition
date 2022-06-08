@@ -15,26 +15,26 @@ import java.io.File;
 
 @RunWith(AndroidJUnit4.class)
 public class LogUtilTest {
-    private Context appContext;
 
     @Before
     public void setUp() {
-        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        LogUtilSingleton.clear(appContext, false);
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        LogUtilSingleton.createInstance(appContext);
+        LogUtilSingleton.getInstance().clear(false);
     }
 
     @Test
     public void write() {
         for(int i = 0; i < 1000; i++) {
-            LogUtilSingleton.writeText(appContext, i + ": " + StringUtil.getRandomString(1024));
+            LogUtilSingleton.getInstance().writeText(i + ": " + StringUtil.getRandomString(1024));
         }
 
-        File file = LogUtilSingleton.getArchiveLog(appContext, true);
+        File file = LogUtilSingleton.getInstance().getArchiveLog(true);
         Assert.assertNotNull(file);
     }
 
     @After
     public void tearDown() {
-        LogUtilSingleton.clear(appContext, false);
+        LogUtilSingleton.getInstance().clear(false);
     }
 }

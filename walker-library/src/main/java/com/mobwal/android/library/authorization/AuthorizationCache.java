@@ -109,13 +109,13 @@ public class AuthorizationCache {
      * @param currentLogin текущий логин авторизованного пользователя, либо null для удаления всех данных
      */
     public boolean clear(String currentLogin) {
-        File dir = new File(mContext.getFilesDir().getPath());
+        File dir = new File(mContext.getCacheDir().getPath());
         if(currentLogin == null) {
             File[] files = dir.listFiles();
             if(files != null) {
                 for (File file : files) {
                     if (file.getName().indexOf(PART_FILENAME) > 0) {
-                        mContext.deleteFile(file.getName());
+                        file.delete();
                     }
                 }
                 return true;
@@ -123,9 +123,9 @@ public class AuthorizationCache {
             return false;
         } else {
             if(!StringUtil.isEmptyOrNull(currentLogin)) {
-                File file = new File(mContext.getFilesDir(), currentLogin + PART_FILENAME);
+                File file = new File(mContext.getCacheDir(), currentLogin + PART_FILENAME);
                 if (file.exists()) {
-                    return mContext.deleteFile(PART_FILENAME);
+                    return file.delete();
                 }
             }
         }
@@ -138,7 +138,7 @@ public class AuthorizationCache {
      * @return Возвращается массив строк с логинали пользователей
      */
     public String[] getNames() {
-        File dir = new File(mContext.getFilesDir().getPath());
+        File dir = new File(mContext.getCacheDir().getPath());
         ArrayList<String> users = new ArrayList<>();
 
         File[] files = dir.listFiles();

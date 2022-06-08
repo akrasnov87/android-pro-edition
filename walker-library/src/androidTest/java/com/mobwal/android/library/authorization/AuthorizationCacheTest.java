@@ -35,7 +35,7 @@ public class AuthorizationCacheTest {
     }
 
     @Test
-    public void WriteTest() {
+    public void writeTest() {
         BasicCredential credentials = new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD);
         BasicUser user = new BasicUser(credentials, 1, "");
         cache.clear(null);

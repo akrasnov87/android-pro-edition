@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.mobwal.android.library.annotation.FieldMetaData;
 import com.mobwal.android.library.annotation.TableMetaData;
+import com.mobwal.android.library.util.LogUtilSingleton;
 
 @RunWith(AndroidJUnit4.class)
 public class SQLContextTest {
@@ -30,6 +31,7 @@ public class SQLContextTest {
     public void setUp() {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         sqlContext = new SQLContextProfile(appContext);
+        LogUtilSingleton.createInstance(appContext);
     }
 
     @Test
