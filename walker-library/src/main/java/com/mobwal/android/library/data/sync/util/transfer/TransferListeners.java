@@ -22,7 +22,6 @@ public class TransferListeners
     public static final int END = 4;
     public static final int ERROR = 5;
 
-    Activity activity;
     String tid;
     TransferStatusListeners mStatusListeners;
     Transfer transfer;
@@ -32,12 +31,10 @@ public class TransferListeners
     /**
      * конструктор
      *
-     * @param activity интерфейс
      * @param tid идентификатор транзакции
      * @param listeners статус
      */
-    public TransferListeners(@NonNull OnSynchronizationListeners synchronization, @NonNull Activity activity, @NonNull String tid, @NonNull Transfer transfer, @NonNull TransferStatusListeners listeners) {
-        this.activity = activity;
+    public TransferListeners(@NonNull OnSynchronizationListeners synchronization, @NonNull String tid, @NonNull Transfer transfer, @NonNull TransferStatusListeners listeners) {
         this.tid = tid;
         this.mStatusListeners = listeners;
         this.transfer = transfer;
@@ -123,16 +120,7 @@ public class TransferListeners
     }
 
     private void onHandler(final int type, final String tid, final Transfer transfer, final Object data){
-        if(activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    onCallHandler(type, tid, transfer, data);
-                }
-            });
-        }else{
-            onCallHandler(type, tid, transfer, data);
-        }
+        onCallHandler(type, tid, transfer, data);
     }
 
     /**
@@ -144,11 +132,15 @@ public class TransferListeners
     protected long getLastTime(Date dtStart, int percent) {
         if(percent == 0)
             percent = 1;
-        // прошло время с начала запуска
-        long workTime = new Date().getTime() - dtStart.getTime();
-        // приблизительная продолжительность
-        long totalTime = (workTime * 100) / percent;
+        try {
+            // прошло время с начала запуска
+            long workTime = new Date().getTime() - dtStart.getTime();
+            // приблизительная продолжительность
+            long totalTime = (workTime * 100) / percent;
 
-        return totalTime - workTime;
+            return totalTime - workTime;
+        } catch (NullPointerException e) {
+            return 0;
+        }
     }
 }

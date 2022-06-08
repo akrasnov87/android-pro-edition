@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -73,7 +73,7 @@ public class SimpleFileManager {
 
         if (!folder.exists()) {
             if(!folder.mkdirs()) {
-                LogUtil.debug(mContext, "Каталог " + folder + " не создан");
+                LogUtilSingleton.getInstance().debug( "Каталог " + folder + " не создан");
             }
         }
 
@@ -159,13 +159,13 @@ public class SimpleFileManager {
     public void deleteFile(@NonNull String folder, @NonNull String fileName) {
         File dir = getRootCatalog(folder);
         if (!dir.exists()) {
-            LogUtil.debug(mContext, "Корневая директория " + folder + " не найдена.");
+            LogUtilSingleton.getInstance().debug("Корневая директория " + folder + " не найдена.");
         }
         File file = new File(dir, fileName);
         if (file.exists()) {
             deleteRecursive(mContext, file);
         } else {
-            LogUtil.debug(mContext, "Файл " + fileName + " в директории " + folder + " не найден.");
+            LogUtilSingleton.getInstance().debug("Файл " + fileName + " в директории " + folder + " не найден.");
         }
     }
 
@@ -179,7 +179,7 @@ public class SimpleFileManager {
         if (dir.exists()) {
             deleteRecursive(mContext, dir);
         } else {
-            LogUtil.debug(mContext, "Директория " + folder + " не найдена.");
+            LogUtilSingleton.getInstance().debug("Директория " + folder + " не найдена.");
         }
     }
 
@@ -193,7 +193,7 @@ public class SimpleFileManager {
         if (fileOrDirectory.isDirectory()) {
             for (File child : Objects.requireNonNull(fileOrDirectory.listFiles())) {
                 if (!deleteRecursive(context, child)) {
-                    LogUtil.debug(context, "Директория " + child.getName() + " не удалена.");
+                    LogUtilSingleton.getInstance().debug("Директория " + child.getName() + " не удалена.");
                 }
             }
         }

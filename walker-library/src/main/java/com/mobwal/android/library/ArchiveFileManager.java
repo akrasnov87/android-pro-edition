@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -92,7 +92,7 @@ public class ArchiveFileManager {
                 }
             }
         } catch (IOException e) {
-            LogUtil.writeText(context, "Ошибка упаковки файлов в архив", e);
+            LogUtilSingleton.getInstance().writeText("Ошибка упаковки файлов в архив", e);
             return context.getString(R.string.unknown_error) + " ZIP1";
         }
 
@@ -148,7 +148,7 @@ public class ArchiveFileManager {
                     }
                 }
             } catch (IOException e) {
-                LogUtil.writeText(context, "Ошибка упаковки архива", e);
+                LogUtilSingleton.getInstance().writeText("Ошибка упаковки архива", e);
                 return context.getString(R.string.unknown_error) + " ZIP0";
             }
         }
@@ -229,7 +229,7 @@ public class ArchiveFileManager {
                 }
             }
         } catch (Exception e) {
-            LogUtil.writeText(context, "Ошибка распаковки архива", e);
+            LogUtilSingleton.getInstance().writeText("Ошибка распаковки архива", e);
             return context.getString(R.string.unknown_error) + " UNZIP6";
         }
 

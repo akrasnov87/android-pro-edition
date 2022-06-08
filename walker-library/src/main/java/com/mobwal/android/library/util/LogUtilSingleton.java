@@ -19,7 +19,17 @@ import java.util.Date;
 /**
  * Логирование информации в файловой системе
  */
-public class LogUtil {
+public class LogUtilSingleton {
+    private static LogUtilSingleton sLogUtilSingleton;
+
+    public static void createInstance(@NonNull Context context) {
+        sLogUtilSingleton = new LogUtilSingleton(context);
+    }
+
+    public static LogUtilSingleton getInstance() {
+        return sLogUtilSingleton;
+    }
+
     /**
      * Максимальный размер лога в килобайтах
      */
@@ -32,9 +42,15 @@ public class LogUtil {
 
     static String TAG = "LOG_UTIL";
 
+    private Context mContext;
+
+    private LogUtilSingleton(@NonNull Context context) {
+        mContext = context;
+    }
+
     @Nullable
-    public static File getArchiveLog(@NonNull Context context, boolean useSystemLog) {
-        File[] files = context.getCacheDir().listFiles(pathname -> {
+    public File getArchiveLog(boolean useSystemLog) {
+        File[] files = mContext.getCacheDir().listFiles(pathname -> {
             if(pathname.isFile()) {
                 String extension = StringUtil.getFileExtension(pathname.getName());
                 return extension != null && ((useSystemLog && extension.equals(".log")) || extension.equals(".exc"));
@@ -44,8 +60,8 @@ public class LogUtil {
         });
 
         if (files != null) {
-            File file = new File(context.getCacheDir(), "journal.zip");
-            ArchiveFileManager.zipFiles(context, files, file.getAbsolutePath(), null);
+            File file = new File(mContext.getCacheDir(), "journal.zip");
+            ArchiveFileManager.zipFiles(mContext, files, file.getAbsolutePath(), null);
             return file;
         }
         return null;
@@ -53,11 +69,10 @@ public class LogUtil {
 
     /**
      * Очистка архива с данными
-     * @param context контекст
      */
-    public static void clear(@NonNull Context context, boolean archiveOnly) {
+    public void clear(boolean archiveOnly) {
         if(!archiveOnly) {
-            File[] files = context.getCacheDir().listFiles(pathname -> {
+            File[] files = mContext.getCacheDir().listFiles(pathname -> {
                 if (pathname.isFile()) {
                     String extension = StringUtil.getFileExtension(pathname.getName());
                     return extension != null && extension.equals(".log");
@@ -73,17 +88,16 @@ public class LogUtil {
             }
         }
 
-        File file = new File(context.getCacheDir(), "journal.zip");
+        File file = new File(mContext.getCacheDir(), "journal.zip");
         file.delete();
     }
 
     /**
      * Запись текста в файл лога
-     * @param context контекст
      * @param message текст сообщения
      */
-    public static void writeText(@NonNull Context context, @NonNull String message) {
-        File[] files = context.getCacheDir().listFiles(pathname -> {
+    public void writeText(@NonNull String message) {
+        File[] files = mContext.getCacheDir().listFiles(pathname -> {
             if(pathname.isFile()) {
                 String extension = StringUtil.getFileExtension(pathname.getName());
                 return extension != null && extension.equals(".log");
@@ -92,7 +106,7 @@ public class LogUtil {
             }
         });
 
-        File[] smalls = context.getCacheDir().listFiles(pathname -> {
+        File[] smalls = mContext.getCacheDir().listFiles(pathname -> {
             if(pathname.isFile()) {
                 String extension = StringUtil.getFileExtension(pathname.getName());
                 return extension != null && pathname.length() < FILE_SIZE && extension.equals(".log");
@@ -102,7 +116,7 @@ public class LogUtil {
         });
 
         if (smalls == null || smalls.length == 0) {
-            createEmptyFile(context, message);
+            createEmptyFile(message);
         } else {
             Arrays.sort(smalls, new Comparator<File>() {
                 public int compare(File f1, File f2) {
@@ -134,31 +148,36 @@ public class LogUtil {
 
     /**
      * Данные для вывода в режиме отладки
-     * @param context контекст
      * @param message текст сообщения
      */
-    public static void debug(@NonNull Context context, @NonNull String message) {
-        writeText(context, message);
+    public void debug(@NonNull String message) {
+        writeText(message);
+    }
+
+    /**
+     * Данные для вывода в режиме отладки
+     * @param message текст сообщения
+     */
+    public void error(@NonNull String message) {
+        writeText(message);
     }
 
     /**
      * Запись текста в файл лога
-     * @param context контекст
      * @param message текст сообщения
      * @param e исключение
      */
-    public static void writeText(@NonNull Context context, @NonNull String message, @NonNull Exception e) {
-        writeText(context, message + " " + e);
+    public void writeText(@NonNull String message, @NonNull Exception e) {
+        writeText(message + " " + e);
     }
 
     /**
      * Создание пустой строки
-     * @param context контекст
      * @param message текст сообщения
      */
-    private static void createEmptyFile(@NonNull Context context, @NonNull String message) {
+    private void createEmptyFile(@NonNull String message) {
         String fileName = new Date().getTime() + ".log";
-        File file = new File(context.getCacheDir(), fileName);
+        File file = new File(mContext.getCacheDir(), fileName);
         write(file, message.getBytes(StandardCharsets.UTF_8));
         Log.d(TAG, "Создан пустой файл " + fileName);
     }
@@ -168,7 +187,7 @@ public class LogUtil {
      * @param file файл
      * @param bytes массив байтов
      */
-    private static void write(@NonNull File file, @NonNull byte[] bytes) {
+    private void write(@NonNull File file, @NonNull byte[] bytes) {
         try {
             FileOutputStream outputStream = new FileOutputStream(file, true);
             BufferedOutputStream bos = new BufferedOutputStream(outputStream);

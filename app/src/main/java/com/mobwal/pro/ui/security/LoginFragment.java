@@ -19,9 +19,8 @@ import androidx.annotation.Nullable;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationListeners;
 import com.mobwal.android.library.authorization.AuthorizationResponseListeners;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 import com.mobwal.android.library.util.NetworkInfoUtil;
-import com.mobwal.pro.MainActivity;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentLoginBinding;
@@ -49,7 +48,7 @@ public class LoginFragment extends BaseFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        LogUtil.writeText(requireContext(), "Безопасность. Логин и пароль.");
+        LogUtilSingleton.getInstance().writeText("Безопасность. Логин и пароль.");
 
         mAuthorization = BasicAuthorizationSingleton.getInstance();
     }
@@ -69,7 +68,7 @@ public class LoginFragment extends BaseFragment
         mBinding.securityPass.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 //пароль введен и можно передавать данные на сервере
-                LogUtil.debug(requireContext(), "Нажатие на клавиатуре специальной клавиши");
+                LogUtilSingleton.getInstance().debug("Нажатие на клавиатуре специальной клавиши");
 
                 onAuthorizing();
                 return true;
@@ -107,7 +106,7 @@ public class LoginFragment extends BaseFragment
             enabledForms(false);
             boolean network = NetworkInfoUtil.isNetworkAvailable(requireContext());
 
-            LogUtil.debug(requireContext(), "Авторизация в режиме: " + network);
+            LogUtilSingleton.getInstance().debug("Авторизация в режиме: " + network);
 
             mAuthorization.onSignIn(requireActivity(), login, password,
                     network ? AuthorizationListeners.ONLINE : AuthorizationListeners.OFFLINE, this);
@@ -164,7 +163,7 @@ public class LoginFragment extends BaseFragment
     @Override
     public void onResponseAuthorizationResult(Activity activity, AuthorizationMeta meta) {
         if (meta.getStatus() == Meta.OK) {
-            LogUtil.debug(requireContext(), "Авторизация по логину и паролю выполнена");
+            LogUtilSingleton.getInstance().debug("Авторизация по логину и паролю выполнена");
 
             PrefManager prefManager = new PrefManager(requireContext());
             prefManager.put("login", meta.getLogin());
@@ -174,7 +173,7 @@ public class LoginFragment extends BaseFragment
             WalkerApplication.authorized(requireActivity());
             return;
         }
-        LogUtil.debug(requireContext(), meta.getMessage());
+        LogUtilSingleton.getInstance().debug(meta.getMessage());
 
         toast(meta.getMessage());
         enabledForms(true);

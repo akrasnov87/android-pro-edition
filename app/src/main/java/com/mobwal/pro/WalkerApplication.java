@@ -30,6 +30,7 @@ import com.mobwal.android.library.util.ImageUtil;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.exception.ExceptionInterceptListeners;
 import com.mobwal.android.library.exception.MyUncaughtExceptionHandler;
+import com.mobwal.android.library.util.LogUtilSingleton;
 
 public class WalkerApplication extends Application implements ExceptionInterceptListeners {
 
@@ -113,6 +114,8 @@ public class WalkerApplication extends Application implements ExceptionIntercept
     @Override
     public void onCreate() {
         super.onCreate();
+
+        LogUtilSingleton.createInstance(this);
 
         Transfer.CHUNK = 8;
         Transfer.STATUS_TRANSFER_SPEED = true;

@@ -1,5 +1,7 @@
 package com.mobwal.android.library.data.sync.util.transfer;
 
+import com.mobwal.android.library.util.StringUtil;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -117,7 +119,7 @@ public class TransferResult {
 
                 return result;
             } catch (JSONException e) {
-                return TransferResult.error(e.getMessage());
+                return TransferResult.error(StringUtil.exceptionToString(e));
             }
         }else {
             return TransferResult.error("Ответ от сервера получен. Данные отсуствуют.");

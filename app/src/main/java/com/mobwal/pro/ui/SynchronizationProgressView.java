@@ -130,7 +130,7 @@ public class SynchronizationProgressView extends LinearLayout {
                 break;
 
             default:
-                colorStateList = AppCompatResources.getColorStateList(getContext(), R.color.colorSuccess);
+                colorStateList = AppCompatResources.getColorStateList(getContext(), R.color.blueLight);
                 break;
         }
         pbProgressBar.setSecondaryProgressTintList(colorStateList);

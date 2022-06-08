@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
 import com.mobwal.android.library.socket.SocketManager;
+import com.mobwal.android.library.util.StringUtil;
 
 import io.socket.client.Socket;
 
@@ -44,11 +45,6 @@ public abstract class Transfer {
     String protocolVersion;
 
     /**
-     * текущая активность
-     */
-    Activity context;
-
-    /**
      * слушатель "регистрации" пользователя на сервере
      */
     TransferRegistryListener transferRegistryListener;
@@ -80,12 +76,10 @@ public abstract class Transfer {
      * @param synchronization текущая синхронизация в рамках которой выполняется процесс
      * @param socket сокет соединение
      * @param version версия синхронизации
-     * @param context интерфейс
      * @param tid идентификатор транзакции
      */
-    public Transfer(OnSynchronizationListeners synchronization, Socket socket, String version, Activity context, String tid){
+    public Transfer(OnSynchronizationListeners synchronization, Socket socket, String version, String tid){
         this.socket = socket;
-        this.context = context;
         protocolVersion = version;
         this.synchronization = synchronization;
         this.tid = tid;
@@ -99,8 +93,8 @@ public abstract class Transfer {
     protected void disconnectListener() {
         removeDisconnectListener();
 
-        transferDisconnectListener = new TransferDisconnectListener(context, tid, this, callback);
-        transferRegistryListener = new TransferRegistryListener(context, tid, this, callback);
+        transferDisconnectListener = new TransferDisconnectListener(tid, this, callback);
+        transferRegistryListener = new TransferRegistryListener(tid, this, callback);
 
         socket.on(Socket.EVENT_DISCONNECT, transferDisconnectListener);
         socket.on(SocketManager.EVENT_REGISTRY, transferRegistryListener);
@@ -174,12 +168,11 @@ public abstract class Transfer {
         /**
          * конструктор
          *
-         * @param activity       интерфейс
          * @param tid            идентификатор транзакции
          * @param statusCallback статус
          */
-        public TransferRegistryListener(Activity activity, String tid, Transfer transfer, TransferStatusListeners statusCallback) {
-            super(synchronization, activity, tid, transfer, statusCallback);
+        public TransferRegistryListener(String tid, Transfer transfer, TransferStatusListeners statusCallback) {
+            super(synchronization, tid, transfer, statusCallback);
         }
 
         @Override
@@ -187,8 +180,8 @@ public abstract class Transfer {
             try{
                 onRestart();
                 transfer.restart();
-            }catch (Exception e){
-                onError(e.getMessage());
+            }catch (Exception e) {
+                onError(StringUtil.exceptionToString(e));
             }
         }
     }
@@ -200,12 +193,11 @@ public abstract class Transfer {
         /**
          * конструктор
          *
-         * @param activity       интерфейс
          * @param tid            идентификатор транзакции
          * @param statusCallback статус
          */
-        public TransferDisconnectListener(Activity activity, String tid, Transfer transfer, TransferStatusListeners statusCallback) {
-            super(synchronization, activity, tid, transfer, statusCallback);
+        public TransferDisconnectListener(String tid, Transfer transfer, TransferStatusListeners statusCallback) {
+            super(synchronization, tid, transfer, statusCallback);
         }
 
         @Override
@@ -213,8 +205,8 @@ public abstract class Transfer {
             try{
                 onStop();
                 transfer.removeListener();
-            }catch (Exception e){
-                onError(e.getMessage());
+            }catch (Exception e) {
+                onError(StringUtil.exceptionToString(e));
             }
         }
     }

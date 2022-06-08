@@ -38,6 +38,8 @@ public class SocketManager {
     private Socket socket;
     private boolean isRegistry;
 
+    private OnSocketListeners mListeners;
+
     /**
      * Подключение к сокету
      * @param url адресная строка подключения
@@ -80,6 +82,8 @@ public class SocketManager {
      * @param listeners обработчик уведомлений
      */
     public void open(final OnSocketListeners listeners) {
+        mListeners = listeners;
+
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -111,7 +115,7 @@ public class SocketManager {
             @Override
             public void call(Object... args) {
                 isRegistry = false;
-                listeners.onDisconnect();
+                mListeners.onDisconnect();
             }
         });
 
@@ -152,10 +156,15 @@ public class SocketManager {
     public void close() {
         if(socket != null) {
             socket.off();
+            socket.disconnect();
             socket.close();
         }
 
         isRegistry = false;
+
+        if(mListeners != null) {
+            mListeners.onDisconnect();
+        }
     }
 
     /**
@@ -163,6 +172,8 @@ public class SocketManager {
      */
     public void destroy() {
         close();
+
+        mListeners = null;
         socket = null;
     }
 }

@@ -20,7 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mobwal.android.library.PrefManager;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentBiometryBinding;
@@ -47,7 +47,7 @@ public class BiometryFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        LogUtil.writeText(requireContext(),"Безопасность. Пин-код.");
+        LogUtilSingleton.getInstance().writeText("Безопасность. Пин-код.");
         mPrefManager = new PrefManager(requireContext());
         pinCode = mPrefManager.get("pin_code", "");
     }
@@ -72,7 +72,7 @@ public class BiometryFragment extends BaseFragment
 
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-                LogUtil.debug(requireContext(),"Пользователь принудительно сбрасывает ПИН-код.");
+                LogUtilSingleton.getInstance().debug("Пользователь принудительно сбрасывает ПИН-код.");
 
                 mPrefManager.put("pin", false);
                 mPrefManager.put("pin_code", "");
@@ -166,7 +166,7 @@ public class BiometryFragment extends BaseFragment
     }
 
     private void onAuthorized() {
-        LogUtil.debug(requireContext(),"Авторизация по ПИН-коду выполнена");
+        LogUtilSingleton.getInstance().debug("Авторизация по ПИН-коду выполнена");
 
         mBinding.securityPass.setError(null);
 

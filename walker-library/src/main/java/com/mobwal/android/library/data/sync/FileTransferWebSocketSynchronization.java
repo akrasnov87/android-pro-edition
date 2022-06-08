@@ -64,8 +64,8 @@ public abstract class FileTransferWebSocketSynchronization
     }
 
     @Override
-    public void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress) {
-        super.start(socketManager, activity, progress);
+    public void start(@NonNull SocketManager socketManager, @NonNull ProgressListeners progress) {
+        super.start(socketManager, progress);
         onProgress(ProgressStep.START, "пакет file=" + StringUtil.getShortGuid(fileTid), fileTid);
     }
 

@@ -3,21 +3,26 @@ package com.mobwal.pro.ui.global;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.mobwal.android.library.FileManager;
+import com.mobwal.android.library.FragmentRunnable;
+import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.data.sync.Entity;
 import com.mobwal.android.library.data.sync.util.transfer.DownloadTransfer;
 import com.mobwal.android.library.data.sync.util.transfer.TransferListeners;
 import com.mobwal.android.library.data.sync.util.transfer.UploadTransfer;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 import com.mobwal.pro.ManualSynchronization;
 import com.mobwal.pro.Names;
+import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.SyncLogAdapter;
 import com.mobwal.pro.databinding.FragmentSynchronizationBinding;
@@ -47,12 +52,10 @@ public class SynchronizationFragment extends Fragment
 
     private List<SynchronizationLogItem> mLogList;
     private SyncLogAdapter mSyncLogAdapter;
-    private boolean mIsSyncSuccess = true;
 
     public SynchronizationFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,8 +68,12 @@ public class SynchronizationFragment extends Fragment
         // Inflate the layout for this fragment
         binding = FragmentSynchronizationBinding.inflate(inflater, container, false);
         binding.synchronizationAction.setOnClickListener(this);
-
+        PrefManager prefManager = new PrefManager(requireContext());
         mLogList = new ArrayList<>();
+
+        if(prefManager.get("debug", false)) {
+            binding.synchronizationLogs.setVisibility(View.VISIBLE);
+        }
 
         synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), false);
         return binding.getRoot();
@@ -76,126 +83,195 @@ public class SynchronizationFragment extends Fragment
     public void onDestroyView() {
         super.onDestroyView();
 
-        socketManager.destroy();
+        Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
+
+        if(synchronization != null) {
+            synchronization.destroy();
+        }
+
+        if(socketManager != null) {
+            socketManager.destroy();
+        }
+
         binding = null;
     }
 
     @Override
     public void onClick(View v) {
-        mLogList.clear();
-        mSyncLogAdapter = new SyncLogAdapter(requireContext(), mLogList);
-        binding.synchronizationLogs.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.synchronizationLogs.setAdapter(mSyncLogAdapter);
+        binding.synchronizationInfo.setVisibility(View.GONE);
 
-        BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredential();
-        socketManager = new SocketManager(Names.getConnectUrl(), credentials, "");
-        if(socketManager.isRegistered()) {
-            onRegistry();
+        if(synchronization.isRunning()) {
+            setLogMessage("Синхронизация завершена принудительно!", true);
+            synchronization.stop();
+            binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_play_arrow_24, null));
+            Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
         } else {
-            socketManager.open(this);
+            binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_stop_24, null));
+
+            mLogList.clear();
+            mSyncLogAdapter = new SyncLogAdapter(requireContext(), mLogList);
+            binding.synchronizationLogs.setLayoutManager(new LinearLayoutManager(requireContext()));
+            binding.synchronizationLogs.setAdapter(mSyncLogAdapter);
+
+            BasicCredential credentials = BasicAuthorizationSingleton.getInstance().getUser().getCredential();
+            socketManager = new SocketManager(Names.getConnectUrl(), credentials, "");
+            if(socketManager.isRegistered()) {
+                onRegistry();
+            } else {
+                socketManager.open(this);
+            }
         }
     }
 
     @Override
     public void onConnect() {
-
+        requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+            @Override
+            public void beforeRun() {
+                setLogMessage("Соединение с сервером создано", false);
+            }
+        });
     }
 
     @Override
     public void onRegistry() {
-        synchronization.start(socketManager, requireActivity(), new ProgressListeners() {
+        synchronization.start(socketManager, new ProgressListeners() {
             @Override
             public void onStart(OnSynchronizationListeners synchronization) {
-                requireActivity().runOnUiThread(() -> {
-                    binding.synchronizationDataCategory.setVisibility(View.VISIBLE);
-                    binding.synchronizationFileCategory.setVisibility(View.VISIBLE);
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.START);
+                        binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.START);
+
+                        binding.synchronizationDataCategory.setVisibility(View.VISIBLE);
+                        binding.synchronizationFileCategory.setVisibility(View.VISIBLE);
+                    }
                 });
             }
 
             @Override
             public void onStop(OnSynchronizationListeners synchronization) {
+                binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_play_arrow_24, null));
+
                 socketManager.destroy();
 
                 // останавливаем индикацию
-                requireActivity().runOnUiThread(() -> {
-                    binding.synchronizationDataCategory.setVisibility(View.GONE);
-                    binding.synchronizationFileCategory.setVisibility(View.GONE);
-                });
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
 
-                try {
-                    if (mIsSyncSuccess) {
-                        FileManager.getInstance().deleteFolder(FileManager.PHOTOS);
+                        binding.synchronizationDataCategory.setVisibility(View.GONE);
+                        binding.synchronizationFileCategory.setVisibility(View.GONE);
+
+                        try {
+                            Toast.makeText(requireContext(), "Синхронизация завершена успешно!", Toast.LENGTH_SHORT).show();
+                            FileManager.getInstance().deleteFolder(FileManager.PHOTOS);
+                        } catch (FileNotFoundException e) {
+                            LogUtilSingleton.getInstance().writeText("Ошибка удаление изображений после синхронизации.", e);
+                        }
                     }
-                } catch (FileNotFoundException e) {
-                    LogUtil.writeText(requireContext(), "Ошибка удаление изображений после синхронизации.", e);
-                }
+                });
             }
 
             @Override
             public void onProgress(OnSynchronizationListeners synchronization, int step, String message, String tid) {
                 if (!message.isEmpty()) {
-                    setLogMessage(message, false);
+                    requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                        @Override
+                        public void beforeRun() {
+                            setLogMessage(message, false);
+                        }
+                    });
                 }
             }
 
             @Override
             public void onError(OnSynchronizationListeners synchronization, int step, String message, String tid) {
-                setLogMessage(message, true);
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        setLogMessage(message, true);
+                    }
+                });
             }
 
             @Override
             public void onStartTransfer(@NonNull String tid, @NonNull Transfer transfer) {
                 String category = getCategoryByTid(tid);
-                if(category.equals("DATA")) {
-                    binding.synchronizationDataCategory.updatePercent(0,0);
-                } else if(category.equals("FILES")) {
-                    binding.synchronizationFileCategory.updatePercent(0,0);
-                }
+
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        if (category.equals("DATA")) {
+                            binding.synchronizationDataCategory.updatePercent(0, 0);
+                        } else if (category.equals("FILES")) {
+                            binding.synchronizationFileCategory.updatePercent(0, 0);
+                        }
+                    }
+                });
             }
 
             @Override
             public void onRestartTransfer(@NonNull String tid, @NonNull Transfer transfer) {
                 String category = getCategoryByTid(tid);
-                if(category.equals("DATA")) {
-                    binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.RESTART);
-                } else if(category.equals("FILES")) {
-                    binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.RESTART);
-                }
+
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        if (category.equals("DATA")) {
+                            binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.RESTART);
+                        } else if (category.equals("FILES")) {
+                            binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.RESTART);
+                        }
+                    }
+                });
             }
 
             @Override
             public void onPercentTransfer(@NonNull String tid, @NonNull TransferProgress progress, @NonNull Transfer transfer) {
                 String category = getCategoryByTid(tid);
 
-                if (transfer instanceof UploadTransfer) {
-                    if(category.equals("DATA")) {
-                        binding.synchronizationDataCategory.updatePercent(progress.getPercent(), 0);
-                        binding.synchronizationDataCategory.updateStatus(progress);
-                    } else if(category.equals("FILES")) {
-                        binding.synchronizationFileCategory.updatePercent(progress.getPercent(), 0);
-                        binding.synchronizationFileCategory.updateStatus(progress);
-                    }
-                }
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        if (transfer instanceof UploadTransfer && isAdded()) {
+                            if (category.equals("DATA")) {
+                                binding.synchronizationDataCategory.updatePercent(progress.getPercent(), 0);
+                                binding.synchronizationDataCategory.updateStatus(progress);
+                            } else if (category.equals("FILES")) {
+                                binding.synchronizationFileCategory.updatePercent(progress.getPercent(), 0);
+                                binding.synchronizationFileCategory.updateStatus(progress);
+                            }
+                        }
 
-                if (transfer instanceof DownloadTransfer) {
-                    if(category.equals("DATA")) {
-                        binding.synchronizationDataCategory.updatePercent(100, progress.getPercent());
-                        binding.synchronizationDataCategory.updateStatus(progress);
-                    } else if(category.equals("FILES")) {
-                        binding.synchronizationFileCategory.updatePercent(100, progress.getPercent());
-                        binding.synchronizationFileCategory.updateStatus(progress);
+                        if (transfer instanceof DownloadTransfer && isAdded()) {
+                            if (category.equals("DATA")) {
+                                binding.synchronizationDataCategory.updatePercent(100, progress.getPercent());
+                                binding.synchronizationDataCategory.updateStatus(progress);
+                            } else if (category.equals("FILES")) {
+                                binding.synchronizationFileCategory.updatePercent(100, progress.getPercent());
+                                binding.synchronizationFileCategory.updateStatus(progress);
+                            }
+                        }
                     }
-                }
+                });
             }
 
             @Override
             public void onStopTransfer(@NonNull String tid, @NonNull Transfer transfer) {
                 String category = getCategoryByTid(tid);
-                if(category.equals("DATA")) {
-                    binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.STOP);
-                } else if(category.equals("FILES")) {
-                    binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.STOP);
-                }
+
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        if (category.equals("DATA")) {
+                            binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.STOP);
+                        } else if (category.equals("FILES")) {
+                            binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.STOP);
+                        }
+                    }
+                });
             }
 
             @Override
@@ -206,18 +282,29 @@ public class SynchronizationFragment extends Fragment
             @Override
             public void onErrorTransfer(@NonNull String tid, @NonNull String message, @NonNull Transfer transfer) {
                 String category = getCategoryByTid(tid);
-                if(category.equals("DATA")) {
-                    binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.ERROR);
-                } else if(category.equals("FILES")) {
-                    binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.ERROR);
-                }
+
+                requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+                    @Override
+                    public void beforeRun() {
+                        if (category.equals("DATA")) {
+                            binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.ERROR);
+                        } else if (category.equals("FILES")) {
+                            binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.ERROR);
+                        }
+                    }
+                });
             }
         });
     }
 
     @Override
     public void onDisconnect() {
-
+        requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+            @Override
+            public void beforeRun() {
+                setLogMessage("Соединение с сервером разорвано", false);
+            }
+        });
     }
 
     // Privates
@@ -231,9 +318,12 @@ public class SynchronizationFragment extends Fragment
     }
 
     protected void setLogMessage(@NonNull String message, boolean isError) {
-        if (isError) {
-            mIsSyncSuccess = false;
+        if(isError) {
+            LogUtilSingleton.getInstance().error(message);
+        } else {
+            LogUtilSingleton.getInstance().debug(message);
         }
+
         mLogList.add(0, new SynchronizationLogItem(message, isError));
         mSyncLogAdapter.notifyItemInserted(0);
     }

@@ -52,10 +52,9 @@ public interface OnSynchronizationListeners {
 
     /**
      * Запуск на выполение
-     * @param activity экран
      * @param progress результат выполнения
      */
-    void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress);
+    void start(@NonNull SocketManager socketManager, @NonNull ProgressListeners progress);
 
     /**
      * Принудительная остановка выполнения

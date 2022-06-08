@@ -56,7 +56,7 @@ public class MyUncaughtExceptionHandler
             }
         } catch (Exception exc) {
             intercept = false;
-            Log.d(Constants.TAG, Objects.requireNonNull(exc.getMessage()));
+            Log.d(Constants.TAG, Objects.requireNonNull(StringUtil.exceptionToString(e)));
         } finally {
             intercept = true;
             if (oldHandler != null) {

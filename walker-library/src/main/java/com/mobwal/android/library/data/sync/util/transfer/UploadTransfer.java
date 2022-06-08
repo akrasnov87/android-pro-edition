@@ -10,6 +10,7 @@ import java.util.Date;
 
 import io.socket.client.Socket;
 import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
+import com.mobwal.android.library.util.StringUtil;
 
 public class UploadTransfer extends Transfer {
 
@@ -29,8 +30,8 @@ public class UploadTransfer extends Transfer {
     private int uploadPosition = 0;
     private Date dtStart;
 
-    public UploadTransfer(OnSynchronizationListeners synchronization, Socket socket, String version, Activity context, String tid) {
-        super(synchronization, socket, version, context, tid);
+    public UploadTransfer(OnSynchronizationListeners synchronization, Socket socket, String version, String tid) {
+        super(synchronization, socket, version, tid);
     }
 
     /**
@@ -45,7 +46,7 @@ public class UploadTransfer extends Transfer {
         disconnectListener();
 
         Log.d(UPLOAD_TAG, "Старт иден. " + tid);
-        uploadListener = new UploadListener(synchronization, context, tid, this, callback);
+        uploadListener = new UploadListener(synchronization, tid, this, callback);
         uploadListener.onStart();
         socket.on(EVENT_UPLOAD, uploadListener);
 
@@ -58,7 +59,7 @@ public class UploadTransfer extends Transfer {
      * перезапуск процесса
      */
     public void restart(){
-        uploadListener = new UploadTransfer.UploadListener(synchronization, context, tid, this, callback);
+        uploadListener = new UploadTransfer.UploadListener(synchronization, tid, this, callback);
         socket.on(EVENT_UPLOAD, uploadListener);
 
         int end = uploadPosition + getChunk();
@@ -98,13 +99,12 @@ public class UploadTransfer extends Transfer {
         /**
          * конструктор
          * @param synchronization синхронизация
-         * @param activity        интерфейс
          * @param tid             идентификатор транзакции
          * @param instance        текущий экземпляр передачи данных
          * @param statusCallback  статус
          */
-        public UploadListener(OnSynchronizationListeners synchronization, Activity activity, String tid, UploadTransfer instance, TransferStatusListeners statusCallback) {
-            super(synchronization, activity, tid, instance, statusCallback);
+        public UploadListener(OnSynchronizationListeners synchronization, String tid, UploadTransfer instance, TransferStatusListeners statusCallback) {
+            super(synchronization, tid, instance, statusCallback);
         }
 
         @Override
@@ -113,7 +113,7 @@ public class UploadTransfer extends Transfer {
                 try {
                     processing(args);
                 } catch (Exception e) {
-                    onError(e.getMessage());
+                    onError(StringUtil.exceptionToString(e));
                 }
             }
         }
@@ -143,7 +143,7 @@ public class UploadTransfer extends Transfer {
                         Log.d(UPLOAD_TAG, "tid: " + tid + "; finish");
                     } else {
                         uploadPosition = result.meta.start;
-                        int percent = (int)(((long)uploadPosition * 100) / (long)uploadBytes.length);
+                        int percent = (int) (((long) uploadPosition * 100) / (long) uploadBytes.length);
                         int end = uploadPosition + getChunk();
                         if (end > uploadBytes.length) {
                             end = uploadBytes.length;
@@ -152,7 +152,7 @@ public class UploadTransfer extends Transfer {
                             Log.d(UPLOAD_TAG, "tid: " + tid + "; start: " + end + "; chunk: " + getChunk() + "; totalLength: " + uploadBytes.length);
                             socket.emit(EVENT_UPLOAD, protocolVersion, Arrays.copyOfRange(uploadBytes, uploadPosition, end), tid, uploadPosition, uploadBytes.length);
                         } catch (Exception e) {
-                            onError(e.getMessage());
+                            onError(StringUtil.exceptionToString(e));
                         }
                         long lastChunk = getChunk();
                         if (getIterationStartTime() != null) {

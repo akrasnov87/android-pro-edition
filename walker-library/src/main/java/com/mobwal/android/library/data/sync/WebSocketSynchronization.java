@@ -1,7 +1,5 @@
 package com.mobwal.android.library.data.sync;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
 
 import com.mobwal.android.library.data.sync.util.transfer.DownloadTransfer;
@@ -12,7 +10,7 @@ import com.mobwal.android.library.data.sync.util.transfer.TransferStatusListener
 import com.mobwal.android.library.data.sync.util.transfer.UploadTransfer;
 import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.DoubleUtil;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +27,7 @@ import io.socket.emitter.Emitter;
 import io.socket.engineio.client.EngineIOException;
 import com.mobwal.android.library.socket.SocketManager;
 
+import com.mobwal.android.library.util.StringUtil;
 import com.mobwal.android.library.util.SyncUtil;
 
 /**
@@ -58,8 +57,8 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     }
 
     @Override
-    public void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress) {
-        super.start(socketManager, activity, progress);
+    public void start(@NonNull SocketManager socketManager, @NonNull ProgressListeners progress) {
+        super.start(socketManager, progress);
 
         onProgress(ProgressStep.START, "Проверка подключения к серверу.", null);
 
@@ -92,9 +91,9 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
 
     @Override
     protected Object sendBytes(final String tid, byte[] bytes) {
-        if(bytes != null && getSocketManager() != null) {
+        if(bytes != null && getSocketManager() != null && getSocketManager().getSocket() != null) {
             onProgress(ProgressStep.UPLOAD, "", tid);
-            UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), "v2", getActivity(), tid);
+            UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), "v2", tid);
             transfers.put(tid, uploadTransfer);
 
             uploadTransfer.upload(bytes, new TransferStatusListeners() {
@@ -137,9 +136,9 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
 
     @Override
     protected Object sendBytes(final String tid, byte[] bytes, FileTransferFinishedCallback fileTransferFinishedCallback) {
-        if(bytes != null && getSocketManager() != null) {
+        if(bytes != null && getSocketManager() != null && getSocketManager().getSocket() != null) {
             onProgress(ProgressStep.UPLOAD, "", tid);
-            UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), "v2", getActivity(), tid);
+            UploadTransfer uploadTransfer = new UploadTransfer(this, getSocketManager().getSocket(), "v2", tid);
             transfers.put(tid, uploadTransfer);
 
             uploadTransfer.upload(bytes, new TransferStatusListeners() {
@@ -183,19 +182,19 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
 
     @Override
     public void stop() {
-        if(synchronizationListener != null && getSocketManager() != null) {
+        if(synchronizationListener != null && getSocketManager() != null && getSocketManager().getSocket() != null) {
             getSocketManager().getSocket().off("synchronization", synchronizationListener);
             getSocketManager().getSocket().off("synchronization-status", synchronizationListener);
         }
 
-        if(synchronizationConnectListener != null && getSocketManager() != null){
+        if(synchronizationConnectListener != null && getSocketManager() != null && getSocketManager().getSocket() != null) {
             getSocketManager().getSocket().off(Socket.EVENT_DISCONNECT, synchronizationConnectListener);
 
             getSocketManager().getSocket().off(Socket.EVENT_CONNECT, synchronizationConnectListener);
             getSocketManager().getSocket().off(Socket.EVENT_CONNECT_ERROR, synchronizationConnectListener);
         }
 
-        if(transfers != null){
+        if(transfers != null) {
             for(Transfer t : transfers.values()){
                 t.destroy();
             }
@@ -217,65 +216,30 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
      */
     protected void onProgressTransfer(final int part, final String tid, final Transfer transfer, final Object data) {
         if(progressListener != null) {
-            if(getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(progressListener != null) {
-                            switch (part) {
-                                case TransferListeners.START:
-                                    progressListener.onStartTransfer(tid, transfer);
-                                    break;
+            switch (part) {
+                case TransferListeners.START:
+                    progressListener.onStartTransfer(tid, transfer);
+                    break;
 
-                                case TransferListeners.RESTART:
-                                    progressListener.onRestartTransfer(tid, transfer);
-                                    break;
+                case TransferListeners.RESTART:
+                    progressListener.onRestartTransfer(tid, transfer);
+                    break;
 
-                                case TransferListeners.PERCENT:
-                                    progressListener.onPercentTransfer(tid, (TransferProgress) data, transfer);
-                                    break;
+                case TransferListeners.PERCENT:
+                    progressListener.onPercentTransfer(tid, (TransferProgress) data, transfer);
+                    break;
 
-                                case TransferListeners.STOP:
-                                    progressListener.onStopTransfer(tid, transfer);
-                                    break;
+                case TransferListeners.STOP:
+                    progressListener.onStopTransfer(tid, transfer);
+                    break;
 
-                                case TransferListeners.END:
-                                    progressListener.onEndTransfer(tid, transfer, data);
-                                    break;
+                case TransferListeners.END:
+                    progressListener.onEndTransfer(tid, transfer, data);
+                    break;
 
-                                case TransferListeners.ERROR:
-                                    progressListener.onErrorTransfer(tid, (String) data, transfer);
-                                    break;
-                            }
-                        }
-                    }
-                });
-            } else {
-                switch (part) {
-                    case TransferListeners.START:
-                        progressListener.onStartTransfer(tid, transfer);
-                        break;
-
-                    case TransferListeners.RESTART:
-                        progressListener.onRestartTransfer(tid, transfer);
-                        break;
-
-                    case TransferListeners.PERCENT:
-                        progressListener.onPercentTransfer(tid, (TransferProgress) data, transfer);
-                        break;
-
-                    case TransferListeners.STOP:
-                        progressListener.onStopTransfer(tid, transfer);
-                        break;
-
-                    case TransferListeners.END:
-                        progressListener.onEndTransfer(tid, transfer, data);
-                        break;
-
-                    case TransferListeners.ERROR:
-                        progressListener.onErrorTransfer(tid, (String) data, transfer);
-                        break;
-                }
+                case TransferListeners.ERROR:
+                    progressListener.onErrorTransfer(tid, (String) data, transfer);
+                    break;
             }
         }
     }
@@ -291,6 +255,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
     @Override
     public void destroy() {
         super.destroy();
+
         mEndTransferResults = null;
         transfers = null;
         synchronizationListener = null;
@@ -319,8 +284,8 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
             }else {*/
                 try {
                     processing(args);
-                }catch (Exception e){
-                    LogUtil.writeText(getContext().getContext(), e.toString());
+                }catch (Exception e) {
+                    LogUtilSingleton.getInstance().writeText(e.toString());
                     onError(ProgressStep.UPLOAD, e, null);
                 }
             //}
@@ -330,18 +295,18 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
          * @param args параметры
          */
         void processing(Object[] args) {
-            if(args != null && args.length > 0){
+            if(args != null && args.length > 0) {
                 Object item = args[0];
                 if(item instanceof String){
                     onProgress(ProgressStep.NONE, (String)item, null);
                 }else if(item instanceof SocketIOException){
-                    onError(ProgressStep.NONE, ((SocketIOException)item).getMessage(), null);
+                    onError(ProgressStep.NONE, StringUtil.exceptionToString((SocketIOException)item), null);
                 } else if(item instanceof EngineIOException){
-                    onError(ProgressStep.NONE, ((EngineIOException)item).getMessage(), null);
+                    onError(ProgressStep.NONE, StringUtil.exceptionToString((EngineIOException)item), null);
                 } else if(item instanceof Integer){
                     onProgress(ProgressStep.NONE, String.valueOf(item), null);
                 }
-            }else {
+            } else {
                 onProgress(ProgressStep.NONE, "ERROR", null);
             }
         }
@@ -374,7 +339,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 try {
                     processing(args);
                 }catch (Exception e){
-                    LogUtil.writeText(getContext().getContext(), e.toString());
+                    LogUtilSingleton.getInstance().writeText(e.toString());
                     //Logger.error(e);
                     onError(ProgressStep.UPLOAD, e, null);
                 }
@@ -414,7 +379,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                     JSONObject metaJSONObject = jsonObject.getJSONObject("meta");
                     String tid = metaJSONObject.getString("tid");
                     if(metaJSONObject.getBoolean("processed") && getEntities(tid).length > 0) {
-                        DownloadTransfer downloadTransfer = new DownloadTransfer(getSynchronization(), getSocketManager().getSocket(), "v2", getActivity(), tid);
+                        DownloadTransfer downloadTransfer = new DownloadTransfer(getSynchronization(), getSocketManager().getSocket(), "v2", tid);
                         if(transfers.get(tid) != null) {
                             Objects.requireNonNull(transfers.get(tid)).destroy();
                         }
@@ -455,17 +420,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                                                     processingPackage(getCollectionTid(), (byte[]) result.mObject);
                                                     onProgressTransfer(TransferListeners.END, result.mTid, result.mTransfer, null);
                                                     if (isEntityFinished()) {
-
-                                                        if (getActivity() != null) {
-                                                            getActivity().runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    stop();
-                                                                }
-                                                            });
-                                                        } else {
-                                                            stop();
-                                                        }
+                                                        stop();
                                                     }
                                                 }
                                             }catch (ConcurrentModificationException ignored) {

@@ -14,7 +14,7 @@ import android.os.Bundle;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.exception.ExceptionInterceptActivity;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 import com.mobwal.pro.databinding.ActivityMailBinding;
 
 public class MailActivity
@@ -65,10 +65,10 @@ public class MailActivity
         super.onBackPressed();
 
         if(BasicAuthorizationSingleton.getInstance().isAuthorized()) {
-            LogUtil.debug(this, "Переход на главый экран");
+            LogUtilSingleton.getInstance().debug("Переход на главый экран");
             startActivity(MainActivity.getIntent(this));
         } else {
-            LogUtil.debug(this, "Переход на экран авторизации");
+            LogUtilSingleton.getInstance().debug("Переход на экран авторизации");
             startActivity(SecurityActivity.getIntent(this));
         }
     }

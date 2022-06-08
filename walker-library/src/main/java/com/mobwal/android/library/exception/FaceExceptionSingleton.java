@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.mobwal.android.library.Constants;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 import com.mobwal.android.library.util.StringUtil;
 
 import java.io.BufferedInputStream;
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,7 +72,7 @@ public class FaceExceptionSingleton {
                 if(files[i].delete()) {
                     Log.d(Constants.TAG, "Файл " + files[i].getName() + " удалён");
                 } else {
-                    LogUtil.writeText(mContext, "Ошибка удаления файла лога: " + files[i].getName());
+                    LogUtilSingleton.getInstance().writeText("Ошибка удаления файла лога: " + files[i].getName());
                 }
             }
         }
@@ -88,7 +87,7 @@ public class FaceExceptionSingleton {
             bos.flush();
             bos.close();
         } catch (IOException e) {
-            LogUtil.writeText(mContext, "Ошибка записи исключения в файл", e);
+            LogUtilSingleton.getInstance().writeText( "Ошибка записи исключения в файл", e);
         }
     }
 
@@ -107,7 +106,7 @@ public class FaceExceptionSingleton {
                 }
                 return buf.toByteArray();
             } catch (IOException e) {
-                LogUtil.writeText(mContext,"Ошибка чтения исключения из файла", e);
+                LogUtilSingleton.getInstance().writeText("Ошибка чтения исключения из файла", e);
             }
         }
 

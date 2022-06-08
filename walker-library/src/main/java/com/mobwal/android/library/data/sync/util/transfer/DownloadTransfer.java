@@ -11,6 +11,7 @@ import java.util.Date;
 
 import io.socket.client.Socket;
 import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
+import com.mobwal.android.library.util.StringUtil;
 
 public class DownloadTransfer extends Transfer {
     /**
@@ -29,8 +30,8 @@ public class DownloadTransfer extends Transfer {
     int downloadPosition = 0;
     private Date dtStart;
 
-    public DownloadTransfer(@NonNull OnSynchronizationListeners synchronization, @NonNull Socket socket, @NonNull String version, @NonNull Activity context, @NonNull String tid) {
-        super(synchronization, socket, version, context, tid);
+    public DownloadTransfer(@NonNull OnSynchronizationListeners synchronization, @NonNull Socket socket, @NonNull String version, @NonNull String tid) {
+        super(synchronization, socket, version, tid);
     }
 
     /**
@@ -43,7 +44,7 @@ public class DownloadTransfer extends Transfer {
         disconnectListener();
 
         Log.d(DOWNLOAD_TAG, "Старт иден. " + tid);
-        downloadListener = new DownloadListener(synchronization, context, tid, this, callback);
+        downloadListener = new DownloadListener(synchronization, tid, this, callback);
         downloadListener.onStart();
         socket.on(EVENT_DOWNLOAD, downloadListener);
 
@@ -56,7 +57,7 @@ public class DownloadTransfer extends Transfer {
      * перезапуск процесса
      */
     public void restart(){
-        downloadListener = new DownloadTransfer.DownloadListener(synchronization, context, tid, this, callback);
+        downloadListener = new DownloadTransfer.DownloadListener(synchronization, tid, this, callback);
         socket.on(EVENT_DOWNLOAD, downloadListener);
 
         socket.emit(EVENT_DOWNLOAD, protocolVersion, downloadPosition,  getChunk(), tid);
@@ -90,12 +91,11 @@ public class DownloadTransfer extends Transfer {
         /**
          * конструктор
          *
-         * @param activity       интерфейс
          * @param tid            идентификатор транзакции
          * @param statusCallback статус
          */
-        public DownloadListener(@NonNull OnSynchronizationListeners synchronization, @NonNull Activity activity, @NonNull String tid, @NonNull DownloadTransfer transfer, @NonNull TransferStatusListeners statusCallback) {
-            super(synchronization, activity, tid, transfer, statusCallback);
+        public DownloadListener(@NonNull OnSynchronizationListeners synchronization, @NonNull String tid, @NonNull DownloadTransfer transfer, @NonNull TransferStatusListeners statusCallback) {
+            super(synchronization, tid, transfer, statusCallback);
         }
 
         /**
@@ -117,7 +117,7 @@ public class DownloadTransfer extends Transfer {
                 try {
                     processing(args);
                 } catch (Exception e) {
-                    onError(e.getMessage());
+                    onError(StringUtil.exceptionToString(e));
                 }
             }
         }

@@ -37,11 +37,6 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     public static final int MAX_COUNT_IN_QUERY = 100000;
 
     /**
-     * текущее активити, нужно для выполнения операции в потоке
-     */
-    private Activity activity;
-
-    /**
      * имя синхронизации
      */
     private final String name;
@@ -146,31 +141,11 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     }
 
     /**
-     * Устанавливаем текущее активити.
-     * Предназначено для вывода процесса синхронизации в UI потоке
-     *
-     * @param activity текущее активити
-     */
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
-    /**
-     * получение активного экрана
-     *
-     * @return Activity
-     */
-    public Activity getActivity() {
-        return this.activity;
-    }
-
-    /**
      * Запуск на выполение
      *
-     * @param activity экран
      * @param progress результат выполнения
      */
-    public void start(@NonNull SocketManager socketManager, @NonNull Activity activity, @NonNull ProgressListeners progress) {
+    public void start(@NonNull SocketManager socketManager, @NonNull ProgressListeners progress) {
         mSocketManager = socketManager;
 
         Log.e("SYNC", "BaseSynchronization start");
@@ -181,7 +156,6 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         }
         initEntities();
         Log.e("SYNC", "BaseSynchronization initEntities");
-        this.activity = activity;
         this.progressListener = progress;
         //resetTid(this);
 
@@ -419,19 +393,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      */
     protected void onProgress(final int step, final String message, final String tid) {
         if (progressListener != null) {
-            final OnSynchronizationListeners synchronization = this;
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (progressListener != null) {
-                            progressListener.onProgress(synchronization, step, message, tid);
-                        }
-                    }
-                });
-            } else {
-                progressListener.onProgress(this, step, message, tid);
-            }
+            progressListener.onProgress(this, step, message, tid);
         }
     }
 
@@ -456,17 +418,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     public void onError(final int step, final String message, final String tid) {
         changeFinishStatus(FinishStatus.FAIL);
         if (progressListener != null) {
-            final OnSynchronizationListeners synchronization = this;
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressListener.onError(synchronization, step, message, tid);
-                    }
-                });
-            } else {
-                progressListener.onError(this, step, message, tid);
-            }
+            progressListener.onError(this, step, message, tid);
         }
     }
 
@@ -557,9 +509,6 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
 
         SyncUtil.resetTid(this);
         entities.clear();
-        if (activity != null) {
-            activity = null;
-        }
         progressListener = null;
         isRunning = false;
     }
@@ -585,9 +534,6 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
     public void destroy() {
         stop();
         progressListener = null;
-        if (activity != null) {
-            activity = null;
-        }
         changeFinishStatus(FinishStatus.NONE);
     }
 

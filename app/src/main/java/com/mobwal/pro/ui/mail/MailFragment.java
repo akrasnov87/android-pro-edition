@@ -1,8 +1,6 @@
 package com.mobwal.pro.ui.mail;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -12,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
@@ -30,9 +26,8 @@ import com.mobwal.pro.MainActivity;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.SecurityActivity;
-import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentMailBinding;
-import com.mobwal.android.library.util.LogUtil;
+import com.mobwal.android.library.util.LogUtilSingleton;
 
 import java.io.File;
 import java.util.List;
@@ -76,7 +71,7 @@ public class MailFragment extends ExceptionInterceptFragment
             }
         }
 
-        LogUtil.writeText(requireContext(), "Отправка сообщения в режиме: " + mode);
+        LogUtilSingleton.getInstance().writeText("Отправка сообщения в режиме: " + mode);
 
         return mBinding.getRoot();
     }
@@ -86,10 +81,10 @@ public class MailFragment extends ExceptionInterceptFragment
 
         if(item.getItemId() == android.R.id.home) {
             if(BasicAuthorizationSingleton.getInstance().isAuthorized()) {
-                LogUtil.debug(requireContext(), "Переход на главый экран");
+                LogUtilSingleton.getInstance().debug("Переход на главый экран");
                 startActivity(MainActivity.getIntent(requireContext()));
             } else {
-                LogUtil.debug(requireContext(), "Переход на экран авторизации");
+                LogUtilSingleton.getInstance().debug("Переход на экран авторизации");
                 startActivity(SecurityActivity.getIntent(requireContext()));
             }
         }
@@ -112,7 +107,7 @@ public class MailFragment extends ExceptionInterceptFragment
 
         Intent chooser = Intent.createChooser(i, getString(R.string.send_mail_title));
 
-        File archive = LogUtil.getArchiveLog(requireContext(), useSystemJournal || mode.equals(MailActivity.EXCEPTION));
+        File archive = LogUtilSingleton.getInstance().getArchiveLog(useSystemJournal || mode.equals(MailActivity.EXCEPTION));
 
         if(useSystemJournal) {
             if(archive != null) {
@@ -130,7 +125,7 @@ public class MailFragment extends ExceptionInterceptFragment
                     requireActivity().grantUriPermission(packageName, fileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
             } else {
-                LogUtil.debug(requireContext(),"Не удалось создать системный журнал.");
+                LogUtilSingleton.getInstance().debug("Не удалось создать системный журнал.");
             }
         }
 
@@ -139,9 +134,9 @@ public class MailFragment extends ExceptionInterceptFragment
         requireActivity().finish();
 
         FaceExceptionSingleton.getInstance(requireContext()).clearAll();
-        LogUtil.clear(requireContext(), true);
+        LogUtilSingleton.getInstance().clear(true);
 
-        LogUtil.debug(requireContext(),"Сообщение отправлено в режиме: " + mode);
+        LogUtilSingleton.getInstance().debug("Сообщение отправлено в режиме: " + mode);
     }
 
     @Override

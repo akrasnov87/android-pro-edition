@@ -46,7 +46,7 @@ public class SyncUtil {
             result = true;
         } catch (Exception e){
             result = false;
-            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            LogUtilSingleton.getInstance().writeText(e.toString());
         } finally {
             db.endTransaction();
         }
@@ -70,7 +70,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+FieldNames.TID+" = ? where "+FieldNames.TID+" is null OR "+FieldNames.TID+" = ?", params);
             result = true;
         } catch (Exception e) {
-            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            LogUtilSingleton.getInstance().writeText(e.toString());
             context.onError(ProgressStep.START, e, tid);
         }
         return result;
@@ -97,7 +97,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID + " = ? where " + linkName + " = ?", params);
             result = true;
         }catch (Exception e){
-            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            LogUtilSingleton.getInstance().writeText(e.toString());
             context.onError(ProgressStep.START, e, tid);
         }
         return result;
@@ -124,7 +124,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID+" = ? where " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " = ?", params);
             result = true;
         }catch (Exception e){
-            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            LogUtilSingleton.getInstance().writeText(e.toString());
             context.onError(ProgressStep.START, e, tid);
         }
         return result;
@@ -150,7 +150,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID+" = ?, " + FieldNames.OBJECT_OPERATION_TYPE + " = ? where " + FieldNames.TID + " = ? ", params);
             result = true;
         }catch (Exception e){
-            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            LogUtilSingleton.getInstance().writeText(e.toString());
             context.onError(ProgressStep.STOP, e, tid);
         }
         return result;
@@ -177,7 +177,7 @@ public class SyncUtil {
             result = true;
         }catch (Exception e){
             result = false;
-            LogUtil.writeText(context.getContext().getContext(), e.toString());
+            LogUtilSingleton.getInstance().writeText(e.toString());
         }finally {
             db.endTransaction();
         }
