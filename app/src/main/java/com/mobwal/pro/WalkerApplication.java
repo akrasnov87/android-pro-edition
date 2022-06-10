@@ -110,7 +110,7 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         // TODO: после тестирования убрать
-        Transfer.CHUNK = 8;
+        //Transfer.CHUNK = 8;
         Transfer.STATUS_TRANSFER_SPEED = true;
 
         PrefManager prefManager = new PrefManager(this);
@@ -145,6 +145,8 @@ public class WalkerApplication extends Application implements ExceptionIntercept
                     LogManager.getInstance().error(faceException.toString());
                 }
             }
+
+            exceptionHandler.clearAll();
         }
 
         // записываем информацию об устройстве в лог

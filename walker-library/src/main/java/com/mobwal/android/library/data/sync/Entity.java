@@ -101,7 +101,6 @@ public class Entity implements EntityListeners {
             to = tableMetaData.to();
             from = tableMetaData.from();
             pKey = tableMetaData.pKey();
-            clearable = tableMetaData.clear();
         }
         category = "DATA";
     }

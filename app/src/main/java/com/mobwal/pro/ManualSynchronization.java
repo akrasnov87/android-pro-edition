@@ -42,7 +42,7 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
 
     protected ManualSynchronization(WalkerSQLContext context, SimpleFileManager fileManager, boolean zip) {
         super(context, "MANUAL_SYNCHRONIZATION", fileManager, zip);
-        oneOnlyMode = true;
+        oneOnlyMode = false;
 
         useAttachments = true;
         serverSidePackage = new FullServerSidePackage();
@@ -53,16 +53,16 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         totalTid = UUID.randomUUID().toString();
         fileTid = UUID.randomUUID().toString();
 
-        addEntity(new Entity(Setting.class).setParam(getAppVersion()).setTid(totalTid));
-        addEntity(new Entity(Point.class).setParam(getAppVersion()).setTid(totalTid));
-        addEntity(new Entity(Route.class).setParam(getAppVersion()).setTid(totalTid));
-        addEntity(new Entity(Template.class).setParam(getAppVersion()).setTid(totalTid));
-        addEntity(new Entity(Result.class).setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Setting.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Point.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Route.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Template.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Result.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
 
-        addEntity(new Entity(Audit.class).setParam(getAppVersion()).setTid(totalTid));
-        addEntity(new Entity(MobileDevice.class).setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Audit.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(MobileDevice.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
 
-        addEntity(new EntityAttachment(Attachment.class).setParam(getAppVersion()).setTid(fileTid));
+        addEntity(new EntityAttachment(Attachment.class).setClearable().setParam(getAppVersion()).setTid(fileTid));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
     public void onError(int step, String message, String tid) {
         super.onError(step, message, tid);
 
-        oneOnlyMode = false;
+        oneOnlyMode = true;
     }
 
     @Override

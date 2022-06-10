@@ -4,9 +4,14 @@ import com.google.gson.annotations.Expose;
 import com.mobwal.android.library.annotation.TableMetaData;
 
 import java.util.Date;
+import java.util.UUID;
 
 @TableMetaData(name = "ad_audits", from = false)
 public class Audit {
+    public Audit() {
+        id = UUID.randomUUID().toString();
+    }
+
     public String id;
 
     @Expose
