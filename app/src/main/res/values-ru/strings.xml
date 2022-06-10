@@ -86,7 +86,7 @@
     <string name="point_name">Наименование или адрес</string>
     <string name="point_description">Краткое описание точки</string>
     <string name="map">Карта</string>
-    <string name="my_coordinate">Я</string>
+    <string name="my_coordinate">Я нахожусь тут!</string>
     <string name="address">Адрес</string>
     <string name="done">Выполнено</string>
 

@@ -18,6 +18,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 
 import com.mobwal.android.library.BitmapCache;
 import com.mobwal.android.library.FileManager;
@@ -115,6 +117,8 @@ public class WalkerApplication extends Application implements ExceptionIntercept
     public void onCreate() {
         super.onCreate();
 
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
         LogUtilSingleton.createInstance(this);
 
         Transfer.CHUNK = 8;
@@ -127,11 +131,11 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         Debug = sharedPreferences.getBoolean("debug", false);
         ReportSending = sharedPreferences.getBoolean("error_reporting", false);
 
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(ReportSending);
+        //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(ReportSending);
 
         if(ReportSending) {
-            FirebaseCrashlytics.getInstance().setCustomKey("debug", Debug);
-            FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
+            //FirebaseCrashlytics.getInstance().setCustomKey("debug", Debug);
+            //FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
         }
 
         BasicAuthorizationSingleton.createInstance(this, Names.CLAIMS, new AuthorizationRequest(Names.getConnectUrl()));

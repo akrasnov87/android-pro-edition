@@ -367,7 +367,7 @@ public class DataManager {
     @Nullable
     public Template[] getTemplates(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t", new String[] { f_route }, Template.class);
+        Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t", null, Template.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
             return resultCollection.toArray(new Template[0]);

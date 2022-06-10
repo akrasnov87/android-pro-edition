@@ -5,8 +5,9 @@ import android.location.LocationManager;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.mobwal.android.library.annotation.TableMetaData;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.UUID;
 
@@ -48,11 +49,11 @@ public class Point {
     public String c_comment;
 
     @Nullable
-    public LatLng convertToLatLng() {
+    public GeoPoint convertToLatLng() {
         if(n_latitude == null || n_longitude == null) {
             return null;
         } else {
-            return new LatLng(n_latitude, n_longitude);
+            return new GeoPoint(n_latitude, n_longitude);
         }
     }
 

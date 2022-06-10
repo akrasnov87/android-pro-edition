@@ -24,7 +24,7 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentCreatePointBinding;
 import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.SettingRoute;
-import com.mobwal.pro.ui.global.GoogleMapBottomDialogFragment;
+import com.mobwal.pro.ui.global.OsmMapBottomDialogFragment;
 import com.mobwal.pro.ui.GeoLocationLayout;
 import com.mobwal.pro.ui.global.WalkerLocationListeners;
 
@@ -37,7 +37,7 @@ public class CreateFragment extends Fragment
     private FragmentCreatePointBinding binding;
     private String f_route = null;
     private DataManager mDataManager;
-    private GoogleMapBottomDialogFragment mGoogleMapBottomDialogFragment;
+    private OsmMapBottomDialogFragment mOsmMapBottomDialogFragment;
     @Nullable
     private Location mLocation;
 
@@ -69,7 +69,7 @@ public class CreateFragment extends Fragment
             mLocation = savedInstanceState.getParcelable("location");
         }
 
-        mGoogleMapBottomDialogFragment = new GoogleMapBottomDialogFragment();
+        mOsmMapBottomDialogFragment = new OsmMapBottomDialogFragment();
         mDataManager = new DataManager(requireContext());
 
         SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
@@ -123,12 +123,12 @@ public class CreateFragment extends Fragment
     @Override
     public void onLocationChanged(@NonNull Location location) {
         mLocation = location;
-        mGoogleMapBottomDialogFragment.addLocation(new LocationInfo(location));
+        mOsmMapBottomDialogFragment.addLocation(new LocationInfo(location));
     }
 
     @Override
     public void onLocationClick(View v) {
-        mGoogleMapBottomDialogFragment.show(requireActivity().getSupportFragmentManager(), "map");
+        mOsmMapBottomDialogFragment.show(requireActivity().getSupportFragmentManager(), "map");
     }
 
     @Override

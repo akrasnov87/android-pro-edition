@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -25,19 +26,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
@@ -47,13 +39,19 @@ import com.mobwal.pro.databinding.FragmentPointInfoBinding;
 import com.mobwal.pro.models.PointInfo;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
+import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
+import com.mobwal.pro.utilits.OsmDroidUtil;
+
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Marker;
 
 /**
  * информация по точке
  */
 public class InfoFragment extends Fragment
-        implements OnMapReadyCallback, LocationListener, RecycleViewItemListeners {
+        implements LocationListener, RecycleViewItemListeners {
 
     private final static String LOCATION = "location";
 
@@ -62,11 +60,11 @@ public class InfoFragment extends Fragment
     private String f_result = null;
     private DataManager mDataManager;
     private PointInfoItemAdapter mPointInfoItemAdapter;
-    private GoogleMap mMap;
     private LocationManager mLocationManager;
     private final List<Marker> mMarkers;
     private Location mLocation;
     private MenuItem mDeleteMenuItem;
+    private Template[] mTemplates;
 
     @Nullable
     private Result[] mResults;
@@ -94,6 +92,8 @@ public class InfoFragment extends Fragment
             f_result = getArguments().getString("f_result");
 
             mResults = mDataManager.getResults(f_point);
+
+            mTemplates = mDataManager.getTemplates("");
         }
     }
 
@@ -111,18 +111,14 @@ public class InfoFragment extends Fragment
         binding = FragmentPointInfoBinding.inflate(inflater, container, false);
         binding.pointInfoList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.point_info_list_map);
-
-        if (supportMapFragment != null) {
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                supportMapFragment.getMapAsync(this);
-            } else {
-                WalkerApplication.Debug("Точки. Информация. Доступ к геолокации не предоставлен.");
-                binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                getChildFragmentManager().beginTransaction().remove(supportMapFragment).commit();
-            }
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.VISIBLE);
+            OsmDroidUtil.enableCompass(requireContext(), binding.osmPointInfoListMap);
+        } else {
+            WalkerApplication.Debug("Точки. Информация. Доступ к геолокации не предоставлен.");
+            binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.GONE);
         }
 
         return binding.getRoot();
@@ -217,6 +213,20 @@ public class InfoFragment extends Fragment
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Objects.requireNonNull(binding.osmPointInfoListMap).onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Objects.requireNonNull(binding.osmPointInfoListMap).onPause();
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     public void onStop() {
@@ -225,24 +235,11 @@ public class InfoFragment extends Fragment
         mLocationManager.removeUpdates(this);
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
-
-        googleMap.getUiSettings().setCompassEnabled(true);
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-        updateLocations(mLocation);
-    }
-
     /**
      * Скрыть карту
      */
     private void hiddenMap() {
-        Fragment fragment = getChildFragmentManager().findFragmentById(R.id.point_info_list_map);
-        if(fragment != null) {
-            getChildFragmentManager().beginTransaction().remove(fragment).commit();
-        }
+        binding.osmPointInfoListMap.setVisibility(View.GONE);
     }
 
     /**
@@ -250,64 +247,89 @@ public class InfoFragment extends Fragment
      * @param location текущее местоположение
      */
     private void updateLocations(@Nullable Location location) {
-        if(mMap == null) {
-            return;
-        }
+        clearMarkers();
 
-        if(mMarkers.size() > 0) {
-            for (Marker marker: mMarkers) {
-                marker.remove();
-            }
-            mMarkers.clear();
-        }
-
+        List<GeoPoint> points = new ArrayList<>();
         Point pointItem = mDataManager.getPoint(f_point);
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if(pointItem != null) {
-            LatLng point = pointItem.convertToLatLng();
-            if(point != null) {
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(point)
-                        .title(pointItem.c_address));
+        Marker pointMarker;
 
-                mMarkers.add(marker);
-                builder.include(point);
+        // точка задания
+        if(pointItem != null) {
+            GeoPoint point = pointItem.convertToLatLng();
+            points.add(point);
+
+            if(point != null) {
+                pointMarker = new Marker(binding.osmPointInfoListMap);
+                pointMarker.setPosition(point);
+                pointMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                pointMarker.setTitle(pointItem.c_address);
+                pointMarker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_48_red, null));
+
+                binding.osmPointInfoListMap.getOverlays().add(pointMarker);
+
+                mMarkers.add(pointMarker);
             }
         }
 
         Result[] results = mDataManager.getResults(f_point);
         if(results != null && results.length > 0) {
             for (Result result: results) {
-                LatLng point = result.convertToLatLng();
-
+                GeoPoint point = result.convertToLatLng();
+                points.add(point);
                 if(point != null) {
-                    Marker marker = mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                            .position(point));
+                    Marker marker = new Marker(binding.osmPointInfoListMap);
+                    marker.setPosition(point);
+                    marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_48_green, null));
+
+                    String templateName = "По умолчанию";
+                    for (Template template:
+                            mTemplates) {
+                        if(template.id.equals(result.fn_template)) {
+                            templateName = template.c_name;
+                            break;
+                        }
+                    }
+
+                    marker.setTitle(templateName);
+
+                    binding.osmPointInfoListMap.getOverlays().add(marker);
 
                     mMarkers.add(marker);
-                    builder.include(point);
                 }
             }
         }
 
+        // текущее местоположение
         if(location != null) {
-            LatLng point = new LatLng(location.getLatitude(), location.getLongitude());
-            Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(point)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                    .title(getString(R.string.my_coordinate)));
+            GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
+            points.add(point);
 
-            if(marker != null) {
-                marker.showInfoWindow();
-            }
+            Marker marker = new Marker(binding.osmPointInfoListMap);
+            marker.setPosition(point);
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.setTitle(getString(R.string.my_coordinate));
+            marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_48_blue, null));
+
+            binding.osmPointInfoListMap.getOverlays().add(marker);
+
+            marker.showInfoWindow();
 
             mMarkers.add(marker);
-            builder.include(point);
         }
+        
 
-        if(mMarkers.size() > 0) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+        if(mMarkers.size() > 1) {
+            binding.osmPointInfoListMap.zoomToBoundingBox(OsmDroidUtil.toBoxing(points), true);
+        } else {
+            // если одна точка
+            if(mMarkers.size() == 1 && pointItem != null) {
+                GeoPoint point = pointItem.convertToLatLng();
+                mMarkers.get(0).showInfoWindow();
+
+                binding.osmPointInfoListMap.getController().setZoom(18.0f);
+                binding.osmPointInfoListMap.getController().setCenter(point);
+            }
         }
     }
 
@@ -318,10 +340,11 @@ public class InfoFragment extends Fragment
     @Override
     public void onViewItemClick(String id) {
         Result result = mDataManager.getResult(id);
-        if(result != null && mMap != null) {
-            LatLng point = result.convertToLatLng();
+        if(result != null) {
+            GeoPoint point = result.convertToLatLng();
             if(point != null) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 18.0f));
+                binding.osmPointInfoListMap.getController().setZoom(18.0f);
+                binding.osmPointInfoListMap.getController().setCenter(point);
             }
         }
     }
@@ -389,10 +412,21 @@ public class InfoFragment extends Fragment
         }
     }
 
+    /**
+     * Очистка меток на карте
+     */
+    private void clearMarkers() {
+        if(mMarkers.size() > 0) {
+            for (Marker marker: mMarkers) {
+                marker.remove(binding.osmPointInfoListMap);
+            }
+            mMarkers.clear();
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        mMap = null;
     }
 }

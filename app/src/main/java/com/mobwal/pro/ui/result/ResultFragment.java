@@ -38,7 +38,7 @@ import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Route;
 import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.BaseFragment;
-import com.mobwal.pro.ui.global.GoogleMapBottomDialogFragment;
+import com.mobwal.pro.ui.global.OsmMapBottomDialogFragment;
 import com.mobwal.pro.ui.GeoLocationLayout;
 import com.mobwal.pro.ui.global.WalkerLocationListeners;
 import com.mobwal.android.library.util.JsonUtil;
@@ -54,7 +54,7 @@ public class ResultFragment extends BaseFragment
 
     private FragmentResultBinding binding;
     private DataManager mDataManager;
-    private GoogleMapBottomDialogFragment mGoogleMapBottomDialogFragment;
+    private OsmMapBottomDialogFragment mGoogleMapBottomDialogFragment;
 
     private boolean mLocationRequire = false;
     private boolean mImageRequire = false;
@@ -115,7 +115,7 @@ public class ResultFragment extends BaseFragment
         }
 
         mDataManager = new DataManager(requireContext());
-        mGoogleMapBottomDialogFragment = new GoogleMapBottomDialogFragment();
+        mGoogleMapBottomDialogFragment = new OsmMapBottomDialogFragment();
 
         if(getArguments() != null) {
             f_route = getArguments().getString("f_route");
