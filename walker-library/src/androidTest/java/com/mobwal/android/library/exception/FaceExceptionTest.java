@@ -1,13 +1,8 @@
 package com.mobwal.android.library.exception;
 
-import android.content.Context;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,7 +13,7 @@ import java.util.Objects;
 public class FaceExceptionTest {
     @Test
     public void toStringTest(){
-        FaceException model = new FaceException(new Date(), "Ошибка", "NONE", 0);
+        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0);
         String str = model.toString();
 
         Assert.assertNotNull(str);
@@ -26,10 +21,10 @@ public class FaceExceptionTest {
 
     @Test
     public void toModelTest(){
-        FaceException model = new FaceException(new Date(), "Ошибка", "NONE", 0);
+        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0);
         String str = model.toString();
 
-        FaceException model1 = FaceException.toFace(str);
+        MaterialException model1 = MaterialException.toFace(str);
         Assert.assertEquals(model.id, Objects.requireNonNull(model1).id);
         Assert.assertEquals(model.date.getTime() / 1000, model1.date.getTime() / 1000);
         Assert.assertEquals(model.message, model1.message);

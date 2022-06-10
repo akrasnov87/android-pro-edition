@@ -1,9 +1,7 @@
 package com.mobwal.pro;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -12,12 +10,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,15 +19,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.exception.ExceptionInterceptActivity;
-import com.mobwal.android.library.exception.FaceExceptionSingleton;
 import com.mobwal.pro.databinding.ActivityMainBinding;
 import com.mobwal.pro.utilits.ActivityUtil;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
-
-import com.mobwal.android.library.NewThread;
 
 public class MainActivity extends ExceptionInterceptActivity
      implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,7 +46,7 @@ public class MainActivity extends ExceptionInterceptActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        WalkerApplication.Debug("Главный экран.");
+        LogManager.getInstance().info("Главный экран.");
 
         if(!BasicAuthorizationSingleton.getInstance().isAuthorized()) {
             Toast.makeText(this, R.string.without_auth, Toast.LENGTH_SHORT).show();
@@ -101,7 +92,7 @@ public class MainActivity extends ExceptionInterceptActivity
         boolean isWelcome = mPrefManager.get("welcome", false);
 
         if(!isWelcome) {
-            WalkerApplication.Log("Приветствие!");
+            LogManager.getInstance().info("Приветствие!");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.attention);

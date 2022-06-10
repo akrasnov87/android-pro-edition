@@ -17,8 +17,8 @@ public abstract class FragmentRunnable
             return;
         }
 
-        beforeRun();
+        inRun();
     }
 
-    public abstract void beforeRun();
+    public abstract void inRun();
 }

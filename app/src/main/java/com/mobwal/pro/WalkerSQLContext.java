@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Audit;
+import com.mobwal.pro.models.db.MobileDevice;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Route;
@@ -29,7 +31,9 @@ public class WalkerSQLContext extends SQLContext {
             new Route(),
             new Point(),
             new Result(),
-            new Attachment());
+            new Attachment(),
+            new Audit(),
+            new MobileDevice());
 
     public WalkerSQLContext(@NotNull Context context, @NotNull String dbName) {
         super(context, dbName, DATABASE_VERSION);

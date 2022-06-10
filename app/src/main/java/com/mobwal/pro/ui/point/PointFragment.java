@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -66,7 +67,7 @@ public class PointFragment extends BaseFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WalkerApplication.Log("Точки.");
+        LogManager.getInstance().info("Точки.");
         setHasOptionsMenu(true);
 
         mDataManager = new DataManager(requireContext());

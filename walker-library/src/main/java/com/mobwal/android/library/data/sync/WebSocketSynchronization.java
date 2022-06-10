@@ -10,7 +10,7 @@ import com.mobwal.android.library.data.sync.util.transfer.TransferStatusListener
 import com.mobwal.android.library.data.sync.util.transfer.UploadTransfer;
 import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.DoubleUtil;
-import com.mobwal.android.library.util.LogUtilSingleton;
+import com.mobwal.android.library.LogManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -285,7 +285,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 try {
                     processing(args);
                 }catch (Exception e) {
-                    LogUtilSingleton.getInstance().writeText(e.toString());
+                    LogManager.getInstance().info(e.toString());
                     onError(ProgressStep.UPLOAD, e, null);
                 }
             //}
@@ -339,7 +339,7 @@ public abstract class WebSocketSynchronization extends BaseSynchronization {
                 try {
                     processing(args);
                 }catch (Exception e){
-                    LogUtilSingleton.getInstance().writeText(e.toString());
+                    LogManager.getInstance().info(e.toString());
                     //Logger.error(e);
                     onError(ProgressStep.UPLOAD, e, null);
                 }

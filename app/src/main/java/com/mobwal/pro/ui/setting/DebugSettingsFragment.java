@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -45,7 +46,7 @@ public class DebugSettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WalkerApplication.Log("Настройки. Режим отладки.");
+        LogManager.getInstance().info("Настройки. Режим отладки.");
         setHasOptionsMenu(true);
 
         boolean debug = mPrefManager.get("debug", false);

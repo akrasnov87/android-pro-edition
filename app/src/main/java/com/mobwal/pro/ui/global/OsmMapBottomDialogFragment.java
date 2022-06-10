@@ -17,7 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.mobwal.android.library.util.LogUtilSingleton;
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.databinding.OsmMapBottomSheetBinding;
 import com.mobwal.pro.models.LocationInfo;
@@ -51,7 +51,7 @@ public class OsmMapBottomDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtilSingleton.getInstance().writeText("Вывод всплывающей карты.");
+        LogManager.getInstance().info("Вывод всплывающей карты.");
 
         if(savedInstanceState != null) {
             mLocationInfo = (LocationInfo) savedInstanceState.getSerializable(LOCATION_NAME);
@@ -82,7 +82,7 @@ public class OsmMapBottomDialogFragment extends BottomSheetDialogFragment {
             }
         } else {
             Objects.requireNonNull(binding.bottomOsm).setVisibility(View.GONE);
-            LogUtilSingleton.getInstance().writeText("Доступ к геолокации не предоставлен.");
+            LogManager.getInstance().info("Доступ к геолокации не предоставлен.");
         }
     }
 

@@ -1,11 +1,8 @@
 package com.mobwal.android.library;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 
-import com.mobwal.android.library.util.LogUtilSingleton;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -25,59 +22,45 @@ public class SimpleFileManager {
     private static final int BUFFER_SIZE = 2048;
 
     private final File mEnvironment;
-    private final Context mContext;
+
+    public File getEnvironment() {
+        return mEnvironment;
+    }
 
     /**
      * Хранение данных
      *
-     * @param context контекст
      * @param environment директория из context.getFileDir() | context.getCacheDir()
      */
-    public SimpleFileManager(@NonNull Context context, @NonNull File environment) {
-        mContext = context;
+    public SimpleFileManager(@NonNull File environment) {
         mEnvironment = environment;
     }
 
     /**
-     * Возвращается корневой каталог
-     * @param folder основной каталог
-     * @return объект File
+     * Хранение данных
+     *
+     * @param environment директория из context.getFileDir() | context.getCacheDir()
+     * @param credential информации об авторизованном пользователе
      */
-    public File getRootCatalog(@NonNull String folder) {
-        return TextUtils.isEmpty(folder) ? mEnvironment : new File(mEnvironment, folder);
+    public SimpleFileManager(@NonNull File environment, @NonNull BasicCredential credential) {
+        this(new File(environment, credential.login));
     }
 
     /**
      * Запись байтов в файловую систему
      *
-     * @param folder   папка
      * @param fileName имя файла
      * @param bytes    массив байтов
      * @throws IOException исключение
      */
-    public void writeBytes(@NonNull String folder, @NonNull String fileName, @NonNull byte[] bytes) throws IOException {
-        File dir = getRootCatalog(folder);
-
-        writeBytes(dir, fileName, bytes);
-    }
-
-    /**
-     * Запись байтов в файловую систему
-     *
-     * @param folder   папка
-     * @param fileName имя файла
-     * @param bytes    массив байтов
-     * @throws IOException исключение
-     */
-    public void writeBytes(@NonNull File folder, @NonNull String fileName, @NonNull byte[] bytes) throws IOException {
-
-        if (!folder.exists()) {
-            if(!folder.mkdirs()) {
-                LogUtilSingleton.getInstance().debug( "Каталог " + folder + " не создан");
+    public void writeBytes(@NonNull String fileName, @NonNull byte[] bytes) throws IOException {
+        if (!mEnvironment.exists()) {
+            if(!mEnvironment.mkdirs()) {
+                LogManager.getInstance().debug( "Каталог " + mEnvironment.getName() + " не создан");
             }
         }
 
-        File file = new File(folder, fileName);
+        File file = new File(mEnvironment, fileName);
 
         FileOutputStream outputStream = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(outputStream);
@@ -89,14 +72,12 @@ public class SimpleFileManager {
     /**
      * Чтение информации о файле
      *
-     * @param folder   папка
      * @param fileName имя файла
      * @return возвращается массив байтов
      * @throws IOException исключение
      */
-    public byte[] readPath(@NonNull String folder, @NonNull String fileName) throws IOException {
-        File dir = getRootCatalog(folder);
-        File file = new File(dir, fileName);
+    public byte[] readPath(@NonNull String fileName) throws IOException {
+        File file = new File(mEnvironment, fileName);
         if (file.exists()) {
             FileInputStream inputStream = new FileInputStream(file);
             BufferedInputStream bis = new BufferedInputStream(inputStream);
@@ -140,60 +121,52 @@ public class SimpleFileManager {
     /**
      * Доступен ли файл
      *
-     * @param folder   папка
      * @param fileName имя файла
      * @return возвращается доступен ли файл
      */
-    public boolean exists(@NonNull String folder, @NonNull String fileName) {
-        File dir = getRootCatalog(folder);
-        File file = new File(dir, fileName);
+    public boolean exists(@NonNull String fileName) {
+        File file = new File(mEnvironment, fileName);
         return file.exists();
     }
 
     /**
      * удаление файла
      *
-     * @param folder   имя папки
      * @param fileName имя файла
      */
-    public void deleteFile(@NonNull String folder, @NonNull String fileName) {
-        File dir = getRootCatalog(folder);
-        if (!dir.exists()) {
-            LogUtilSingleton.getInstance().debug("Корневая директория " + folder + " не найдена.");
+    public void deleteFile(@NonNull String fileName) {
+        if (!mEnvironment.exists()) {
+            LogManager.getInstance().debug("Корневая директория " + mEnvironment.getName() + " не найдена.");
         }
-        File file = new File(dir, fileName);
+        File file = new File(mEnvironment, fileName);
         if (file.exists()) {
-            deleteRecursive(mContext, file);
+            deleteRecursive(file);
         } else {
-            LogUtilSingleton.getInstance().debug("Файл " + fileName + " в директории " + folder + " не найден.");
+            LogManager.getInstance().debug("Файл " + fileName + " в директории " + mEnvironment.getName() + " не найден.");
         }
     }
 
     /**
      * очистка папки
-     *
-     * @param folder папка
      */
-    public void deleteFolder(@NonNull String folder) {
-        File dir = getRootCatalog(folder);
-        if (dir.exists()) {
-            deleteRecursive(mContext, dir);
+    public void deleteFolder() {
+        if (mEnvironment.exists()) {
+            deleteRecursive(mEnvironment);
         } else {
-            LogUtilSingleton.getInstance().debug("Директория " + folder + " не найдена.");
+            LogManager.getInstance().debug("Директория " + mEnvironment.getName() + " не найдена.");
         }
     }
 
     /**
      * удаление объекта File
      *
-     * @param context контекст
      * @param fileOrDirectory файл или директория
      */
-    public static boolean deleteRecursive(@NonNull Context context, @NonNull File fileOrDirectory) {
+    public static boolean deleteRecursive(@NonNull File fileOrDirectory) {
         if (fileOrDirectory.isDirectory()) {
             for (File child : Objects.requireNonNull(fileOrDirectory.listFiles())) {
-                if (!deleteRecursive(context, child)) {
-                    LogUtilSingleton.getInstance().debug("Директория " + child.getName() + " не удалена.");
+                if (!deleteRecursive(child)) {
+                    LogManager.getInstance().debug("Директория " + child.getName() + " не удалена.");
                 }
             }
         }

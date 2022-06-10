@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -78,7 +79,7 @@ public class InfoFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        WalkerApplication.Log("Точки. Информация.");
+        LogManager.getInstance().info("Точки. Информация.");
         mLocationManager = (LocationManager) requireContext().getSystemService(LOCATION_SERVICE);
 
         if(savedInstanceState != null) {
@@ -116,7 +117,7 @@ public class InfoFragment extends Fragment
             Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.VISIBLE);
             OsmDroidUtil.enableCompass(requireContext(), binding.osmPointInfoListMap);
         } else {
-            WalkerApplication.Debug("Точки. Информация. Доступ к геолокации не предоставлен.");
+            LogManager.getInstance().debug("Точки. Информация. Доступ к геолокации не предоставлен.");
             binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.GONE);
         }
@@ -207,7 +208,7 @@ public class InfoFragment extends Fragment
 
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            WalkerApplication.Debug("Точки. Информация. Доступ к геолокации не предоставлен.");
+            LogManager.getInstance().debug("Точки. Информация. Доступ к геолокации не предоставлен.");
             return;
         }
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);

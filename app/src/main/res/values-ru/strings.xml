@@ -35,9 +35,9 @@
     <string name="layout_summary">Шаблон формы по умолчанию.</string>
 
     <string name="error_reporting">Отправлять отчеты об ошибке?</string>
-    <string name="error_reporting_full">В мобильном приложении для анализа ошибок используется Firebase Crashlytics. Разрешить отправлять отчеты об ошибках в Firebase?</string>
-    <string name="error_reporting_summary_off">Отчеты об ошибках будут направляются на сервера Firebase.</string>
-    <string name="error_reporting_summary_on">Отчеты об ошибках направляются на сервера Firebase.</string>
+    <string name="error_reporting_full">В мобильном приложении встроен механизм сбора информации об ошибках. Разрешить отправлять отчеты на сервера MOBWAL PRO?</string>
+    <string name="error_reporting_summary_off">Отчеты об ошибках будут направляются на сервера MOBWAL PRO.</string>
+    <string name="error_reporting_summary_on">Отчеты об ошибках направляются на сервера MOBWAL PRO.</string>
     <string name="reset_settings">Сбросить настройки</string>
     <string name="reset_settings_summary">Настройки приложения будут сброшены на значения по умолчанию.</string>
     <string name="reset_settings_confirm">Вы уверены что хотите сбросить настройки на значения по умолчанию?</string>

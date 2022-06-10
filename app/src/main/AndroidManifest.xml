@@ -38,13 +38,6 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
-            android:name=".MailActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.MobileWalker.NoActionBar" />
-
-        <activity
             android:name=".SecurityActivity"
             android:exported="true"
             android:label="@string/app_name"

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 import java.text.MessageFormat;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -53,7 +54,7 @@ public class RouteFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        WalkerApplication.Log("Маршруты.");
+        LogManager.getInstance().info("Маршруты.");
         if(savedInstanceState != null) {
             mQuery = savedInstanceState.getString(QUERY_NAME);
         }

@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.mobwal.android.library.SimpleFileManager;
+import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -26,29 +27,29 @@ public class SimpleFileManagerTest {
     public void setUp() {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        fileManager = new SimpleFileManager(appContext, appContext.getFilesDir());
+        fileManager = new SimpleFileManager(appContext.getFilesDir(), new BasicCredential("user", "1234"));
     }
 
     @Test
     public void write() throws IOException {
-        fileManager.writeBytes("pictures", "pic.txt", "picture 1".getBytes());
+        fileManager.writeBytes("pic.txt", "picture 1".getBytes());
 
-        assertTrue(fileManager.exists("pictures", "pic.txt"));
+        assertTrue(fileManager.exists("pic.txt"));
 
-        fileManager.writeBytes("pictures", "pic2.txt", "picture 2".getBytes());
+        fileManager.writeBytes("pic2.txt", "picture 2".getBytes());
 
-        byte[] bytes = fileManager.readPath("pictures", "pic.txt");
+        byte[] bytes = fileManager.readPath("pic.txt");
         Assert.assertEquals("picture 1", new String(bytes));
 
-        fileManager.deleteFile("pictures", "pic2.txt");
-        assertNull(fileManager.readPath("pictures", "pic2.txt"));
+        fileManager.deleteFile("pic2.txt");
+        assertNull(fileManager.readPath("pic2.txt"));
 
-        fileManager.deleteFolder("pictures");
-        assertNull(fileManager.readPath("pictures", "pic.txt"));
+        fileManager.deleteFolder();
+        assertNull(fileManager.readPath("pic.txt"));
     }
 
     @After
     public void tearDown() {
-        SimpleFileManager.deleteRecursive(appContext, appContext.getFilesDir());
+        SimpleFileManager.deleteRecursive(appContext.getFilesDir());
     }
 }

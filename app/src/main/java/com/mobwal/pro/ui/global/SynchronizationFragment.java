@@ -12,14 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.FragmentRunnable;
 import com.mobwal.android.library.PrefManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.sync.Entity;
 import com.mobwal.android.library.data.sync.util.transfer.DownloadTransfer;
 import com.mobwal.android.library.data.sync.util.transfer.TransferListeners;
 import com.mobwal.android.library.data.sync.util.transfer.UploadTransfer;
-import com.mobwal.android.library.util.LogUtilSingleton;
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.ManualSynchronization;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -38,7 +38,6 @@ import com.mobwal.android.library.data.sync.util.transfer.Transfer;
 import com.mobwal.android.library.data.sync.util.transfer.TransferProgress;
 import com.mobwal.pro.sync.SynchronizationLogItem;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +74,7 @@ public class SynchronizationFragment extends Fragment
             binding.synchronizationLogs.setVisibility(View.VISIBLE);
         }
 
-        synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), false);
+        synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), new SimpleFileManager(requireContext().getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential()), false);
         return binding.getRoot();
     }
 
@@ -127,7 +126,7 @@ public class SynchronizationFragment extends Fragment
     public void onConnect() {
         requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
             @Override
-            public void beforeRun() {
+            public void inRun() {
                 setLogMessage("Соединение с сервером создано", false);
             }
         });
@@ -140,7 +139,7 @@ public class SynchronizationFragment extends Fragment
             public void onStart(OnSynchronizationListeners synchronization) {
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.START);
                         binding.synchronizationFileCategory.updateProgressBarColor(TransferListeners.START);
 
@@ -159,17 +158,12 @@ public class SynchronizationFragment extends Fragment
                 // останавливаем индикацию
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
 
                         binding.synchronizationDataCategory.setVisibility(View.GONE);
                         binding.synchronizationFileCategory.setVisibility(View.GONE);
 
-                        try {
-                            Toast.makeText(requireContext(), "Синхронизация завершена успешно!", Toast.LENGTH_SHORT).show();
-                            FileManager.getInstance().deleteFolder(FileManager.PHOTOS);
-                        } catch (FileNotFoundException e) {
-                            LogUtilSingleton.getInstance().writeText("Ошибка удаление изображений после синхронизации.", e);
-                        }
+                        Toast.makeText(requireContext(), "Синхронизация завершена успешно!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -179,7 +173,7 @@ public class SynchronizationFragment extends Fragment
                 if (!message.isEmpty()) {
                     requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                         @Override
-                        public void beforeRun() {
+                        public void inRun() {
                             setLogMessage(message, false);
                         }
                     });
@@ -190,7 +184,7 @@ public class SynchronizationFragment extends Fragment
             public void onError(OnSynchronizationListeners synchronization, int step, String message, String tid) {
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         setLogMessage(message, true);
                     }
                 });
@@ -202,7 +196,7 @@ public class SynchronizationFragment extends Fragment
 
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         if (category.equals("DATA")) {
                             binding.synchronizationDataCategory.updatePercent(0, 0);
                         } else if (category.equals("FILES")) {
@@ -218,7 +212,7 @@ public class SynchronizationFragment extends Fragment
 
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         if (category.equals("DATA")) {
                             binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.RESTART);
                         } else if (category.equals("FILES")) {
@@ -234,7 +228,7 @@ public class SynchronizationFragment extends Fragment
 
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         if (transfer instanceof UploadTransfer && isAdded()) {
                             if (category.equals("DATA")) {
                                 binding.synchronizationDataCategory.updatePercent(progress.getPercent(), 0);
@@ -264,7 +258,7 @@ public class SynchronizationFragment extends Fragment
 
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         if (category.equals("DATA")) {
                             binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.STOP);
                         } else if (category.equals("FILES")) {
@@ -285,7 +279,7 @@ public class SynchronizationFragment extends Fragment
 
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
-                    public void beforeRun() {
+                    public void inRun() {
                         if (category.equals("DATA")) {
                             binding.synchronizationDataCategory.updateProgressBarColor(TransferListeners.ERROR);
                         } else if (category.equals("FILES")) {
@@ -301,7 +295,7 @@ public class SynchronizationFragment extends Fragment
     public void onDisconnect() {
         requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
             @Override
-            public void beforeRun() {
+            public void inRun() {
                 setLogMessage("Соединение с сервером разорвано", false);
             }
         });
@@ -319,9 +313,9 @@ public class SynchronizationFragment extends Fragment
 
     protected void setLogMessage(@NonNull String message, boolean isError) {
         if(isError) {
-            LogUtilSingleton.getInstance().error(message);
+            LogManager.getInstance().error(message);
         } else {
-            LogUtilSingleton.getInstance().debug(message);
+            LogManager.getInstance().debug(message);
         }
 
         mLogList.add(0, new SynchronizationLogItem(message, isError));

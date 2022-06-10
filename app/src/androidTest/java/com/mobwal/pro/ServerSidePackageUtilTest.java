@@ -2,6 +2,7 @@ package com.mobwal.pro;
 
 import com.google.gson.JsonObject;
 import com.mobwal.android.library.FieldNames;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.util.ReflectionUtil;
 import com.mobwal.android.library.data.sync.util.PackageResult;
@@ -14,12 +15,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
-import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.data.packager.BinaryBlock;
 import com.mobwal.android.library.data.packager.FileBinary;
@@ -185,14 +184,10 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         int blockTid = 0;
 
         BasicCredential credentials = new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD);
-        FileManager fileManager = FileManager.createInstance(credentials, getContext());
-        try {
-            fileManager.deleteFolder(FileManager.ATTACHMENTS);
-        }catch (FileNotFoundException ignored){
+        SimpleFileManager fileManager = new SimpleFileManager(getContext().getFilesDir(), credentials);
+        fileManager.deleteFolder();
 
-        }
-
-        fileManager.writeBytes(FileManager.ATTACHMENTS, "file1.tmp", "attachmentsToTest".getBytes());
+        fileManager.writeBytes("file1.tmp", "attachmentsToTest".getBytes());
 
         Attachment attachment = new Attachment();
         attachment.id = LINK;
@@ -216,7 +211,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
         JsonObject object = new JsonObject();
         object.addProperty("id", LINK);
-        object.addProperty(FieldNames.C_NAME, "file1.tmp");
+        object.addProperty("c_name", "file1.tmp");
 
         objects[0] = object;
         records.records = objects;
@@ -231,7 +226,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         sidePackage.setFileBinary(files);
         PackageResult packageResult = sidePackage.from(getSQLContext(), result, tid, true, true);
         Assert.assertTrue(packageResult.message, packageResult.success);
-        String txt = new String(fileManager.readPath(FileManager.ATTACHMENTS, "file1.tmp"));
+        String txt = new String(fileManager.readPath("file1.tmp"));
         Assert.assertEquals(txt, "attachmentsToTest");
     }
 

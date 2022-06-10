@@ -1,11 +1,11 @@
 package com.mobwal.android.library.data.sync;
 
-import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.mobwal.android.library.Constants;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.sync.util.FullServerSidePackage;
 import com.mobwal.android.library.data.sync.util.PackageResult;
 import com.mobwal.android.library.data.sync.util.TableQuery;
@@ -15,7 +15,6 @@ import com.mobwal.android.library.util.StringUtil;
 
 import java.io.IOException;
 
-import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.data.rpc.RPCItem;
 import com.mobwal.android.library.data.rpc.RPCResult;
 import com.mobwal.android.library.util.PackageCreateUtils;
@@ -40,7 +39,7 @@ public abstract class FileTransferWebSocketSynchronization
     /**
      * Управление файловой системой
      */
-    private FileManager fileManager;
+    private SimpleFileManager fileManager;
 
     /**
      * конструктор
@@ -48,7 +47,7 @@ public abstract class FileTransferWebSocketSynchronization
      * @param name        имя
      * @param fileManager файловый менеджер
      */
-    public FileTransferWebSocketSynchronization(SQLContext context, String name, FileManager fileManager, boolean zip) {
+    public FileTransferWebSocketSynchronization(SQLContext context, String name, SimpleFileManager fileManager, boolean zip) {
         super(context, name, zip);
 
         this.fileManager = fileManager;
@@ -59,7 +58,7 @@ public abstract class FileTransferWebSocketSynchronization
      *
      * @return возвращается объект
      */
-    public FileManager getFileManager() {
+    public SimpleFileManager getFileManager() {
         return fileManager;
     }
 
@@ -78,11 +77,11 @@ public abstract class FileTransferWebSocketSynchronization
                 if (tid.equals(fileTid) && useAttachments && entity instanceof EntityAttachment) {
                     // тут только обрабатывается добавление
                     Object[] records = getRecords(entity.tableName, tid).toArray();
-                    FileManager manager = getFileManager();
+                    SimpleFileManager manager = getFileManager();
                     if (records.length > 0) {
 
                         for (Object record : records) {
-                            if (record instanceof OnFileListeners) {
+                            /*if (record instanceof OnFileListeners) {
                                 OnFileListeners file = (OnFileListeners) record;
                                 if (file.getIsDelete()) {
                                     continue;
@@ -97,7 +96,7 @@ public abstract class FileTransferWebSocketSynchronization
                                 } catch (IOException e) {
                                     onError(ProgressStep.PACKAGE_CREATE, "При обработке файла " + file.getC_name() + " возникла ошибка", tid);
                                 }
-                            }
+                            }*/
 
                             if (record instanceof OnAttachmentListeners) {
                                 OnAttachmentListeners attachment = (OnAttachmentListeners) record;
@@ -105,7 +104,7 @@ public abstract class FileTransferWebSocketSynchronization
                                     continue;
                                 }
                                 try {
-                                    byte[] bytes = manager.readPath(FileManager.PHOTOS, attachment.getPath());
+                                    byte[] bytes = manager.readPath(attachment.getPath());
                                     if (bytes != null) {
                                         utils.addFile(attachment.getId(), attachment.getId(), bytes);
                                     }

@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
-import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.pro.models.PointInfo;
 import com.mobwal.pro.models.db.complex.PointItem;
@@ -461,11 +460,12 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
         Collection<Attachment> collection = getAttachments(f_result);
-        SimpleFileManager mFileManager = new SimpleFileManager(mContext, mContext.getFilesDir());
+        SimpleFileManager mFileManager = new SimpleFileManager(mContext.getFilesDir(),
+                BasicAuthorizationSingleton.getInstance().getUser().getCredential());
         if(collection != null) {
             for (Attachment attachment:
                  collection) {
-                mFileManager.deleteFile(attachment.fn_route, attachment.c_path + ".jpg");
+                mFileManager.deleteFile(attachment.c_path + ".jpg");
             }
         }
 
@@ -473,14 +473,14 @@ public class DataManager {
             attachment.fn_result = f_result;
         }
 
-        return sqlContext.exec("delete from ATTACHMENT where f_result = ?;", new String[] { f_result }) &&
+        return sqlContext.exec("delete from attachments where fn_result = ?;", new String[] { f_result }) &&
                 sqlContext.insertMany(attachments);
     }
 
     public boolean delRoute(@NotNull String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        SimpleFileManager fileManager = new SimpleFileManager(mContext, mContext.getFilesDir());
-        fileManager.deleteFolder(f_route);
+        SimpleFileManager fileManager = new SimpleFileManager(mContext.getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential());
+        fileManager.deleteFolder();
 
         return sqlContext.exec("delete from ATTACHMENT where f_route = ?;", new String[]{f_route})
                 && sqlContext.exec("delete from RESULT where f_route = ?;", new String[]{f_route})
@@ -495,12 +495,11 @@ public class DataManager {
         if(collection != null) {
             Attachment[] array = collection.toArray(new Attachment[0]);
             if(array.length > 0) {
-                String f_route = array[0].fn_route;
-                FileManager fileManager = new FileManager(
-                        BasicAuthorizationSingleton.getInstance().getUser().getCredential(),
-                        mContext);
+                SimpleFileManager fileManager = new SimpleFileManager(
+                        mContext.getFilesDir(),
+                        BasicAuthorizationSingleton.getInstance().getUser().getCredential());
                 for (Attachment item: array) {
-                    fileManager.deleteFile(f_route, item.c_path);
+                    fileManager.deleteFile(item.c_path);
                 }
             }
         }
@@ -521,10 +520,9 @@ public class DataManager {
         if(collection != null) {
             Attachment[] array = collection.toArray(new Attachment[0]);
             if(array.length > 0) {
-                String f_route = array[0].fn_route;
-                FileManager fileManager = new FileManager(BasicAuthorizationSingleton.getInstance().getUser().getCredential(), mContext);
+                SimpleFileManager fileManager = new SimpleFileManager(mContext.getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential());
                 for (Attachment item: array) {
-                    fileManager.deleteFile(f_route, item.c_path);
+                    fileManager.deleteFile(item.c_path);
                 }
             }
         }

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.mobwal.android.library.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.authorization.credential.BasicUser;
 
@@ -14,17 +14,17 @@ import com.mobwal.android.library.authorization.credential.BasicUser;
 public abstract class DbGenerate {
     private final Context mContext;
     private final WalkerSQLContext mSQLContext;
-    private final FileManager mFileManager;
+    private final SimpleFileManager mFileManager;
 
     public DbGenerate() {
         String dbName = getClass().getName();
         mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mSQLContext = new WalkerSQLContext(mContext, dbName);
         BasicCredential credentials = getCredentials();
-        mFileManager = FileManager.createInstance(credentials, getContext());
+        mFileManager = new SimpleFileManager(mContext.getFilesDir(), credentials);
     }
 
-    public FileManager getFileManager() {
+    public SimpleFileManager getFileManager() {
         return mFileManager;
     }
 
@@ -45,7 +45,7 @@ public abstract class DbGenerate {
     }
 
     public static BasicCredential getCredentials() {
-        return new BasicCredential("test", "1234");
+        return new BasicCredential("user", "1234");
     }
 
     public static BasicUser getBasicUser() {

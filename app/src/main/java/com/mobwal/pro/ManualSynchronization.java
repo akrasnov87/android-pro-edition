@@ -1,17 +1,17 @@
 package com.mobwal.pro;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
 import java.util.UUID;
 
-import com.mobwal.android.library.FileManager;
-
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.sync.Entity;
 import com.mobwal.android.library.data.sync.EntityAttachment;
 import com.mobwal.android.library.socket.SocketManager;
+import com.mobwal.pro.models.db.Audit;
+import com.mobwal.pro.models.db.MobileDevice;
 import com.mobwal.pro.models.db.Setting;
 import com.mobwal.android.library.data.sync.FileTransferWebSocketSynchronization;
 import com.mobwal.android.library.data.sync.ProgressListeners;
@@ -31,16 +31,16 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
     @SuppressLint("StaticFieldLeak")
     private static ManualSynchronization manualSynchronization;
 
-    public static ManualSynchronization getInstance(WalkerSQLContext context, boolean zip) {
+    public static ManualSynchronization getInstance(WalkerSQLContext context, SimpleFileManager simpleFileManager, boolean zip) {
         if (manualSynchronization == null) {
-            manualSynchronization = new ManualSynchronization(context, FileManager.getInstance(), zip);
+            manualSynchronization = new ManualSynchronization(context, simpleFileManager, zip);
         }
         return manualSynchronization;
     }
 
     public String totalTid;
 
-    protected ManualSynchronization(WalkerSQLContext context, FileManager fileManager, boolean zip) {
+    protected ManualSynchronization(WalkerSQLContext context, SimpleFileManager fileManager, boolean zip) {
         super(context, "MANUAL_SYNCHRONIZATION", fileManager, zip);
         oneOnlyMode = true;
 
@@ -58,6 +58,9 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         addEntity(new Entity(Route.class).setParam(getAppVersion()).setTid(totalTid));
         addEntity(new Entity(Template.class).setParam(getAppVersion()).setTid(totalTid));
         addEntity(new Entity(Result.class).setParam(getAppVersion()).setTid(totalTid));
+
+        addEntity(new Entity(Audit.class).setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(MobileDevice.class).setParam(getAppVersion()).setTid(totalTid));
 
         addEntity(new EntityAttachment(Attachment.class).setParam(getAppVersion()).setTid(fileTid));
     }

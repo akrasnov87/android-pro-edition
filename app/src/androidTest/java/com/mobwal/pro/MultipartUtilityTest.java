@@ -25,7 +25,7 @@ public class MultipartUtilityTest {
     private final BasicCredential basicCredentials;
 
     public MultipartUtilityTest(){
-        basicCredentials = new BasicCredential("test", "1234");
+        basicCredentials = new BasicCredential("user", "1234");
     }
 
     @Test

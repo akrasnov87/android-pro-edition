@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.UUID;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -80,7 +81,7 @@ public class ResultFragment extends BaseFragment
     @Nullable
     private Route mRoute;
 
-    private String id = UUID.randomUUID().toString();
+    private final String id = UUID.randomUUID().toString();
 
     @Nullable
     @Override
@@ -105,7 +106,7 @@ public class ResultFragment extends BaseFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WalkerApplication.Log("Результат.");
+        LogManager.getInstance().info("Результат.");
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null) {

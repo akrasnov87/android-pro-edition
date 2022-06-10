@@ -1,5 +1,6 @@
 package com.mobwal.pro;
 
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.data.sync.EntityAttachment;
 import com.mobwal.android.library.data.sync.FileTransferWebSocketSynchronization;
@@ -13,12 +14,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 
-import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.data.rpc.FilterItem;
 import com.mobwal.android.library.util.PackageReadUtils;
@@ -50,8 +49,8 @@ public class DeleteSynchronizationTest extends DbGenerate {
 
         byte[] fileBytes = "Hello World!!!".getBytes();
 
-        FileManager fileManager = synchronization.getFileManager();
-        fileManager.writeBytes(FileManager.FILES, file.c_path, fileBytes);
+        SimpleFileManager fileManager = synchronization.getFileManager();
+        fileManager.writeBytes(file.c_path, fileBytes);
 
         file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
@@ -113,16 +112,11 @@ public class DeleteSynchronizationTest extends DbGenerate {
                 file.__IS_SYNCHRONIZATION = false;
 
                 getSQLContext().insert(file);
-                //daoSession.getFilesDao().update(files);
             } else {
                 getSQLContext().exec("delete from " + ReflectionUtil.getTableName(Attachment.class) + " where id = ?", new Object[] { fileId });
             }
-            FileManager fileManager = FileManager.getInstance();
-            try {
-                fileManager.deleteFile(FileManager.FILES, file.c_path);
-            } catch (FileNotFoundException ignore) {
-                // это нормально
-            }
+            SimpleFileManager fileManager = new SimpleFileManager(getContext().getFilesDir(), getCredentials());
+            fileManager.deleteFile(file.c_path);
         }
     }
 
@@ -131,7 +125,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
         private final BasicCredential mCredentials;
         private final String mBaseUrl;
 
-        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials, String baseUrl) {
+        public MySynchronization(WalkerSQLContext context, SimpleFileManager fileManager, BasicCredential credentials, String baseUrl) {
             super(context, "test", fileManager, false);
             useAttachments = true;
             oneOnlyMode = true;
@@ -159,6 +153,7 @@ public class DeleteSynchronizationTest extends DbGenerate {
             addEntity(new EntityAttachment(Attachment.class)
                     .setSelect("id", "c_path", "fn_user", "fn_result", "fn_point", "fn_route", "n_longitude", "n_latitude", "d_date", "c_mime", "c_extension", "jb_data", "n_distance", "fn_storage")
                     .setFilter(new FilterItem("id", fileId))
+                    .setClearable()
                     .setTid(fileTid)
                     .setParam(null, "null"));
         }

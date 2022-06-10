@@ -14,6 +14,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.Objects;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -42,7 +43,7 @@ public class PinSettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WalkerApplication.Log("Настройки. Безопасность.");
+        LogManager.getInstance().info("Настройки. Безопасность.");
         setHasOptionsMenu(true);
 
         updatePinCodeSummary();

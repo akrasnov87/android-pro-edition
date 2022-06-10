@@ -3,6 +3,7 @@ package com.mobwal.android.library.util;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.mobwal.android.library.FieldNames;
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.data.sync.Entity;
 import com.mobwal.android.library.data.sync.ProgressStep;
 import com.mobwal.android.library.data.sync.OnSynchronizationListeners;
@@ -46,7 +47,7 @@ public class SyncUtil {
             result = true;
         } catch (Exception e){
             result = false;
-            LogUtilSingleton.getInstance().writeText(e.toString());
+            LogManager.getInstance().info(e.toString());
         } finally {
             db.endTransaction();
         }
@@ -70,7 +71,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+FieldNames.TID+" = ? where "+FieldNames.TID+" is null OR "+FieldNames.TID+" = ?", params);
             result = true;
         } catch (Exception e) {
-            LogUtilSingleton.getInstance().writeText(e.toString());
+            LogManager.getInstance().info(e.toString());
             context.onError(ProgressStep.START, e, tid);
         }
         return result;
@@ -97,7 +98,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID + " = ? where " + linkName + " = ?", params);
             result = true;
         }catch (Exception e){
-            LogUtilSingleton.getInstance().writeText(e.toString());
+            LogManager.getInstance().info(e.toString());
             context.onError(ProgressStep.START, e, tid);
         }
         return result;
@@ -124,7 +125,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID+" = ? where " + FieldNames.TID + " = ? AND " + FieldNames.OBJECT_OPERATION_TYPE + " = ?", params);
             result = true;
         }catch (Exception e){
-            LogUtilSingleton.getInstance().writeText(e.toString());
+            LogManager.getInstance().info(e.toString());
             context.onError(ProgressStep.START, e, tid);
         }
         return result;
@@ -150,7 +151,7 @@ public class SyncUtil {
             context.getContext().exec("update " + tableName + " set "+ FieldNames.BLOCK_TID+" = ?, " + FieldNames.OBJECT_OPERATION_TYPE + " = ? where " + FieldNames.TID + " = ? ", params);
             result = true;
         }catch (Exception e){
-            LogUtilSingleton.getInstance().writeText(e.toString());
+            LogManager.getInstance().info(e.toString());
             context.onError(ProgressStep.STOP, e, tid);
         }
         return result;
@@ -177,7 +178,7 @@ public class SyncUtil {
             result = true;
         }catch (Exception e){
             result = false;
-            LogUtilSingleton.getInstance().writeText(e.toString());
+            LogManager.getInstance().info(e.toString());
         }finally {
             db.endTransaction();
         }

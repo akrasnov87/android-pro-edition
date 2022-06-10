@@ -18,6 +18,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.Objects;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.pro.CustomLayoutManager;
 import com.mobwal.pro.Names;
@@ -64,7 +65,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        WalkerApplication.Log("Настройки");
+        LogManager.getInstance().info("Настройки");
         setHasOptionsMenu(true);
 
         Objects.requireNonNull(mVersionPreference).setSummary(VersionUtil.getVersionName(requireActivity()));
@@ -111,12 +112,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
             AlertDialog.Builder adb = new AlertDialog.Builder(requireContext());
             adb.setPositiveButton(R.string.yes, (dialog, which) -> {
-                if(new CustomLayoutManager(requireContext()).removeLayout()) {
-                    WalkerApplication.Debug("Шаблон формы удален.");
-                } else {
-                    Toast.makeText(getActivity(), R.string.layout_remove_error, Toast.LENGTH_LONG).show();
-                }
-
                 mPrefManager.clearAll();
                 Toast.makeText(getActivity(), R.string.reset_setting_success, Toast.LENGTH_SHORT).show();
                 setup();

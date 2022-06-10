@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -62,7 +63,7 @@ public class CreateFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WalkerApplication.Log("Создание точки.");
+        LogManager.getInstance().info("Создание точки.");
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null) {

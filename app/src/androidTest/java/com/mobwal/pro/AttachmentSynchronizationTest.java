@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.mobwal.android.library.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 
 import com.mobwal.android.library.data.sync.EntityAttachment;
@@ -33,7 +33,7 @@ public class AttachmentSynchronizationTest extends DbGenerate {
     @After
     public void tearDown() {
         getSQLContext().trash();
-        getFileManager().clearUserFolder();
+        getFileManager().deleteFolder();
     }
 
     @Test
@@ -46,13 +46,13 @@ public class AttachmentSynchronizationTest extends DbGenerate {
         Object[] array = synchronization.getRecords(ReflectionUtil.getTableMetaData(Attachment.class).name(), "").toArray();
         for(Object o : array) {
             Attachment attachment = (Attachment)o;
-            assertTrue(getFileManager().exists(FileManager.ATTACHMENTS, attachment.c_path));
+            assertTrue(getFileManager().exists(attachment.c_path));
         }
     }
 
     public static class MySynchronization extends ManualSynchronization {
         private final BasicCredential mCredentials;
-        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials) {
+        public MySynchronization(WalkerSQLContext context, SimpleFileManager fileManager, BasicCredential credentials) {
             super(context, fileManager, false);
             fileTid = UUID.randomUUID().toString();
             addEntity(new EntityAttachment(Attachment.class).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));

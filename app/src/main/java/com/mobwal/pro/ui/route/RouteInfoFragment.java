@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.RouteInfoCategoryAdapter;
@@ -36,7 +37,7 @@ public class RouteInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        WalkerApplication.Log("Маршруты. Информация.");
+        LogManager.getInstance().info("Маршруты. Информация.");
 
         if(getArguments() != null) {
             f_route = getArguments().getString("f_route");

@@ -1,6 +1,6 @@
 package com.mobwal.pro;
 
-import com.mobwal.android.library.FileManager;
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.util.ReflectionUtil;
 
@@ -82,7 +82,7 @@ public class BaseSynchronizationTest extends DbGenerate {
     @Test
     public void duplicateRecords() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(ReflectionUtil.getTableName(Result.class)).setTid(tid));
+        synchronization.addEntity(new Entity(Result.class).setTid(tid));
         generateData();
 
         SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Result.class), tid);
@@ -111,10 +111,12 @@ public class BaseSynchronizationTest extends DbGenerate {
         Assert.assertEquals(length, 0);
     }
 
+    // TODO: обновить тест на обработку двух таблиц
     @Test
     public void twoTable() throws Exception {
         String tid = UUID.randomUUID().toString();
-        synchronization.addEntity(new Entity(ReflectionUtil.getTableName(Result.class)).setTid(tid).setSchema("dbo"));
+        // TODO: переделать на аудит
+        synchronization.addEntity(new Entity(Result.class).setParam("1.0.0.0").setClearable().setTid(tid));
 
         generateData();
 
@@ -129,19 +131,8 @@ public class BaseSynchronizationTest extends DbGenerate {
         array[0] = tid;
         synchronization.processingPackage(array, results);
 
-        // передача второго пакета
-        /*bytes = synchronization.generatePackage(tid, AuditsDao.TABLENAME);
-        results = (byte[]) synchronization.sendBytes(tid, bytes);
-        array = new String[1];
-        array[0] = tid;
-        synchronization.processingPackage(array, results);*/
-
         int length = synchronization.getRecords(ReflectionUtil.getTableName(Result.class), "").toArray().length;
         Assert.assertEquals(length, 0);
-        //length = synchronization.getRecords(AuditsDao.TABLENAME, "").toArray().length;
-        //Assert.assertEquals(length, 2);//потому что в методе onProcessingPackage класса ServiceSynchronization добавилась строчка
-        // AuditManager.getInstance().write(String.valueOf(utils.getLength()), AuditListeners.TRAFFIC_INPUT, OnAuditListeners.Level.HIGH);
-        // которая вызывается дважды - по одному разу для каждого пакета
 
         synchronization.destroy();
     }
@@ -150,7 +141,7 @@ public class BaseSynchronizationTest extends DbGenerate {
         private final BasicCredential mCredentials;
         private static long DEFAULT_USER_ID = 4;
 
-        public MySynchronization(WalkerSQLContext context, FileManager fileManager, BasicCredential credentials) {
+        public MySynchronization(WalkerSQLContext context, SimpleFileManager fileManager, BasicCredential credentials) {
             super(context, fileManager, false);
             mCredentials = credentials;
         }

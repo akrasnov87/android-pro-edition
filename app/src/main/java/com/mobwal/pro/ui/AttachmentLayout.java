@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -83,7 +84,7 @@ public class AttachmentLayout extends LinearLayout
         super(context, attributeSet);
 
         mDataManager = new DataManager(getContext());
-        mFileManager = new SimpleFileManager(getContext(), getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(getContext().getFilesDir());
 
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -168,7 +169,7 @@ public class AttachmentLayout extends LinearLayout
         if (allPermissionsGranted()) {
             onCamera();
         } else {
-            WalkerApplication.Debug("Доступ к камере не предоставлен.");
+            LogManager.getInstance().debug("Доступ к камере не предоставлен.");
             if(mPermissionActivityResultLauncher != null) {
                 mPermissionActivityResultLauncher.launch(REQUIRED_PERMISSIONS);
             }
@@ -291,12 +292,12 @@ public class AttachmentLayout extends LinearLayout
 
                         byte[] byteArray = ImageUtil.bitmapToBytes(bitmap);
 
-                        mFileManager.writeBytes(mPointBundle.f_route, id + ".jpg", byteArray);
+                        mFileManager.writeBytes(id + ".jpg", byteArray);
 
                         ((AppCompatActivity) getContext()).runOnUiThread(() -> addAttachment(id, finalUri));
                     }
                 } catch (Exception e) {
-                    WalkerApplication.Debug("Ошибка сохранения вложенного изображения.", e);
+                    LogManager.getInstance().error("Ошибка сохранения вложенного изображения.", e);
                 }
             });
         }
@@ -340,7 +341,7 @@ public class AttachmentLayout extends LinearLayout
     public void onViewItemClick(String id) {
         for (Attachment attach: mItemAdapter.getData()) {
             if(attach.id.equals(id)) {
-                //ActivityUtil.openGallery(getContext(), new File(mFileManager.getRootCatalog(mPointBundle.f_route), attach.c_name));
+                ActivityUtil.openGallery(getContext(), new File(mFileManager.getEnvironment(), attach.c_path));
                 return;
             }
         }

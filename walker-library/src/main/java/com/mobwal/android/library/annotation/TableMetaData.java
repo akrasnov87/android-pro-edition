@@ -29,4 +29,10 @@ public @interface TableMetaData {
      * @return true - разрешено
      */
     boolean useMUIFunction() default true;
+
+    /**
+     * Очистка данных после успешной вставки
+     * @return true - разрешено
+     */
+    boolean clear() default false;
 }

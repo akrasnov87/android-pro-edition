@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -50,7 +51,7 @@ public class ResultChoiceBottomDialogFragment extends BottomSheetDialogFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mDataManager = new DataManager(requireContext());
-        WalkerApplication.Log("Вывод доступных шаблонов.");
+        LogManager.getInstance().info("Вывод доступных шаблонов.");
         binding = ResultChoiceBottomSheetBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -94,7 +95,7 @@ public class ResultChoiceBottomDialogFragment extends BottomSheetDialogFragment
         bundle.putString("f_result", data[0]);
         bundle.putString("c_template", data[1]);
 
-        WalkerApplication.Debug("Выбран шаблон для результата " + data[1]);
+        LogManager.getInstance().debug("Выбран шаблон для результата " + data[1]);
 
         navController.navigate(R.id.nav_result, bundle);
 

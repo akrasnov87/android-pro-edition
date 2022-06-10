@@ -6,12 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mobwal.android.library.Constants;
 import com.mobwal.android.library.FieldNames;
-import com.mobwal.android.library.FileManager;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.data.packager.FileBinary;
 import com.mobwal.android.library.data.rpc.RPCResult;
 import com.mobwal.android.library.sql.SQLContext;
@@ -21,7 +20,7 @@ import com.mobwal.android.library.sql.SQLContext;
  */
 public abstract class ServerSidePackage implements ServerSidePackageListeners {
     protected boolean deleteRecordBeforeAppend = false;
-    protected FileManager fileManager;
+    protected SimpleFileManager fileManager;
     protected FileBinary[] mFileBinary;
 
     /**
@@ -47,7 +46,7 @@ public abstract class ServerSidePackage implements ServerSidePackageListeners {
      *
      * @param fileManager файловый менеджер
      */
-    public void attachmentBy(FileManager fileManager) {
+    public void attachmentBy(SimpleFileManager fileManager) {
         this.fileManager = fileManager;
     }
 
@@ -181,12 +180,7 @@ public abstract class ServerSidePackage implements ServerSidePackageListeners {
             if (getDeleteRecordBeforeAppend() && rpcResult.code != RPCResult.PERMATENT) {
                 session.exec("delete from " + tableName, new Object[0]);
                 if (attachmentProcessing) {
-                    try {
-                        fileManager.deleteFolder(tableName);
-                        fileManager.deleteFolder(FileManager.PHOTOS);
-                    } catch (FileNotFoundException ignored) {
-
-                    }
+                    fileManager.deleteFolder();
                 }
             }
 

@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.mobwal.android.library.annotation.TableMetaData;
 import com.mobwal.android.library.util.DateUtil;
-import com.mobwal.android.library.util.LogUtilSingleton;
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.util.ReflectionUtil;
 
 /**
@@ -71,7 +71,7 @@ public abstract class SQLContext
                 try {
                     item = (T) itemClass.newInstance();
                 } catch (IllegalAccessException | InstantiationException e) {
-                    LogUtilSingleton.getInstance().writeText("Ошибка получения результата запроса " + query, e);
+                    e.printStackTrace();
                     cursor.close();
                     return null;
                 }
@@ -118,7 +118,7 @@ public abstract class SQLContext
                         }
                     }
                 } catch (Exception e) {
-                    LogUtilSingleton.getInstance().writeText("Ошибка выполнения запроса " + query, e);
+                    e.printStackTrace();
                     continue;
                 }
                 results.add(item);
@@ -165,7 +165,7 @@ public abstract class SQLContext
                     db.setTransactionSuccessful();
                     result = true;
                 } catch (Exception e) {
-                    LogUtilSingleton.getInstance().writeText("Ошибка запроса для вставки данных", e);
+                    e.printStackTrace();
                 } finally {
                     db.endTransaction();
                 }
@@ -205,7 +205,7 @@ public abstract class SQLContext
             cursor.moveToFirst();
             return cursor.getLong(0);
         } catch (Exception e) {
-            LogUtilSingleton.getInstance().writeText("Ошибка вычисления количества в запросе " + query, e);
+            e.printStackTrace();
             return null;
         }
     }
@@ -219,7 +219,7 @@ public abstract class SQLContext
             db.execSQL(query, args);
             return true;
         } catch (SQLException e) {
-            LogUtilSingleton.getInstance().writeText("SQL. Ошибка выполнения запроса " + query, e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -320,14 +320,14 @@ public abstract class SQLContext
 
         if(databasePath.exists()) {
             if(!databasePath.delete()) {
-                LogUtilSingleton.getInstance().writeText("Ошибка удаления базы данных " + this.dbName);
+                LogManager.getInstance().info("Ошибка удаления базы данных " + this.dbName);
             }
         }
 
         File databaseLog = new File(databasePath.getParentFile(), this.dbName + "-journal");
         if(databaseLog.exists()) {
             if(!databaseLog.delete()) {
-                LogUtilSingleton.getInstance().writeText("Ошибка удаления лога базы данных " + this.dbName);
+                LogManager.getInstance().info("Ошибка удаления лога базы данных " + this.dbName);
             }
         }
     }

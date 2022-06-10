@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Map;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.ui.global.HorizontalProgressLayout;
@@ -111,7 +112,7 @@ public class GeoLocationLayout extends LinearLayout
             if(mPermissionActivityResultLauncher != null) {
                 mPermissionActivityResultLauncher.launch(REQUIRED_PERMISSIONS);
             }
-            WalkerApplication.Debug("Доступ к геолокации непредоставлен.");
+            LogManager.getInstance().debug("Доступ к геолокации непредоставлен.");
         } else {
             if(mLocation == null) {
                 showProgress(true);

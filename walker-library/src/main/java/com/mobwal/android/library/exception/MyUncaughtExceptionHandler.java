@@ -45,13 +45,13 @@ public class MyUncaughtExceptionHandler
     public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
         try {
             if(!intercept) {
-                Log.d(Constants.TAG, "Перехвачено исключение от группы " + group + ", код " + FaceException.codeToString(code));
+                Log.d(Constants.TAG, "Перехвачено исключение от группы " + group + ", код " + MaterialException.codeToString(code));
                 String exceptionString = StringUtil.exceptionToString(e);
-                FaceException exceptionModel = new FaceException(mContext, new Date(), exceptionString, group, code);
+                MaterialException exceptionModel = new MaterialException(new Date(), exceptionString, group, code);
 
                 boolean isDebug = new PrefManager(mContext).get(Constants.DEBUG, false);
                 Log.d(Constants.TAG, "Запись исключения " + exceptionModel.getExceptionCode(isDebug) + " в файл.");
-                FaceExceptionSingleton.getInstance(mContext).writeBytes(exceptionModel.getFileName(), exceptionModel.toString().getBytes());
+                new ExceptionHandler(mContext).writeBytes(exceptionModel.getFileName(), exceptionModel.toString().getBytes());
                 Log.d(Constants.TAG, "Исключение " + exceptionModel.getExceptionCode(isDebug) + " записано в файл.");
             }
         } catch (Exception exc) {

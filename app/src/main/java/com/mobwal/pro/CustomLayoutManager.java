@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.util.StreamUtil;
 
 public class CustomLayoutManager {
@@ -50,14 +51,14 @@ public class CustomLayoutManager {
             try (FileInputStream inputStream = new FileInputStream(file)) {
                 return new String(StreamUtil.readBytes(inputStream), StandardCharsets.UTF_8);
             } catch (IOException e) {
-                WalkerApplication.Log("Ошибка чтения шаблона.", e);
+                LogManager.getInstance().error("Ошибка чтения шаблона.", e);
             }
         }
 
         try (InputStream inStream = mContext.getResources().openRawResource(R.raw.default_layout)) {
             return new String(StreamUtil.readBytes(inStream), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            WalkerApplication.Log("Ошибка чтения шаблона по умолчанию.", e);
+            LogManager.getInstance().error("Ошибка чтения шаблона по умолчанию.", e);
         }
 
         return null;
@@ -94,7 +95,7 @@ public class CustomLayoutManager {
                 bos.write(bytes, 0, bytes.length);
                 return true;
             } catch (IOException e) {
-                WalkerApplication.Log("Ошибка обновления шаблона форм.", e);
+                LogManager.getInstance().error("Ошибка обновления шаблона форм.", e);
             } finally {
                 if(bos != null) {
                     bos.flush();
@@ -102,7 +103,7 @@ public class CustomLayoutManager {
                 }
             }
         } catch (IOException e) {
-            WalkerApplication.Log("Общая ошибка обновления шаблона форм.", e);
+            LogManager.getInstance().error("Общая ошибка обновления шаблона форм.", e);
         }
 
         return false;

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import com.mobwal.android.library.BitmapCache;
+import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.util.ImageUtil;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -40,7 +41,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         mListeners = listeners;
         mContext = itemView.getContext();
 
-        mFileManager = new SimpleFileManager(mContext, itemView.getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(itemView.getContext().getFilesDir());
 
         mImage = itemView.findViewById(R.id.attach_item_image);
         ImageButton trash = itemView.findViewById(R.id.attach_item_trash);
@@ -55,7 +56,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         mAttachment = item;
 
         try {
-            byte[] bytes = mFileManager.readPath(item.fn_route, item.c_path);
+            byte[] bytes = mFileManager.readPath(item.c_path);
             if(bytes != null) {
                 Bitmap bitmap = ImageUtil.getSizedBitmap(bytes, 0, bytes.length, 80);
                 mImage.setImageBitmap(bitmap);
@@ -63,7 +64,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
                 mImage.setImageDrawable(AppCompatResources.getDrawable(mContext, R.drawable.ic_attach_empty_96));
             }
         } catch (IOException e) {
-            WalkerApplication.Log("Ошибка сжатия изображения для галереи.", e);
+            LogManager.getInstance().error("Ошибка сжатия изображения для галереи.", e);
         }
     }
 }

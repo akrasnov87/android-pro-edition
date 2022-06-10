@@ -3,15 +3,10 @@ package com.mobwal.pro;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Build;
 
-import androidx.activity.ComponentActivity;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -19,26 +14,30 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 
 import com.mobwal.android.library.BitmapCache;
-import com.mobwal.android.library.FileManager;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationRequest;
+import com.mobwal.android.library.authorization.credential.BasicUser;
 import com.mobwal.android.library.data.sync.util.transfer.Transfer;
-import com.mobwal.android.library.exception.FaceExceptionSingleton;
+import com.mobwal.android.library.exception.MaterialException;
+import com.mobwal.android.library.exception.ExceptionHandler;
+import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.ImageUtil;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.exception.ExceptionInterceptListeners;
 import com.mobwal.android.library.exception.MyUncaughtExceptionHandler;
-import com.mobwal.android.library.util.LogUtilSingleton;
+import com.mobwal.android.library.LogManager;
+import com.mobwal.android.library.util.VersionUtil;
+import com.mobwal.pro.models.db.Audit;
+import com.mobwal.pro.models.db.MobileDevice;
+
+import java.util.List;
+import java.util.UUID;
 
 public class WalkerApplication extends Application implements ExceptionInterceptListeners {
-
-    private boolean isAuthorized = false;
-    private static boolean ReportSending = false;
-    public static boolean Debug = false;
+    public static String sSessionId = UUID.randomUUID().toString();
 
     private static final BitmapCache sBitmapCache = new BitmapCache();
 
@@ -82,28 +81,6 @@ public class WalkerApplication extends Application implements ExceptionIntercept
     }
 
     /**
-     * Установка призначка авторизации в приложении
-     * @param context контекст
-     * @param authorized признак авторизации
-     */
-    @Deprecated
-    public static void setAuthorized(Context context, boolean authorized) {
-        WalkerApplication app = (WalkerApplication)context.getApplicationContext();
-        app.isAuthorized = authorized;
-    }
-
-    /**
-     * Получение признака авторизации
-     * @param context текущий контекст
-     * @return возвращается признак авторизации
-     */
-    @Deprecated
-    public static boolean getAuthorized(Context context) {
-        WalkerApplication app = (WalkerApplication)context.getApplicationContext();
-        return app.isAuthorized;
-    }
-
-    /**
      * Подключение к БД
      * @param context контекст
      * @return подключение
@@ -113,80 +90,35 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         return app.mWalkerSQLContext;
     }
 
+    /**
+     * Установка подключения к БД
+     * @param context контекст
+     * @param sqlContext подключение
+     */
+    public static void setWalkerSQLContext(Context context, WalkerSQLContext sqlContext) {
+        WalkerApplication app = (WalkerApplication)context.getApplicationContext();
+        app.mWalkerSQLContext = sqlContext;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        LogManager.createInstance(new LogInMemory(sSessionId));
+
+        // без этого сайт osm не возвращает результат
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
-        LogUtilSingleton.createInstance(this);
-
+        // TODO: после тестирования убрать
         Transfer.CHUNK = 8;
         Transfer.STATUS_TRANSFER_SPEED = true;
 
-        mWalkerSQLContext = new WalkerSQLContext(this, "walker");
-
-        SharedPreferences sharedPreferences = getSharedPreferences(Names.PREFERENCE_NAME, MODE_PRIVATE);
-
-        Debug = sharedPreferences.getBoolean("debug", false);
-        ReportSending = sharedPreferences.getBoolean("error_reporting", false);
-
-        //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(ReportSending);
-
-        if(ReportSending) {
-            //FirebaseCrashlytics.getInstance().setCustomKey("debug", Debug);
-            //FirebaseCrashlytics.getInstance().setCustomKey("pin_use", !sharedPreferences.getString("pin_code", "").isEmpty());
+        PrefManager prefManager = new PrefManager(this);
+        if(prefManager.get("error_reporting", false)) {
+            LogManager.getInstance().debug("debug=" + prefManager.get("debug", false));
         }
 
         BasicAuthorizationSingleton.createInstance(this, Names.CLAIMS, new AuthorizationRequest(Names.getConnectUrl()));
-    }
-
-    /**
-     * Логирование действий пользователя
-     * @param message сообщение
-     */
-    @Deprecated
-    public static void Log(String message) {
-        Log(message, null);
-    }
-
-    /**
-     * Логирование действий пользователя
-     * @param message сообщение
-     * @param exception исключение
-     */
-    @Deprecated
-    public static void Log(String message, @Nullable Exception exception) {
-        if(ReportSending) {
-            if(exception != null) {
-                FirebaseCrashlytics.getInstance().recordException(exception);
-            }
-            FirebaseCrashlytics.getInstance().log(message);
-        }
-    }
-
-    /**
-     * Логирование действий пользователя в режиме отладки
-     * @param message сообщение
-     */
-    @Deprecated
-    public static void Debug(@NotNull String message) {
-        Debug(message, null);
-    }
-
-    /**
-     * Логирование действий пользователя в режиме отладки
-     * @param message сообщение
-     * @param exception исключение
-     */
-    @Deprecated
-    public static void Debug(@NotNull String message, @Nullable Exception exception) {
-        if(Debug && ReportSending) {
-            if(exception != null) {
-                FirebaseCrashlytics.getInstance().recordException(exception);
-            }
-            FirebaseCrashlytics.getInstance().log(message);
-        }
     }
 
     /**
@@ -194,10 +126,40 @@ public class WalkerApplication extends Application implements ExceptionIntercept
      * @param activity контекст
      */
     public static void authorized(@NonNull Activity activity) {
+        BasicUser basicUser = BasicAuthorizationSingleton.getInstance().getUser();
+        WalkerSQLContext walkerSQLContext = new WalkerSQLContext(activity, basicUser.getUserId().toString());
+        setWalkerSQLContext(activity, walkerSQLContext);
+
+        // меняем способ логирования на БД
+        LogInDb logInDb = new LogInDb(walkerSQLContext, sSessionId);
+        LogInMemory logInMemory = (LogInMemory)LogManager.getInstance();
+        logInDb.writeArray(logInMemory.getAudits().toArray(new Audit[0]));
+        LogManager.createInstance(logInDb);
+
+        ExceptionHandler exceptionHandler = new ExceptionHandler(activity);
+
+        if(exceptionHandler.getCount() > 0) {
+            List<MaterialException> list = exceptionHandler.getExceptionList();
+            if(list != null) {
+                for (MaterialException faceException : list) {
+                    LogManager.getInstance().error(faceException.toString());
+                }
+            }
+        }
+
+        // записываем информацию об устройстве в лог
+        MobileDevice mobileDevice = new MobileDevice();
+        mobileDevice.b_debug = new PrefManager(activity).get("debug", false);
+        mobileDevice.fn_user = basicUser.getUserId();
+        mobileDevice.c_architecture = System.getProperty("os.arch");
+        mobileDevice.c_model = Build.MODEL;
+        mobileDevice.c_sdk = String.valueOf(Build.VERSION.SDK_INT);
+        mobileDevice.c_os = Build.VERSION.RELEASE;
+        mobileDevice.c_version = VersionUtil.getVersionName(activity);
+        mobileDevice.c_session_id = sSessionId;
+        walkerSQLContext.insert(mobileDevice);
+
         activity.finish();
-
-        FileManager.createInstance(BasicAuthorizationSingleton.getInstance().getUser().getCredential(), activity);
-
         activity.startActivity(MainActivity.getIntent(activity));
     }
 
@@ -206,8 +168,11 @@ public class WalkerApplication extends Application implements ExceptionIntercept
      * @param context контекст
      */
     public static void exitToApp(@NotNull Context context) {
+        sSessionId = UUID.randomUUID().toString();
+
         new PrefManager(context).clearAll();
         BasicAuthorizationSingleton.getInstance().destroy();
+        getWalkerSQLContext(context).close();
     }
 
     @Override
