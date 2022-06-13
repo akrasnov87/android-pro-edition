@@ -15,6 +15,7 @@ import com.mobwal.android.library.sql.SQLContext;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,6 +50,16 @@ public class WalkerSQLContext extends SQLContext {
      * @return список таблиц
      */
     public Object[] getTables() {
-        return mTableList.toArray(new Object[0]);
+        List<Object> objectList = new ArrayList<>();
+        objectList.add(new Template());
+        objectList.add(new Setting());
+        objectList.add(new Route());
+        objectList.add(new Point());
+        objectList.add(new Result());
+        objectList.add(new Attachment());
+        objectList.add(new Audit());
+        objectList.add(new MobileDevice());
+
+        return objectList.toArray();
     }
 }

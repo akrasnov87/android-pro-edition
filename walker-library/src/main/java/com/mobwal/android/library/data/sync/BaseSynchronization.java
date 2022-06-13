@@ -299,6 +299,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         Object[] updateRecords = getRecords(tableName, tid, DbOperationType.UPDATED).toArray();
         Object[] removeRecords = getRecords(tableName, tid, DbOperationType.REMOVED).toArray();
 
+        // TODO: нужно заменить
         String linkName = "id";
 
         if (createRecords.length > 0 || updateRecords.length > 0 || removeRecords.length > 0) {

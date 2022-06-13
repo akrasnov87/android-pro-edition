@@ -82,9 +82,10 @@ public class SynchronizationFragment extends Fragment
     public void onDestroyView() {
         super.onDestroyView();
 
-        Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
-
         if(synchronization != null) {
+            if(synchronization.isRunning()) {
+                Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
+            }
             synchronization.destroy();
         }
 

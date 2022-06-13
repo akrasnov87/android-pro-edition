@@ -19,6 +19,7 @@ import com.mobwal.android.library.BitmapCache;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationRequest;
 import com.mobwal.android.library.authorization.credential.BasicUser;
+import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.data.sync.util.transfer.Transfer;
 import com.mobwal.android.library.exception.MaterialException;
 import com.mobwal.android.library.exception.ExceptionHandler;
@@ -159,6 +160,8 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         mobileDevice.c_os = Build.VERSION.RELEASE;
         mobileDevice.c_version = VersionUtil.getVersionName(activity);
         mobileDevice.c_session_id = sSessionId;
+        mobileDevice.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
+
         walkerSQLContext.insert(mobileDevice);
 
         activity.finish();

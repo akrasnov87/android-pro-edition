@@ -39,6 +39,8 @@ public abstract class SQLContext
     @NonNull
     private final Context mContext;
 
+    private final SQLiteDatabase mSQLiteDatabase;
+
     @NonNull
     public Context getContext() {
         return mContext;
@@ -49,6 +51,7 @@ public abstract class SQLContext
         mContext = context;
         this.dbName = dbName + ".db";
         databasePath = context.getDatabasePath(this.dbName);
+        mSQLiteDatabase = getWritableDatabase();
     }
 
     /**
@@ -60,8 +63,7 @@ public abstract class SQLContext
      */
     @Nullable
     public <T> Collection<T> select(@NonNull String query, String[] args, @NonNull Class<?> itemClass) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, args);
+        Cursor cursor = mSQLiteDatabase.rawQuery(query, args);
 
         Collection<T> results = new ArrayList<>();
         Field[] fields = itemClass.getDeclaredFields();
@@ -152,22 +154,20 @@ public abstract class SQLContext
         if(array.length > 0) {
             T entity = array[0];
             if(exists(entity)) {
-                SQLiteDatabase db = getWritableDatabase();
-
                 try {
-                    db.beginTransaction();
+                    mSQLiteDatabase.beginTransaction();
 
-                    SQLStatementInsert sqlStatementInsert = new SQLStatementInsert(entity, db);
+                    SQLStatementInsert sqlStatementInsert = new SQLStatementInsert(entity, mSQLiteDatabase);
                     for (T item: array) {
                         sqlStatementInsert.bind(item);
                     }
 
-                    db.setTransactionSuccessful();
+                    mSQLiteDatabase.setTransactionSuccessful();
                     result = true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    db.endTransaction();
+                    mSQLiteDatabase.endTransaction();
                 }
             }
         }
@@ -201,7 +201,7 @@ public abstract class SQLContext
      */
     @Nullable
     public Long count(String query, String[] selectionArgs) {
-        try (SQLiteDatabase db = getReadableDatabase(); Cursor cursor = db.rawQuery(query, selectionArgs)) {
+        try (Cursor cursor = mSQLiteDatabase.rawQuery(query, selectionArgs)) {
             cursor.moveToFirst();
             return cursor.getLong(0);
         } catch (Exception e) {
@@ -215,8 +215,8 @@ public abstract class SQLContext
      * @param query SQL - запрос
      */
     public boolean exec(String query, @Nullable Object[] args) {
-        try (SQLiteDatabase db = getReadableDatabase()) {
-            db.execSQL(query, args);
+        try {
+            mSQLiteDatabase.execSQL(query, args);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

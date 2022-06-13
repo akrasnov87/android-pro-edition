@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -139,12 +140,11 @@ public class SQLContextTest {
 
     static class SQLContextProfile extends SQLContext {
 
-        private final List<Object> mTableList = Collections.singletonList(
-                new Profile());
-
         @Override
         public Object[] getTables() {
-            return mTableList.toArray();
+            List<Object> objectList = new ArrayList<>();
+            objectList.add(new Profile());
+            return objectList.toArray();
         }
 
         public SQLContextProfile(Context context) {

@@ -77,7 +77,7 @@ public abstract class ServerSidePackage implements ServerSidePackageListeners {
                 Object[] params = new Object[1];
                 params[0] = packageTid;
 
-                session.exec("delete from " + rpcResult.action + " where tid = ?", params);
+                session.exec("delete from " + rpcResult.action + " where " + FieldNames.TID +" = ?", params);
                 return PackageResult.success(null);
             } else {
                 return to(session, rpcResult, packageTid);
