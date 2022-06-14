@@ -155,24 +155,20 @@ public class InfoFragment extends Fragment
                 if(mResults != null) {
                     boolean b = true;
                     for (Result result : mResults) {
-                        try {
-                            if (mDataManager.delResult(result.id)) {
-                                List<PointInfo> items = mPointInfoItemAdapter.getData();
-                                int i = 0;
-                                for (PointInfo pointInfo : items) {
-                                    if (pointInfo.result != null && pointInfo.result.equals(result.id)) {
-                                        mPointInfoItemAdapter.removeItem(i);
-                                        break;
-                                    }
-                                    i++;
+                        if (result.b_server ? mDataManager.disabledResult(result.id) : mDataManager.delResult(result.id)) {
+                            List<PointInfo> items = mPointInfoItemAdapter.getData();
+                            int i = 0;
+                            for (PointInfo pointInfo : items) {
+                                if (pointInfo.result != null && pointInfo.result.equals(result.id)) {
+                                    mPointInfoItemAdapter.removeItem(i);
+                                    break;
                                 }
-                            } else {
-                                if (b) {
-                                    b = false;
-                                }
+                                i++;
                             }
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
+                        } else {
+                            if (b) {
+                                b = false;
+                            }
                         }
                     }
 
@@ -371,16 +367,19 @@ public class InfoFragment extends Fragment
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             // ДА
-            try {
-                if (pointItem.result != null && mDataManager.delResult(pointItem.result)) {
-                    mPointInfoItemAdapter.removeItem(position);
-                    updateLocations(mLocation);
-                    updateResults();
+            if (pointItem.result != null) {
+                if(!pointItem.server) {
+                    mDataManager.delResult(pointItem.result);
                 } else {
-                    Toast.makeText(requireContext(), R.string.remove_result_error, Toast.LENGTH_SHORT).show();
+                    mDataManager.disabledResult(pointItem.result);
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+
+                mPointInfoItemAdapter.removeItem(position);
+
+                updateLocations(mLocation);
+                updateResults();
+            } else {
+                Toast.makeText(requireContext(), R.string.remove_result_error, Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton(R.string.no, null);

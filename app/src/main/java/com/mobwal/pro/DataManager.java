@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
+import com.mobwal.android.library.FieldNames;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.util.StringUtil;
@@ -56,7 +57,7 @@ public class DataManager {
                 "\tr.c_name as C_NUMBER, \n" +
                 "\t(select count(*) from cd_points as p where p.fn_route = r.id) as N_TASK, \n" +
                 "\t(select count(*) from cd_points as p where p.fn_route = r.id and p.b_anomaly = 1) as N_ANOMALY, \n" +
-                "\t(select count(*) from (select p.id from cd_points as p inner join cd_results as rr on rr.fn_point = p.id where p.fn_route = r.id and p.b_check = 1 group by p.id) as t) as N_DONE, \n" +
+                "\t(select count(*) from (select p.id from cd_points as p inner join cd_results as rr on rr.fn_point = p.id where p.fn_route = r.id and p.b_check = 1 and rr.b_disabled = 0 group by p.id) as t) as N_DONE, \n" +
                 "\t(select count (*) from (select p.id from cd_points as p where p.fn_route = r.id and p.b_check = 0) as t) as N_FAIL, " +
                 "\tr.d_date as D_DATE \n" +
                 "from cd_routes as r" + (TextUtils.isEmpty(search) ? "" : " where r.c_name like '%' || ? || '%'");
@@ -233,7 +234,7 @@ public class DataManager {
                 "\tp.C_DESCRIPTION, \n" +
                 "\tp.JB_DATA, \n" +
                 "\tp.C_ADDRESS, \n" +
-                "\t(select count(*) from cd_results as rr where rr.fn_point = p.id) > 0 as B_DONE, \n" +
+                "\t(select count(*) from cd_results as rr where rr.fn_point = p.id and rr.b_disabled = 0) > 0 as B_DONE, \n" +
                 "\tp.B_ANOMALY, \n" +
                 "\tp.B_CHECK \n" +
                 "from cd_points as p where p.fn_route = ?" + (TextUtils.isEmpty(search) ? "" : " and p.c_address like '%' || ? || '%'") + " order by p.n_order";
@@ -291,7 +292,7 @@ public class DataManager {
                     "\tr.b_server as B_SERVER \n" +
                     "from cd_results as r \n" +
                     "left join cd_templates as t on r.fn_template = t.id \n" +
-                    "where r.fn_point = ? and r.id is not null", new String[] { f_point }, ResultTemplate.class);
+                    "where r.b_disabled = 0 and r.fn_point = ? and r.id is not null", new String[] { f_point }, ResultTemplate.class);
 
             if(collection != null && !collection.isEmpty()) {
                 ResultTemplate[] templates = collection.toArray(new ResultTemplate[0]);
@@ -321,7 +322,7 @@ public class DataManager {
     public Result[] getResults(@NotNull String f_point) {
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Result> collection = sqlContext.select("SELECT * from cd_results as r where r.fn_point = ?", new String[] { f_point }, Result.class);
+        Collection<Result> collection = sqlContext.select("SELECT * from cd_results as r where r.fn_point = ? and r.b_disabled = 0", new String[] { f_point }, Result.class);
 
         if(collection != null) {
             return collection.toArray(new Result[0]);
@@ -338,7 +339,7 @@ public class DataManager {
     @Nullable
     public Long getResultCount(@Nullable String f_route) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        return sqlContext.count("SELECT count(*) from Result as r where r.f_route = ?", new String[] { f_route });
+        return sqlContext.count("SELECT count(*) from cd_results as r where r.f_route = ? and r.b_disabled = 0", new String[] { f_route });
     }
 
     /**
@@ -353,6 +354,7 @@ public class DataManager {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
         Collection<Route> routeCollection = sqlContext.select("select * from cd_routes as r where r.id = ?", new String[] { f_route }, Route.class);
+
         if(routeCollection != null && !routeCollection.isEmpty()) {
             Route route = routeCollection.toArray(new Route[0])[0];
             String[] templates = StringUtil.isEmptyOrNull(route.c_templates) ? new String[0] : route.c_templates.split(",");
@@ -361,11 +363,10 @@ public class DataManager {
                     "\tt.id as F_TEMPLATE, \n" +
                     "\tt.C_NAME as C_TEMPLATE, \n" +
                     "\tt.C_TEMPLATE as C_CONST, \n" +
-                    "\tr.id as F_RESULT, \n" +
-                    "\tr.d_date as D_DATE, \n" +
-                    "\tr.b_server as B_SERVER \n" +
-                    "from cd_templates as t \n" +
-                    "left join cd_results as r on r.fn_template = t.id and r.fn_point = ?", new String[] { f_point }, ResultTemplate.class);
+                    "\t(select r.id from cd_results as r where r.fn_point = ? and r.fn_template = t.id and r.B_DISABLED = 0) as F_RESULT, \n" +
+                    "\t(select r.D_DATE from cd_results as r where r.fn_point = ? and r.fn_template = t.id and r.B_DISABLED = 0) as D_DATE, \n" +
+                    "\t(select r.B_SERVER from cd_results as r where r.fn_point = ? and r.fn_template = t.id and r.B_DISABLED = 0) as B_SERVER \n" +
+                    "from cd_templates as t", new String[] { f_point, f_point, f_point }, ResultTemplate.class);
 
             if(collection != null && !collection.isEmpty()) {
                 List<ResultTemplate> resultTemplates = new ArrayList<>();
@@ -409,7 +410,7 @@ public class DataManager {
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Result> resultCollection = sqlContext.select("SELECT * from cd_results as r where r.id = ?", new String[] { f_result }, Result.class);
+        Collection<Result> resultCollection = sqlContext.select("SELECT * from cd_results as r where r.id = ? and r.b_disabled = 0", new String[] { f_result }, Result.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
             return resultCollection.toArray(new Result[0])[0];
@@ -524,7 +525,7 @@ public class DataManager {
         return false;
     }
 
-    public boolean delResult(@NotNull String f_result) throws FileNotFoundException {
+    public boolean delResult(@NotNull String f_result) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
         Collection<Attachment> collection = sqlContext.select("select * from attachments where fn_result = ?;", new String[] { f_result }, Attachment.class);
 
@@ -543,6 +544,14 @@ public class DataManager {
         }
 
         return false;
+    }
+
+    public boolean disabledResult(@NotNull String f_result) {
+        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
+        return sqlContext.exec("" +
+                "update cd_results " +
+                "set b_disabled = ?, " + FieldNames.IS_SYNCHRONIZATION + " = 0, " + FieldNames.OBJECT_OPERATION_TYPE + " = ? " +
+                "where id = ?", new Object[] { true, DbOperationType.UPDATED, f_result });
     }
 
     /**

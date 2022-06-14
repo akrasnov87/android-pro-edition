@@ -26,6 +26,6 @@ public class PointInfo {
     public boolean server;
 
     public boolean isResult() {
-        return !TextUtils.isEmpty(result) && !server;
+        return !TextUtils.isEmpty(result);
     }
 }

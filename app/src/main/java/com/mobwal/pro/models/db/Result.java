@@ -71,6 +71,9 @@ public class Result {
     @Nullable
     public Double n_distance;
 
+    @Expose
+    public boolean b_disabled;
+
     public boolean b_server;
 
     @Nullable
