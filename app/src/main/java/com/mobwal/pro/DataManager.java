@@ -10,11 +10,14 @@ import org.jetbrains.annotations.Nullable;
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+import com.mobwal.android.library.data.DbOperationType;
+import com.mobwal.android.library.util.StringUtil;
 import com.mobwal.pro.models.PointInfo;
 import com.mobwal.pro.models.db.complex.PointItem;
 import com.mobwal.pro.models.db.complex.ResultExportItem;
@@ -347,17 +350,33 @@ public class DataManager {
     public ResultTemplate[] getResultTemplates(@NotNull String f_route, @NotNull String f_point) {
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<ResultTemplate> collection = sqlContext.select("select \n" +
-                "\tt.id as F_TEMPLATE, \n" +
-                "\tt.C_NAME as C_TEMPLATE, \n" +
-                "\tt.C_TEMPLATE as C_CONST, \n" +
-                "\tr.id as F_RESULT, \n" +
-                "\tr.d_date as D_DATE \n" +
-                "from cd_templates as t \n" +
-                "left join cd_results as r on r.fn_template = t.id and r.fn_point = ?", new String[] { f_point }, ResultTemplate.class);
 
-        if(collection != null && !collection.isEmpty()) {
-            return collection.toArray(new ResultTemplate[0]);
+        Collection<Route> routeCollection = sqlContext.select("select * from cd_routes as r where r.id = ?", new String[] { f_route }, Route.class);
+        if(routeCollection != null && !routeCollection.isEmpty()) {
+            Route route = routeCollection.toArray(new Route[0])[0];
+            String[] templates = StringUtil.isEmptyOrNull(route.c_templates) ? new String[0] : route.c_templates.split(",");
+
+            Collection<ResultTemplate> collection = sqlContext.select("select \n" +
+                    "\tt.id as F_TEMPLATE, \n" +
+                    "\tt.C_NAME as C_TEMPLATE, \n" +
+                    "\tt.C_TEMPLATE as C_CONST, \n" +
+                    "\tr.id as F_RESULT, \n" +
+                    "\tr.d_date as D_DATE \n" +
+                    "from cd_templates as t \n" +
+                    "left join cd_results as r on r.fn_template = t.id and r.fn_point = ?", new String[] { f_point }, ResultTemplate.class);
+
+            if(collection != null && !collection.isEmpty()) {
+                List<ResultTemplate> resultTemplates = new ArrayList<>();
+                for (ResultTemplate resultTemplate: collection) {
+                    for (String s: templates) {
+                        if(resultTemplate.c_const.equals(s)) {
+                            resultTemplates.add(resultTemplate);
+                        }
+                    }
+                }
+;
+                return resultTemplates.toArray(new ResultTemplate[0]);
+            }
         }
 
         return null;
@@ -471,6 +490,7 @@ public class DataManager {
 
         for (Attachment attachment : attachments) {
             attachment.fn_result = f_result;
+            attachment.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
         }
 
         return sqlContext.exec("delete from attachments where fn_result = ?;", new String[] { f_result }) &&

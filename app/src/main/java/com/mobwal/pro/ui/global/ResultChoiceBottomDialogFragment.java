@@ -94,6 +94,7 @@ public class ResultChoiceBottomDialogFragment extends BottomSheetDialogFragment
 
         bundle.putString("f_result", data[0]);
         bundle.putString("c_template", data[1]);
+        bundle.putString("f_template", data[2]);
 
         LogManager.getInstance().debug("Выбран шаблон для результата " + data[1]);
 

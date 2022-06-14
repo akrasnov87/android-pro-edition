@@ -167,7 +167,7 @@
     <string name="result_save_error5">Для сохранения результата требуется прикрепить геолокацию.</string>
     <string name="files">Файлы</string>
 
-    <string name="create_route_docs">Для создания маршрута воспользуйтесь инструкцией с сайта {0}.</string>
+    <string name="create_route_docs">Для получения маршрутов требуется выполнить синхронизацию.</string>
     <string name="demo_route">Демонстрационный маршрут</string>
     <string name="demo_route_empty">Данные для демонстрационного маршрута не найдены.</string>
     <string name="profile">Профиль</string>

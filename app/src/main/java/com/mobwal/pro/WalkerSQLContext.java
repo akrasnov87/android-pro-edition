@@ -26,16 +26,6 @@ public class WalkerSQLContext extends SQLContext {
      */
     public static final int DATABASE_VERSION = 1;
 
-    private final List<Object> mTableList = Arrays.asList(
-            new Template(),
-            new Setting(),
-            new Route(),
-            new Point(),
-            new Result(),
-            new Attachment(),
-            new Audit(),
-            new MobileDevice());
-
     public WalkerSQLContext(@NotNull Context context, @NotNull String dbName) {
         super(context, dbName, DATABASE_VERSION);
     }

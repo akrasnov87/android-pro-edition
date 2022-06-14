@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import com.mobwal.android.library.LogManager;
+import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
@@ -76,6 +77,9 @@ public class ResultFragment extends BaseFragment
     private Result mResult;
 
     private String c_template;
+
+    private String f_template;
+
     @Nullable
     private Template mTemplate;
     @Nullable
@@ -123,6 +127,7 @@ public class ResultFragment extends BaseFragment
             f_point = getArguments().getString("f_point");
             f_result = getArguments().getString("f_result");
             c_template = getArguments().getString("c_template");
+            f_template = getArguments().getString("f_template");
 
             SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
             mLocationRequire = settingRoute.geo;
@@ -264,6 +269,9 @@ public class ResultFragment extends BaseFragment
         Result item = mResult == null
                 ? new Result(id, f_route, f_point, c_template, mLocation, mPoint)
                 : mResult;
+        item.fn_template = f_template;
+        item.__OBJECT_OPERATION_TYPE = item.__IS_SYNCHRONIZATION ? DbOperationType.UPDATED : DbOperationType.CREATED;
+        item.__IS_SYNCHRONIZATION = false;
 
         item.jb_data = jb_data;
 

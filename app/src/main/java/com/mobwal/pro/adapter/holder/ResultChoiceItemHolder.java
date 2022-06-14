@@ -42,7 +42,7 @@ public class ResultChoiceItemHolder extends RecyclerView.ViewHolder
     @Override
     public void onClick(View v) {
         if(mListeners != null) {
-            mListeners.onViewItemClick(MessageFormat.format("{0}|{1}", mItem.f_result, mItem.c_const));
+            mListeners.onViewItemClick(MessageFormat.format("{0}|{1}|{2}", mItem.f_result, mItem.c_const, mItem.f_template));
         }
     }
 }

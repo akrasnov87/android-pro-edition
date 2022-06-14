@@ -121,7 +121,7 @@ public class RouteFragment extends BaseFragment
         if(isSearch) {
             binding.routeListEmpty.setText(R.string.search_not_result);
         } else {
-            String html = getString(R.string.route_list_empty) + "<p>" + MessageFormat.format(getString(R.string.create_route_docs), "<a href=\""+Names.ROUTE_DOCS+"\">" + Names.HOME_PAGE + "</a>") + "</p>";
+            String html = getString(R.string.route_list_empty) + "<p>" + getString(R.string.create_route_docs) + "</p>";
             binding.routeListEmpty.setText(HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY));
             binding.routeListEmpty.setMovementMethod(LinkMovementMethod.getInstance());
         }

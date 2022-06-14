@@ -238,6 +238,7 @@ public class PointFragment extends BaseFragment
 
                 bundle.putString("f_result", resultTemplates[0].f_result);
                 bundle.putString("c_template", resultTemplates[0].c_const);
+                bundle.putString("f_template", resultTemplates[0].f_template);
 
                 navController.navigate(R.id.nav_result, bundle);
             }

@@ -26,4 +26,6 @@ public class Route {
     public Date d_date;
     
     public boolean b_check;
+
+    public String c_templates;
 }
