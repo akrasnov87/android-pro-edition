@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 
 public class StreamUtil {
 
@@ -33,5 +34,22 @@ public class StreamUtil {
         byteBuffer.close();
         inputStream.close();
         return bytes;
+    }
+
+    /**
+     * Загрузка изображения с сервера
+     * @param src путь к изображению
+     * @return объект Bitmap
+     */
+    public static byte[] readURL(@NonNull String src, int timeout) throws IOException {
+        java.net.URL url = new java.net.URL(src);
+        HttpURLConnection connection = (HttpURLConnection) url
+                .openConnection();
+        connection.setDoInput(true);
+        connection.setConnectTimeout(timeout);
+        connection.setReadTimeout(timeout);
+        connection.connect();
+        InputStream input = connection.getInputStream();
+        return StreamUtil.readBytes(input);
     }
 }

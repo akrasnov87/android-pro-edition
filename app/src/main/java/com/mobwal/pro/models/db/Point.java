@@ -5,6 +5,7 @@ import android.location.LocationManager;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.Expose;
 import com.mobwal.android.library.annotation.TableMetaData;
 
 import org.osmdroid.util.GeoPoint;
@@ -47,6 +48,8 @@ public class Point {
     public boolean b_check;
 
     public String c_comment;
+
+    public boolean b_server;
 
     @Nullable
     public GeoPoint convertToLatLng() {

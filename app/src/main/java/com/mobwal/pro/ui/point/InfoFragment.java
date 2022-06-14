@@ -44,6 +44,10 @@ import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.utilits.OsmDroidUtil;
 
+import org.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourcePolicy;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;

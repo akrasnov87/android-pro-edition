@@ -23,7 +23,9 @@ public class PointInfo {
     @Nullable
     public String result;
 
+    public boolean server;
+
     public boolean isResult() {
-        return !TextUtils.isEmpty(result);
+        return !TextUtils.isEmpty(result) && !server;
     }
 }

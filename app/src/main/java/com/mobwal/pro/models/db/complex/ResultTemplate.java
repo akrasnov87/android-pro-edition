@@ -14,6 +14,7 @@ public class ResultTemplate {
     public String c_template;
     public String c_const;
     public Date d_date;
+    public Boolean b_server;
 
     /**
      * Идентификатор результата

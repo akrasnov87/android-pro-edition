@@ -1,5 +1,6 @@
 package com.mobwal.pro.adapter.holder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
@@ -15,7 +16,12 @@ import org.jetbrains.annotations.NotNull;
 
 import com.mobwal.android.library.BitmapCache;
 import com.mobwal.android.library.LogManager;
+import com.mobwal.android.library.NewThread;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.util.ImageUtil;
+import com.mobwal.android.library.util.StreamUtil;
+import com.mobwal.pro.LogInDb;
+import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.models.db.Attachment;
@@ -30,6 +36,7 @@ import java.io.IOException;
 public class AttachmentItemHolder extends RecyclerView.ViewHolder {
 
     private final ImageView mImage;
+    private final ImageButton mTrash;
     private final SimpleFileManager mFileManager;
     private final Context mContext;
     private Attachment mAttachment;
@@ -41,30 +48,58 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         mListeners = listeners;
         mContext = itemView.getContext();
 
-        mFileManager = new SimpleFileManager(itemView.getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(itemView.getContext().getFilesDir(),
+                BasicAuthorizationSingleton.getInstance().getUser().getCredential());
 
         mImage = itemView.findViewById(R.id.attach_item_image);
-        ImageButton trash = itemView.findViewById(R.id.attach_item_trash);
+        mTrash = itemView.findViewById(R.id.attach_item_trash);
 
         if(mListeners != null) {
             mImage.setOnClickListener(v -> mListeners.onViewItemClick(mAttachment.id));
-            trash.setOnClickListener(v-> mListeners.onViewItemInfo(mAttachment.id));
+            mTrash.setOnClickListener(v-> mListeners.onViewItemInfo(mAttachment.id));
         }
     }
 
     public void bind(@NotNull Attachment item) {
         mAttachment = item;
 
-        try {
-            byte[] bytes = mFileManager.readPath(item.c_path);
-            if(bytes != null) {
-                Bitmap bitmap = ImageUtil.getSizedBitmap(bytes, 0, bytes.length, 80);
-                mImage.setImageBitmap(bitmap);
-            } else {
-                mImage.setImageDrawable(AppCompatResources.getDrawable(mContext, R.drawable.ic_attach_empty_96));
+        mTrash.setVisibility(item.b_disabled ? View.GONE : View.VISIBLE);
+
+        if(item.b_server) {
+            NewThread newThread = new NewThread((Activity)mContext) {
+                Bitmap mBitmap;
+                @Override
+                public void onBackgroundExecute() {
+                    try {
+                        mBitmap = WalkerApplication.getBitmap(item.id);
+                        if(mBitmap == null) {
+                            byte[] bytes = StreamUtil.readURL(Names.getConnectUrl() + "/file/" + item.id, 5000);
+                            mBitmap = WalkerApplication.getBitmap(item.id, bytes, 120);
+                        }
+                    } catch (IOException e) {
+                        LogManager.getInstance().error("Ошибка загрузки изображения с сервера. ", e);
+                    }
+                }
+
+                @Override
+                public void onPostExecute() {
+                    mImage.setImageBitmap(item.b_disabled ? ImageUtil.blur(mContext, mBitmap) : mBitmap);
+                }
+            };
+
+            newThread.run();
+        } else {
+            try {
+                byte[] bytes = mFileManager.readPath(item.c_name);
+                if (bytes != null) {
+                    Bitmap bitmap = ImageUtil.getSizedBitmap(bytes, 0, bytes.length, 80);
+                    mImage.setImageBitmap(bitmap);
+                } else {
+                    mImage.setImageDrawable(AppCompatResources.getDrawable(mContext, R.drawable.ic_attach_empty_96));
+                }
+            } catch (IOException e) {
+                LogManager.getInstance().error("Ошибка сжатия изображения для галереи.", e);
             }
-        } catch (IOException e) {
-            LogManager.getInstance().error("Ошибка сжатия изображения для галереи.", e);
         }
     }
 }

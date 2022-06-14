@@ -19,6 +19,8 @@ import com.mobwal.android.library.Constants;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 
 /**
  * Работа с изображениями

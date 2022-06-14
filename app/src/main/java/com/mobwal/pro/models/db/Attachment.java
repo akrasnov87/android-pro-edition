@@ -45,11 +45,16 @@ public class Attachment implements Serializable, OnAttachmentListeners {
     public Date d_date;
 
     @Expose
-    public String c_path;
+    public String c_name;
 
     @Expose
     @Nullable
     public Long n_distance;
+
+    @Expose
+    public boolean b_disabled;
+
+    public boolean b_server;
 
     /**
      * Тип операции над объектом
@@ -88,6 +93,6 @@ public class Attachment implements Serializable, OnAttachmentListeners {
 
     @Override
     public String getPath() {
-        return c_path;
+        return c_name;
     }
 }

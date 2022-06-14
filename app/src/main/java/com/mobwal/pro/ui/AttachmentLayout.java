@@ -41,6 +41,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import com.mobwal.android.library.LogManager;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -84,7 +86,7 @@ public class AttachmentLayout extends LinearLayout
         super(context, attributeSet);
 
         mDataManager = new DataManager(getContext());
-        mFileManager = new SimpleFileManager(getContext().getFilesDir());
+        mFileManager = new SimpleFileManager(getContext().getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential());
 
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -318,8 +320,10 @@ public class AttachmentLayout extends LinearLayout
         attachment.fn_route = mPointBundle.f_route;
         attachment.fn_result = mPointBundle.f_result;
 
-        attachment.c_path = id + ".jpg";
+        attachment.c_name = id + ".jpg";
         attachment.d_date = new Date();
+        attachment.__IS_SYNCHRONIZATION = false;
+        attachment.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
         if(mLocationInfo != null) {
             attachment.n_distance = mLocationInfo.getDistance();
@@ -341,7 +345,11 @@ public class AttachmentLayout extends LinearLayout
     public void onViewItemClick(String id) {
         for (Attachment attach: mItemAdapter.getData()) {
             if(attach.id.equals(id)) {
-                ActivityUtil.openGallery(getContext(), new File(mFileManager.getEnvironment(), attach.c_path));
+                if(attach.b_server) {
+                    ActivityUtil.openWebPage(getContext(), Names.getConnectUrl() + "/file/" + attach.id);
+                } else {
+                    ActivityUtil.openGallery(getContext(), new File(mFileManager.getEnvironment(), attach.c_name));
+                }
                 return;
             }
         }

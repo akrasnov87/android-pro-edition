@@ -82,8 +82,6 @@ public class ResultFragment extends BaseFragment
 
     @Nullable
     private Template mTemplate;
-    @Nullable
-    private Route mRoute;
 
     private final String id = UUID.randomUUID().toString();
 
@@ -135,7 +133,6 @@ public class ResultFragment extends BaseFragment
             mImageRequire = settingRoute.image;
 
             mTemplate = mDataManager.getTemplate(f_route, c_template);
-            mRoute = mDataManager.getRoute(f_route);
             mPoint = mDataManager.getPoint(f_point);
             mResult = mDataManager.getResult(f_result);
         }
@@ -174,6 +171,12 @@ public class ResultFragment extends BaseFragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if(mResult != null && mDataManager.getResult(f_result) == null) {
+            // Значит результат удален
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
+            navController.popBackStack();
+        }
+
         if(mTemplate != null) {
             binding.createResultForm.init(mTemplate.c_layout, new Hashtable<>());
         }
@@ -189,8 +192,8 @@ public class ResultFragment extends BaseFragment
             binding.createResultForm.setValues(JsonUtil.toHashObject(mResult.jb_data));
         }
 
-        if(mRoute != null) {
-            binding.createResultCheck.setVisibility(mRoute.b_check ? View.VISIBLE : View.GONE);
+        if(mPoint != null) {
+            binding.createResultCheck.setVisibility(mPoint.b_check ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -270,7 +273,7 @@ public class ResultFragment extends BaseFragment
                 ? new Result(id, f_route, f_point, c_template, mLocation, mPoint)
                 : mResult;
         item.fn_template = f_template;
-        item.__OBJECT_OPERATION_TYPE = item.__IS_SYNCHRONIZATION ? DbOperationType.UPDATED : DbOperationType.CREATED;
+        item.__OBJECT_OPERATION_TYPE = item.b_server ? DbOperationType.UPDATED : DbOperationType.CREATED;
         item.__IS_SYNCHRONIZATION = false;
 
         item.jb_data = jb_data;
@@ -279,7 +282,7 @@ public class ResultFragment extends BaseFragment
 
         binding.createResultSave.setEnabled(false);
 
-        if(mRoute != null && mRoute.b_check) {
+        if(mPoint != null && mPoint.b_check) {
             if(!binding.createResultCheck.saveData(f_point)) {
                 txt = getString(R.string.result_save_error3);
             }

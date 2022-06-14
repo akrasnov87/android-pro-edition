@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.pro.R;
 import com.mobwal.pro.adapter.holder.AttachmentItemHolder;
 import com.mobwal.pro.models.db.Attachment;
@@ -78,9 +80,18 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemHo
             }
             idx++;
         }
+
         if(removeAttach != null) {
-            mAttachments.remove(removeAttach);
-            notifyItemRemoved(idx);
+            if(removeAttach.b_server) {
+                removeAttach.b_disabled = true;
+                removeAttach.__IS_SYNCHRONIZATION = false;
+                removeAttach.__OBJECT_OPERATION_TYPE = DbOperationType.UPDATED;
+
+                notifyItemChanged(idx);
+            } else {
+                mAttachments.remove(removeAttach);
+                notifyItemRemoved(idx);
+            }
         }
     }
 }

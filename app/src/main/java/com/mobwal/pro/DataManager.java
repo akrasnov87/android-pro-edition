@@ -58,8 +58,7 @@ public class DataManager {
                 "\t(select count(*) from cd_points as p where p.fn_route = r.id and p.b_anomaly = 1) as N_ANOMALY, \n" +
                 "\t(select count(*) from (select p.id from cd_points as p inner join cd_results as rr on rr.fn_point = p.id where p.fn_route = r.id and p.b_check = 1 group by p.id) as t) as N_DONE, \n" +
                 "\t(select count (*) from (select p.id from cd_points as p where p.fn_route = r.id and p.b_check = 0) as t) as N_FAIL, " +
-                "\tr.d_date as D_DATE, \n" +
-                "\tr.b_check as B_CHECK \n" +
+                "\tr.d_date as D_DATE \n" +
                 "from cd_routes as r" + (TextUtils.isEmpty(search) ? "" : " where r.c_name like '%' || ? || '%'");
 
         if(TextUtils.isEmpty(search)) {
@@ -288,7 +287,8 @@ public class DataManager {
                     "\tt.C_NAME as C_TEMPLATE, \n" +
                     "\tt.C_TEMPLATE as C_CONST, \n" +
                     "\tr.id as F_RESULT, \n" +
-                    "\tr.d_date as D_DATE \n" +
+                    "\tr.d_date as D_DATE, \n" +
+                    "\tr.b_server as B_SERVER \n" +
                     "from cd_results as r \n" +
                     "left join cd_templates as t on r.fn_template = t.id \n" +
                     "where r.fn_point = ? and r.id is not null", new String[] { f_point }, ResultTemplate.class);
@@ -300,6 +300,7 @@ public class DataManager {
                         
                         PointInfo pointInfo = new PointInfo(mContext, DateUtil.toDateTimeString(resultTemplate.d_date), MessageFormat.format("{0} - {1}", mContext.getString(R.string.done), resultTemplate.c_template));
                         pointInfo.result = resultTemplate.f_result;
+                        pointInfo.server = resultTemplate.b_server;
                         items.add(pointInfo);
                     }
                 }
@@ -361,7 +362,8 @@ public class DataManager {
                     "\tt.C_NAME as C_TEMPLATE, \n" +
                     "\tt.C_TEMPLATE as C_CONST, \n" +
                     "\tr.id as F_RESULT, \n" +
-                    "\tr.d_date as D_DATE \n" +
+                    "\tr.d_date as D_DATE, \n" +
+                    "\tr.b_server as B_SERVER \n" +
                     "from cd_templates as t \n" +
                     "left join cd_results as r on r.fn_template = t.id and r.fn_point = ?", new String[] { f_point }, ResultTemplate.class);
 
@@ -478,19 +480,8 @@ public class DataManager {
         // потом сожаем текущие в БД
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        Collection<Attachment> collection = getAttachments(f_result);
-        SimpleFileManager mFileManager = new SimpleFileManager(mContext.getFilesDir(),
-                BasicAuthorizationSingleton.getInstance().getUser().getCredential());
-        if(collection != null) {
-            for (Attachment attachment:
-                 collection) {
-                mFileManager.deleteFile(attachment.c_path + ".jpg");
-            }
-        }
-
         for (Attachment attachment : attachments) {
             attachment.fn_result = f_result;
-            attachment.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
         }
 
         return sqlContext.exec("delete from attachments where fn_result = ?;", new String[] { f_result }) &&
@@ -519,7 +510,7 @@ public class DataManager {
                         mContext.getFilesDir(),
                         BasicAuthorizationSingleton.getInstance().getUser().getCredential());
                 for (Attachment item: array) {
-                    fileManager.deleteFile(item.c_path);
+                    fileManager.deleteFile(item.c_name);
                 }
             }
         }
@@ -542,7 +533,7 @@ public class DataManager {
             if(array.length > 0) {
                 SimpleFileManager fileManager = new SimpleFileManager(mContext.getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential());
                 for (Attachment item: array) {
-                    fileManager.deleteFile(item.c_path);
+                    fileManager.deleteFile(item.c_name);
                 }
             }
         }

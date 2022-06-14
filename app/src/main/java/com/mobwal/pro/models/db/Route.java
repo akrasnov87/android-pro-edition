@@ -12,7 +12,6 @@ public class Route {
     public Route() {
         id = UUID.randomUUID().toString();
         d_date = new Date();
-        b_check = false;
     }
 
     public String id;
@@ -24,8 +23,6 @@ public class Route {
 
     @Nullable
     public Date d_date;
-    
-    public boolean b_check;
 
     public String c_templates;
 }

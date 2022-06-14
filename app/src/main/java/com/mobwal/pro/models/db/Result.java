@@ -71,6 +71,8 @@ public class Result {
     @Nullable
     public Double n_distance;
 
+    public boolean b_server;
+
     @Nullable
     public GeoPoint convertToLatLng() {
         if(n_latitude == null || n_longitude == null) {
