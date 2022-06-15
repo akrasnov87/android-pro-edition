@@ -52,6 +52,8 @@ public class SynchronizationFragment extends Fragment
     private List<SynchronizationLogItem> mLogList;
     private SyncLogAdapter mSyncLogAdapter;
 
+    private boolean isDebug;
+
     public SynchronizationFragment() {
         // Required empty public constructor
     }
@@ -67,12 +69,10 @@ public class SynchronizationFragment extends Fragment
         // Inflate the layout for this fragment
         binding = FragmentSynchronizationBinding.inflate(inflater, container, false);
         binding.synchronizationAction.setOnClickListener(this);
-        PrefManager prefManager = new PrefManager(requireContext());
         mLogList = new ArrayList<>();
 
-        if(prefManager.get("debug", false)) {
-            binding.synchronizationLogs.setVisibility(View.VISIBLE);
-        }
+        PrefManager prefManager = new PrefManager(requireContext());
+        isDebug = prefManager.get("debug", false);
 
         synchronization = ManualSynchronization.getInstance(WalkerApplication.getWalkerSQLContext(requireContext()), new SimpleFileManager(requireContext().getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential()), false);
         return binding.getRoot();
@@ -325,11 +325,15 @@ public class SynchronizationFragment extends Fragment
     protected void setLogMessage(@NonNull String message, boolean isError) {
         if(isError) {
             LogManager.getInstance().error(message);
+            mLogList.add(0, new SynchronizationLogItem(message, isError));
+            mSyncLogAdapter.notifyItemInserted(0);
         } else {
-            LogManager.getInstance().debug(message);
-        }
+            if(isDebug) {
+                LogManager.getInstance().debug(message);
 
-        mLogList.add(0, new SynchronizationLogItem(message, isError));
-        mSyncLogAdapter.notifyItemInserted(0);
+                mLogList.add(0, new SynchronizationLogItem(message, isError));
+                mSyncLogAdapter.notifyItemInserted(0);
+            }
+        }
     }
 }

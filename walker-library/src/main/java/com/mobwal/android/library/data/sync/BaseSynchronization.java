@@ -23,6 +23,7 @@ import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.PackageCreateUtils;
 import com.mobwal.android.library.util.PackageReadUtils;
 
+import com.mobwal.android.library.util.StringUtil;
 import com.mobwal.android.library.util.SyncUtil;
 import com.mobwal.android.library.util.VersionUtil;
 
@@ -406,7 +407,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param tid  идентификатор транзакции
      */
     public void onError(int step, Exception e, String tid) {
-        onError(step, e.toString(), tid);
+        onError(step, StringUtil.exceptionToString(e), tid);
     }
 
     /**
