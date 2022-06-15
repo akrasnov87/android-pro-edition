@@ -98,7 +98,7 @@ public class InfoFragment extends Fragment
 
             mResults = mDataManager.getResults(f_point);
 
-            mTemplates = mDataManager.getTemplates("");
+            mTemplates = mDataManager.getTemplates();
         }
     }
 

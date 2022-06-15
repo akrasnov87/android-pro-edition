@@ -32,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +53,7 @@ import com.mobwal.pro.models.LocationInfo;
 import com.mobwal.pro.models.PointBundle;
 import com.mobwal.pro.models.SettingRoute;
 import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.util.ImageUtil;
@@ -143,9 +145,9 @@ public class AttachmentLayout extends LinearLayout
         mPointBundle = bundle;
 
         if (mAttachmentList == null) {
-            Collection<Attachment> attachments = mDataManager.getAttachments(bundle.f_route);
+            Attachment[] attachments = mDataManager.getAttachments(bundle.f_route);
             if(attachments != null) {
-                mAttachmentList = new ArrayList<>(attachments);
+                mAttachmentList = Arrays.asList(attachments);
             } else {
                 mAttachmentList = new ArrayList<>();
             }
@@ -159,10 +161,9 @@ public class AttachmentLayout extends LinearLayout
      * установка данных
      * @param items список вложений
      */
-    public void setData(@Nullable Collection<Attachment> items) {
+    public void setData(@Nullable Attachment[] items) {
         if(items != null) {
-            mAttachmentList = new ArrayList<>();
-            mAttachmentList.addAll(items);
+            mAttachmentList = Arrays.asList(items);
         }
     }
 

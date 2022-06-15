@@ -132,7 +132,7 @@ public class ResultFragment extends BaseFragment
             mLocationLevel = settingRoute.geo_quality;
             mImageRequire = settingRoute.image;
 
-            mTemplate = mDataManager.getTemplate(f_route, c_template);
+            mTemplate = mDataManager.getTemplate(c_template);
             mPoint = mDataManager.getPoint(f_point);
             mResult = mDataManager.getResult(f_result);
         }
@@ -184,7 +184,7 @@ public class ResultFragment extends BaseFragment
         binding.createResultSave.setEnabled(mPoint != null);
         binding.createResultCheck.bind(mPoint);
 
-        binding.createResultGallery.setData(mItems == null ? mDataManager.getAttachments(f_result) : Arrays.asList(mItems));
+        binding.createResultGallery.setData(mItems == null ? mDataManager.getAttachments(f_result) : mItems);
         binding.createResultGallery.setPointBundle(new PointBundle(f_route, f_point, f_result));
 
         if(mResult != null) {

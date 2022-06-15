@@ -21,7 +21,6 @@ import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.util.StringUtil;
 import com.mobwal.pro.models.PointInfo;
 import com.mobwal.pro.models.db.complex.PointItem;
-import com.mobwal.pro.models.db.complex.ResultExportItem;
 import com.mobwal.pro.models.db.complex.ResultTemplate;
 import com.mobwal.pro.models.RouteInfo;
 import com.mobwal.pro.models.db.complex.RouteItem;
@@ -68,7 +67,14 @@ public class DataManager {
             collection = sqlContext.select(query, new String[] { search }, RouteItem.class);
         }
         if(collection != null) {
-            return collection.toArray(new RouteItem[0]);
+            RouteItem[] array = collection.toArray(new RouteItem[0]);
+            Arrays.sort(array, (entry1, entry2) -> {
+                Long time1 = entry1.d_date.getTime();
+                Long time2 = entry2.d_date.getTime();
+                return time2.compareTo(time1);
+            });
+
+            return array;
         } else {
             return null;
         }
@@ -238,7 +244,8 @@ public class DataManager {
                 "\tp.B_ANOMALY, \n" +
                 "\tp.B_CHECK, \n" +
                 "\tp.B_SERVER \n" +
-                "from cd_points as p where p.fn_route = ?" + (TextUtils.isEmpty(search) ? "" : " and p.c_address like '%' || ? || '%'") + " order by p.n_order";
+                "from cd_points as p where p.fn_route = ?" + (TextUtils.isEmpty(search) ? "" : " and p.c_address like '%' || ? || '%'") + " " +
+                "order by p.n_order";
 
         if(TextUtils.isEmpty(search)) {
             collection = sqlContext.select(query, new String[] { f_route }, PointItem.class);
@@ -247,22 +254,6 @@ public class DataManager {
         }
         if(collection != null) {
             return collection.toArray(new PointItem[0]);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Получен точек по маршруту
-     * @param f_route идентификатор маршрута
-     * @return результат выборки
-     */
-    public Point[] getPoints(@NotNull String f_route) {
-        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Point> collection = sqlContext.select("SELECT * from cd_points as p where p.fn_route = ? order by p.n_order", new String[] { f_route }, Point.class);
-
-        if(collection != null) {
-            return collection.toArray(new Point[0]);
         } else {
             return null;
         }
@@ -296,8 +287,15 @@ public class DataManager {
                     "where r.b_disabled = 0 and r.fn_point = ? and r.id is not null", new String[] { f_point }, ResultTemplate.class);
 
             if(collection != null && !collection.isEmpty()) {
-                ResultTemplate[] templates = collection.toArray(new ResultTemplate[0]);
-                for (ResultTemplate resultTemplate : templates) {
+                ResultTemplate[] array = collection.toArray(new ResultTemplate[0]);
+
+                Arrays.sort(array, (entry1, entry2) -> {
+                    Long time1 = entry1.d_date.getTime();
+                    Long time2 = entry2.d_date.getTime();
+                    return time2.compareTo(time1);
+                });
+
+                for (ResultTemplate resultTemplate : array) {
                     if(resultTemplate.isExistsResult()) {
                         
                         PointInfo pointInfo = new PointInfo(mContext, DateUtil.toDateTimeString(resultTemplate.d_date), MessageFormat.format("{0} - {1}", mContext.getString(R.string.done), resultTemplate.c_template));
@@ -326,21 +324,18 @@ public class DataManager {
         Collection<Result> collection = sqlContext.select("SELECT * from cd_results as r where r.fn_point = ? and r.b_disabled = 0", new String[] { f_point }, Result.class);
 
         if(collection != null) {
-            return collection.toArray(new Result[0]);
+            Result[] array = collection.toArray(new Result[0]);
+
+            Arrays.sort(array, (entry1, entry2) -> {
+                Long time1 = entry1.d_date.getTime();
+                Long time2 = entry2.d_date.getTime();
+                return time2.compareTo(time1);
+            });
+
+            return array;
         } else {
             return null;
         }
-    }
-
-    /**
-     * Получен количества результатов по маршруту
-     * @param f_route идентификатор маршрута
-     * @return количество точек
-     */
-    @Nullable
-    public Long getResultCount(@Nullable String f_route) {
-        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        return sqlContext.count("SELECT count(*) from cd_results as r where r.f_route = ? and r.b_disabled = 0", new String[] { f_route });
     }
 
     /**
@@ -367,7 +362,8 @@ public class DataManager {
                     "\t(select r.id from cd_results as r where r.fn_point = ? and r.fn_template = t.id and r.B_DISABLED = 0) as F_RESULT, \n" +
                     "\t(select r.D_DATE from cd_results as r where r.fn_point = ? and r.fn_template = t.id and r.B_DISABLED = 0) as D_DATE, \n" +
                     "\t(select r.B_SERVER from cd_results as r where r.fn_point = ? and r.fn_template = t.id and r.B_DISABLED = 0) as B_SERVER \n" +
-                    "from cd_templates as t", new String[] { f_point, f_point, f_point }, ResultTemplate.class);
+                    "from cd_templates as t " +
+                    "order by t.n_order", new String[] { f_point, f_point, f_point }, ResultTemplate.class);
 
             if(collection != null && !collection.isEmpty()) {
                 List<ResultTemplate> resultTemplates = new ArrayList<>();
@@ -378,7 +374,7 @@ public class DataManager {
                         }
                     }
                 }
-;
+
                 return resultTemplates.toArray(new ResultTemplate[0]);
             }
         }
@@ -387,9 +383,9 @@ public class DataManager {
     }
 
     @Nullable
-    public Template[] getTemplates(@NotNull String f_route) {
+    public Template[] getTemplates() {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t", null, Template.class);
+        Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t order by t.n_order", null, Template.class);
 
         if(resultCollection != null && resultCollection.size() > 0) {
             return resultCollection.toArray(new Template[0]);
@@ -441,34 +437,27 @@ public class DataManager {
         return null;
     }
 
-    public boolean exportRoute(@NotNull String f_route) {
-        Route route = getRoute(f_route);
-        if(route != null) {
-            //route.b_export = true;
-            //route.d_export = new Date();
-
-            WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-            return sqlContext.insertMany(new Route[] { route });
-        }
-        return false;
-    }
-
     @Nullable
-    public Collection<Attachment> getAttachments(@Nullable String f_result) {
+    public Attachment[] getAttachments(@Nullable String f_result) {
         if(f_result == null) {
             return null;
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
 
-        return sqlContext.select("SELECT * from attachments as a where a.fn_result = ?", new String[] { f_result }, Attachment.class);
-    }
+        Collection<Attachment> collection = sqlContext.select("SELECT * from attachments as a where a.fn_result = ?", new String[] { f_result }, Attachment.class);
+        if(collection != null) {
+            Attachment[] array = collection.toArray(new Attachment[0]);
 
-    @Nullable
-    public Collection<Attachment> getRouteAttachments(@NotNull String f_route) {
-        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-
-        return sqlContext.select("SELECT * from attachments as a where a.fn_route = ?", new String[] { f_route }, Attachment.class);
+            Arrays.sort(array, (entry1, entry2) -> {
+                Long time1 = entry1.d_date.getTime();
+                Long time2 = entry2.d_date.getTime();
+                return time1.compareTo(time2);
+            });
+            return array;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -553,46 +542,6 @@ public class DataManager {
     }
 
     /**
-     * получение результат для экспорта
-     * @param f_route иден. маршрута
-     * @return список результатов
-     */
-    @Nullable
-    public ResultExportItem[] getResultExport(@NotNull String f_route) {
-        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-
-        Collection<ResultExportItem> collection = sqlContext.select("select\n" +
-                "                    p.C_ADDRESS,\n" +
-                "                    p.N_LATITUDE,\n" +
-                "                    p.N_LONGITUDE,\n" +
-                "                    p.C_DESCRIPTION,\n" +
-                "                    p.B_ANOMALY,\n" +
-                "                    p.N_ORDER,\n" +
-                "                    p.C_IMP_ID,\n" +
-                "                    p.JB_DATA,\n" +
-                "                    IFNULL(rr.N_LATITUDE, 0.0) as N_RESULT_LATITUDE,\n" +
-                "                    IFNULL(rr.N_LONGITUDE, 0.0) as N_RESULT_LONGITUDE,\n" +
-                "                    IFNULL(rr.N_DISTANCE, -1) as N_RESULT_DISTANCE,\n" +
-                "                    rr.id as F_RESULT,\n" +
-                "                    rr.JB_DATA as JB_RESULT_DATA,\n" +
-                "                    rr.D_DATE,\n" +
-                "                    rr.C_TEMPLATE,\n" +
-                "                    t.C_NAME as C_TEMPLATE_NAME,\n" +
-                "                    IFNULL(t.N_ORDER, -1) as N_TEMPLATE_ORDER,\n" +
-                "                    (select count(*) from ATTACHMENT as a where a.f_result = rr.id) as N_IMAGE_COUNT\n" +
-                "                from POINT as p\n" +
-                "                left join RESULT as rr on p.id = rr.f_point\n" +
-                "                left join TEMPLATE as t on t.C_TEMPLATE = rr.C_TEMPLATE and t.f_route = ?\n" +
-                "                where p.f_route = ?\n" +
-                "                order by p.n_order", new String[] { f_route, f_route }, ResultExportItem.class);
-        if(collection != null) {
-            return collection.toArray(new ResultExportItem[0]);
-        }
-
-        return null;
-    }
-
-    /**
      * Добавление результата
      * @param item результат
      * @return true - результат вставки
@@ -604,12 +553,11 @@ public class DataManager {
 
     /**
      * Получение шаблона для результата
-     * @param f_route иден. маршрута
      * @param c_template имя шаблона
      * @return шаблон
      */
     @Nullable
-    public Template getTemplate(@NotNull String f_route, @NotNull String c_template) {
+    public Template getTemplate(@NotNull String c_template) {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
         Collection<Template> resultCollection = sqlContext.select("SELECT * from cd_templates as t where t.c_template = ?", new String[] { c_template }, Template.class);
 
