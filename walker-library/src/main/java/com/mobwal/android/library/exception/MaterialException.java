@@ -1,6 +1,7 @@
 package com.mobwal.android.library.exception;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -33,8 +34,9 @@ public class MaterialException {
             String message = jsonObject.getString("message");
             int code = jsonObject.getInt("code");
             String group = jsonObject.getString("group");
+            int orientation = jsonObject.getInt("orientation");
 
-            return new MaterialException(dt == null ? new Date() : dt, message, group, code);
+            return new MaterialException(dt == null ? new Date() : dt, message, group, code, orientation);
         } catch (JSONException e) {
             Log.e(Constants.TAG, "Ошибка преобразования строки в JSONObject для исключения.", e);
             return null;
@@ -55,12 +57,13 @@ public class MaterialException {
         return String.format("%s%s", fill, number);
     }
 
-    public MaterialException(@NonNull Date date, @NonNull String message, @NonNull String group, int code) {
+    public MaterialException(@NonNull Date date, @NonNull String message, @NonNull String group, int code, int orientation) {
         this.id = DateUtil.convertDateToSystemString(date);
         this.date = date;
         this.message = message;
         this.group = group;
         this.code = code;
+        this.orientation = orientation;
     }
 
     @Expose
@@ -82,7 +85,7 @@ public class MaterialException {
     public String label;
 
     @Expose
-    public String orientation;
+    public int orientation;
 
     /**
      * Дата возникновения ошибки
@@ -103,7 +106,25 @@ public class MaterialException {
      * @return код ошибки
      */
     public String getExceptionCode(boolean isDebug) {
-        return String.format("%s%s%s", group, code, isDebug ? "D" : "E");
+        String orient = "";
+        switch (orientation) {
+            case android.content.res.Configuration.ORIENTATION_PORTRAIT:
+                orient = "P";
+                break;
+
+            case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
+                orient = "L";
+                break;
+
+            case android.content.res.Configuration.ORIENTATION_SQUARE:
+                orient = "S";
+                break;
+
+            case android.content.res.Configuration.ORIENTATION_UNDEFINED:
+                orient = "U";
+                break;
+        }
+        return String.format("%s%s%s%s", group, code, isDebug ? "D" : "E", orient);
     }
 
     @NonNull

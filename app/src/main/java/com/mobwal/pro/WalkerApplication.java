@@ -142,24 +142,6 @@ public class WalkerApplication extends Application implements ExceptionIntercept
             if(list != null) {
                 for (MaterialException faceException : list) {
                     faceException.label = faceException.getExceptionCode(isDebug);
-
-                    switch (activity.getResources().getConfiguration().orientation) {
-                        case android.content.res.Configuration.ORIENTATION_PORTRAIT:
-                            faceException.label += "P";
-                            break;
-
-                        case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
-                            faceException.label += "L";
-                            break;
-
-                        case android.content.res.Configuration.ORIENTATION_SQUARE:
-                            faceException.label += "S";
-                            break;
-
-                        case android.content.res.Configuration.ORIENTATION_UNDEFINED:
-                            faceException.label += "U";
-                            break;
-                    }
                     LogManager.getInstance().error(faceException.toString());
                 }
             }

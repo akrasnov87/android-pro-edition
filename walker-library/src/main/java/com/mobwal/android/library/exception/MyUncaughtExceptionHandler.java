@@ -47,7 +47,7 @@ public class MyUncaughtExceptionHandler
             if(!intercept) {
                 Log.d(Constants.TAG, "Перехвачено исключение от группы " + group + ", код " + MaterialException.codeToString(code));
                 String exceptionString = StringUtil.exceptionToString(e);
-                MaterialException exceptionModel = new MaterialException(new Date(), exceptionString, group, code);
+                MaterialException exceptionModel = new MaterialException(new Date(), exceptionString, group, code, mContext.getResources().getConfiguration().orientation);
 
                 boolean isDebug = new PrefManager(mContext).get(Constants.DEBUG, false);
                 Log.d(Constants.TAG, "Запись исключения " + exceptionModel.getExceptionCode(isDebug) + " в файл.");

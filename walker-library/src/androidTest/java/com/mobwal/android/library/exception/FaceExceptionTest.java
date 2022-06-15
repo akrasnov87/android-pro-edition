@@ -1,5 +1,7 @@
 package com.mobwal.android.library.exception;
 
+import android.content.res.Configuration;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Assert;
@@ -13,7 +15,7 @@ import java.util.Objects;
 public class FaceExceptionTest {
     @Test
     public void toStringTest(){
-        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0);
+        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0, Configuration.ORIENTATION_PORTRAIT);
         String str = model.toString();
 
         Assert.assertNotNull(str);
@@ -21,7 +23,7 @@ public class FaceExceptionTest {
 
     @Test
     public void toModelTest(){
-        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0);
+        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0, Configuration.ORIENTATION_PORTRAIT);
         String str = model.toString();
 
         MaterialException model1 = MaterialException.toFace(str);

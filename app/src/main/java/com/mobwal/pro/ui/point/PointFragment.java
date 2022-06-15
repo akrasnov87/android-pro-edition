@@ -164,7 +164,6 @@ public class PointFragment extends BaseFragment
     @Override
     public void onStart() {
         super.onStart();
-        int  i = 2 / 0;
 
         PointItem[] items = mDataManager.getPoints(f_route, null);
         setEmptyText(items, false);

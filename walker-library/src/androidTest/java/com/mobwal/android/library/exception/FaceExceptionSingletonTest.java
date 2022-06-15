@@ -1,5 +1,7 @@
 package com.mobwal.android.library.exception;
 
+import android.content.res.Configuration;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -30,7 +32,7 @@ public class FaceExceptionSingletonTest {
 
     @Test
     public void writeExceptionTest() {
-        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0);
+        MaterialException model = new MaterialException(new Date(), "Ошибка", "NONE", 0, Configuration.ORIENTATION_PORTRAIT);
         String str = model.toString();
         String fileName = model.getFileName();
         mFaceExceptionSingleton.writeBytes(fileName, str.getBytes());
@@ -49,7 +51,7 @@ public class FaceExceptionSingletonTest {
         String exceptionID = "";
         for(int i = 0; i < 2; i++){
             long time = new Date().getTime();
-            MaterialException model = new MaterialException(new Date(time + (1000 * 60 * (i + 1))), "Ошибка #" + i, "NONE", 0);
+            MaterialException model = new MaterialException(new Date(time + (1000 * 60 * (i + 1))), "Ошибка #" + i, "NONE", 0, Configuration.ORIENTATION_PORTRAIT);
             String str = model.toString();
             String fileName = model.getFileName();
             mFaceExceptionSingleton.writeBytes(fileName, str.getBytes());
