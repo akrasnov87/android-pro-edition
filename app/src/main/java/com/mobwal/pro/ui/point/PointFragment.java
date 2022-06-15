@@ -131,7 +131,7 @@ public class PointFragment extends BaseFragment
                 builder.setPositiveButton(R.string.yes, (dialog, which) -> {
                     // ДА
                     try {
-                        if(mDataManager.delPoint(pointItem.id)) {
+                        if(pointItem.b_server ? mDataManager.disabledPoint(pointItem.id) : mDataManager.delPoint(pointItem.id)) {
                             mPointItemAdapter.removeItem(position);
                         } else {
                             Toast.makeText(requireContext(), R.string.remove_point_error, Toast.LENGTH_SHORT).show();

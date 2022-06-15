@@ -368,10 +368,10 @@ public class InfoFragment extends Fragment
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             // ДА
             if (pointItem.result != null) {
-                if(!pointItem.server) {
-                    mDataManager.delResult(pointItem.result);
-                } else {
+                if(pointItem.server) {
                     mDataManager.disabledResult(pointItem.result);
+                } else {
+                    mDataManager.delResult(pointItem.result);
                 }
 
                 mPointInfoItemAdapter.removeItem(position);

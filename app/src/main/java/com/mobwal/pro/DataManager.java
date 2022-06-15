@@ -236,7 +236,8 @@ public class DataManager {
                 "\tp.C_ADDRESS, \n" +
                 "\t(select count(*) from cd_results as rr where rr.fn_point = p.id and rr.b_disabled = 0) > 0 as B_DONE, \n" +
                 "\tp.B_ANOMALY, \n" +
-                "\tp.B_CHECK \n" +
+                "\tp.B_CHECK, \n" +
+                "\tp.B_SERVER \n" +
                 "from cd_points as p where p.fn_route = ?" + (TextUtils.isEmpty(search) ? "" : " and p.c_address like '%' || ? || '%'") + " order by p.n_order";
 
         if(TextUtils.isEmpty(search)) {
@@ -489,17 +490,6 @@ public class DataManager {
                 sqlContext.insertMany(attachments);
     }
 
-    public boolean delRoute(@NotNull String f_route) {
-        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        SimpleFileManager fileManager = new SimpleFileManager(mContext.getFilesDir(), BasicAuthorizationSingleton.getInstance().getUser().getCredential());
-        fileManager.deleteFolder();
-
-        return sqlContext.exec("delete from ATTACHMENT where f_route = ?;", new String[]{f_route})
-                && sqlContext.exec("delete from RESULT where f_route = ?;", new String[]{f_route})
-                && sqlContext.exec("delete from POINT where f_route = ?;", new String[]{f_route})
-                && sqlContext.exec("delete from ROUTE where id = ?;", new String[]{f_route});
-    }
-
     public boolean delPoint(@NotNull String f_point) throws FileNotFoundException {
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
         Collection<Attachment> collection = sqlContext.select("select * from attachments where fn_point = ?;", new String[] { f_point }, Attachment.class);
@@ -523,6 +513,14 @@ public class DataManager {
         }
 
         return false;
+    }
+
+    public boolean disabledPoint(@NotNull String f_point) {
+        WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
+        return sqlContext.exec("" +
+                "update cd_points " +
+                "set b_disabled = ?, " + FieldNames.IS_SYNCHRONIZATION + " = 0, " + FieldNames.OBJECT_OPERATION_TYPE + " = ? " +
+                "where id = ?", new Object[] { true, DbOperationType.UPDATED, f_point });
     }
 
     public boolean delResult(@NotNull String f_result) {

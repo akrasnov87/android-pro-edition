@@ -35,6 +35,7 @@ public class PointItem implements Serializable {
     public String jb_data;
     public boolean b_anomaly;
     public boolean b_check;
+    public boolean b_server;
 
     @Nullable
     public String toUserString(@NonNull Context context) {

@@ -73,6 +73,10 @@ public class CreateFragment extends Fragment
         mOsmMapBottomDialogFragment = new OsmMapBottomDialogFragment();
         mDataManager = new DataManager(requireContext());
 
+        if(getArguments() != null) {
+            f_route = getArguments().getString("f_route");
+        }
+
         SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
         mLocationRequire = settingRoute.geo;
         mLocationLevel = settingRoute.geo_quality;

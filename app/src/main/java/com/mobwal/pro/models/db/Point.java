@@ -24,8 +24,10 @@ public class Point {
         b_check = true;
     }
 
+    @Expose
     public String id;
 
+    @Expose
     public String c_address;
 
     @Nullable
@@ -34,20 +36,28 @@ public class Point {
     @Nullable
     public Double n_longitude;
 
+    @Expose
     public String c_description;
 
+    @Expose
     public boolean b_anomaly;
 
+    @Expose
     public String fn_route;
 
+    @Expose
     public int n_order;
 
+    @Expose
     @Nullable
     public String jb_data;
 
     public boolean b_check;
 
     public String c_comment;
+
+    @Expose
+    public boolean b_disabled;
 
     public boolean b_server;
 
