@@ -3,19 +3,17 @@ package com.mobwal.pro;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
-
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmdroid.config.Configuration;
 
 import com.mobwal.android.library.BitmapCache;
+import com.mobwal.android.library.Constants;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.authorization.AuthorizationRequest;
 import com.mobwal.android.library.authorization.credential.BasicUser;
@@ -23,7 +21,6 @@ import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.data.sync.util.transfer.Transfer;
 import com.mobwal.android.library.exception.MaterialException;
 import com.mobwal.android.library.exception.ExceptionHandler;
-import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.ImageUtil;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
@@ -105,7 +102,7 @@ public class WalkerApplication extends Application implements ExceptionIntercept
     public void onCreate() {
         super.onCreate();
 
-        LogManager.createInstance(new LogInMemory(sSessionId));
+        LogManager.createInstance(new LogInMemoryWriter(sSessionId));
 
         // без этого сайт osm не возвращает результат
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -132,17 +129,37 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         setWalkerSQLContext(activity, walkerSQLContext);
 
         // меняем способ логирования на БД
-        LogInDb logInDb = new LogInDb(walkerSQLContext, sSessionId);
-        LogInMemory logInMemory = (LogInMemory)LogManager.getInstance();
+        LogInDbWriter logInDb = new LogInDbWriter(walkerSQLContext, sSessionId);
+        LogInMemoryWriter logInMemory = (LogInMemoryWriter)LogManager.getInstance();
         logInDb.writeArray(logInMemory.getAudits().toArray(new Audit[0]));
         LogManager.createInstance(logInDb);
 
         ExceptionHandler exceptionHandler = new ExceptionHandler(activity);
 
         if(exceptionHandler.getCount() > 0) {
+            boolean isDebug = new PrefManager(activity).get(Constants.DEBUG, false);
             List<MaterialException> list = exceptionHandler.getExceptionList();
             if(list != null) {
                 for (MaterialException faceException : list) {
+                    faceException.label = faceException.getExceptionCode(isDebug);
+
+                    switch (activity.getResources().getConfiguration().orientation) {
+                        case android.content.res.Configuration.ORIENTATION_PORTRAIT:
+                            faceException.label += "P";
+                            break;
+
+                        case android.content.res.Configuration.ORIENTATION_LANDSCAPE:
+                            faceException.label += "L";
+                            break;
+
+                        case android.content.res.Configuration.ORIENTATION_SQUARE:
+                            faceException.label += "S";
+                            break;
+
+                        case android.content.res.Configuration.ORIENTATION_UNDEFINED:
+                            faceException.label += "U";
+                            break;
+                    }
                     LogManager.getInstance().error(faceException.toString());
                 }
             }

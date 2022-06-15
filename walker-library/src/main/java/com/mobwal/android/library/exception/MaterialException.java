@@ -1,5 +1,6 @@
 package com.mobwal.android.library.exception;
 
+import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -76,6 +77,12 @@ public class MaterialException {
 
     @Expose
     public String group;
+
+    @Expose
+    public String label;
+
+    @Expose
+    public String orientation;
 
     /**
      * Дата возникновения ошибки

@@ -13,11 +13,11 @@ import com.mobwal.pro.models.db.Audit;
 import java.util.Collection;
 import java.util.Date;
 
-public class LogInDb implements LogListeners {
+public class LogInDbWriter implements LogListeners {
     private final SQLContext mSQLContext;
     private final String mSessionId;
 
-    public LogInDb(SQLContext sqlContext, String sessionId) {
+    public LogInDbWriter(SQLContext sqlContext, String sessionId) {
         mSQLContext = sqlContext;
         mSessionId = sessionId;
     }

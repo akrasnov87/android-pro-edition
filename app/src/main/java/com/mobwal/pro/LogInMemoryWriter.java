@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class LogInMemory implements LogListeners {
+public class LogInMemoryWriter implements LogListeners {
     private final List<Audit> mAudits;
     private final String mSessionId;
 
@@ -19,7 +19,7 @@ public class LogInMemory implements LogListeners {
         return mAudits;
     }
 
-    public LogInMemory(String sessionId) {
+    public LogInMemoryWriter(String sessionId) {
         mAudits = new ArrayList<>();
         mSessionId = sessionId;
     }
