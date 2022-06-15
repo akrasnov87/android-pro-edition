@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.mobwal.android.library.R;
+import com.mobwal.android.library.RequestManager;
 import com.mobwal.android.library.data.Meta;
 import com.mobwal.android.library.util.VersionUtil;
 
@@ -13,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -20,6 +23,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -102,6 +106,7 @@ public class AuthorizationRequest
         String claims = null;
         String message;
         String login = "";
+        String ip = "";
 
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -112,6 +117,7 @@ public class AuthorizationRequest
                 userId = jsonObject.getJSONObject("user").getLong("id");
                 claims = jsonObject.getJSONObject("user").getString("claims");
                 login = jsonObject.getJSONObject("user").getString("login");
+                ip = jsonObject.getString("ip");
             } else {
                 status = Meta.NOT_AUTHORIZATION;
                 message = jsonObject.getJSONObject("meta").getString("msg");
@@ -120,7 +126,21 @@ public class AuthorizationRequest
             status = Meta.ERROR_SERVER;
             message = context.getString(R.string.authorization_format);
         }
-        return new AuthorizationMeta(status, message, token, claims, userId, login);
+        return new AuthorizationMeta(status, message, token, claims, userId, login, ip);
+    }
+
+    /**
+     * Проверка на доступность подключения к серверу приложения
+     */
+    @Nullable
+    @Override
+    public HashMap<String, String> exists() {
+        try {
+            return RequestManager.exists(mBaseUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

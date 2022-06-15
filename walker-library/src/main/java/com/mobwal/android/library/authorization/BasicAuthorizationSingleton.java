@@ -12,6 +12,9 @@ import com.mobwal.android.library.authorization.credential.BasicCredential;
 import com.mobwal.android.library.authorization.credential.BasicUser;
 import com.mobwal.android.library.data.Meta;
 import com.mobwal.android.library.util.ClaimsUtil;
+import com.mobwal.android.library.util.NetworkInfoUtil;
+
+import java.util.HashMap;
 
 /**
  * Авторизация
@@ -119,7 +122,7 @@ public class BasicAuthorizationSingleton {
                         listeners.onResponseAuthorizationResult(context, mAuthorizationMeta);
                         reset();
                     } else {
-                        BasicUser basicUser = new BasicUser(mCredentials, mAuthorizationMeta.getUserId(), mAuthorizationMeta.getClaims());
+                        BasicUser basicUser = new BasicUser(mCredentials, mAuthorizationMeta.getUserId(), mAuthorizationMeta.getClaims(), mAuthorizationMeta.getIP());
                         setUser(basicUser);
                         if(isUser()) {
                             listeners.onResponseAuthorizationResult(context, mAuthorizationMeta);
@@ -143,7 +146,8 @@ public class BasicAuthorizationSingleton {
                                 basicUser.getCredential().getToken(),
                                 basicUser.getClaims(),
                                 basicUser.getUserId(),
-                                basicUser.getCredential().login));
+                                basicUser.getCredential().login,
+                                basicUser.getIp()));
                     } else {
                         listeners.onResponseAuthorizationResult(context, new AuthorizationMeta(Meta.NOT_AUTHORIZATION, context.getString(R.string.authorization_failed)));
                         reset();

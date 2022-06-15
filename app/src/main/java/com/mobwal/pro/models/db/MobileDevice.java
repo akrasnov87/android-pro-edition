@@ -42,6 +42,9 @@ public class MobileDevice {
     @Expose
     public String c_session_id;
 
+    @Expose
+    public String c_ip;
+
     /**
      * Тип операции надл объектом
      */

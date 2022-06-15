@@ -11,11 +11,13 @@ public class BasicUser {
     private final BasicCredential mCredential;
     private final Long mUserId;
     private final String[] mRoles;
+    private String mIp;
 
-    public BasicUser(@NonNull BasicCredential credentials, long userId, @NonNull String claims) {
+    public BasicUser(@NonNull BasicCredential credentials, long userId, @NonNull String claims, String ip) {
         mCredential = credentials;
         mClaims = claims;
         mUserId = userId;
+        mIp = ip;
 
         String trimClaims = claims.replaceAll("^.", "").replaceAll(".$", "");
         mRoles = trimClaims.split("\\.");
@@ -48,6 +50,12 @@ public class BasicUser {
      */
     public String getClaims() {
         return mClaims;
+    }
+
+    public String getIp() { return mIp; }
+
+    public void setIp(String value) {
+        mIp = value;
     }
 }
 

@@ -160,6 +160,7 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         mobileDevice.c_os = Build.VERSION.RELEASE;
         mobileDevice.c_version = VersionUtil.getVersionName(activity);
         mobileDevice.c_session_id = sSessionId;
+        mobileDevice.c_ip = basicUser.getIp();
         mobileDevice.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
 
         walkerSQLContext.insert(mobileDevice);

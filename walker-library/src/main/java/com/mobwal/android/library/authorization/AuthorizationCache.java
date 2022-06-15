@@ -81,7 +81,7 @@ public class AuthorizationCache {
                 builder.append(str);
             }
             JSONObject json = new JSONObject(builder.toString());
-            user = new BasicUser(BasicCredential.decode(json.getString("token")), json.getInt("userId"), json.getString("claims"));
+            user = new BasicUser(BasicCredential.decode(json.getString("token")), json.getInt("userId"), json.getString("claims"), json.getString("ip"));
             br.close();
         } catch (FileNotFoundException e) {
             Log.e(Constants.TAG, "Файл для сохранения авторизации не найден. " + e);
@@ -201,6 +201,7 @@ public class AuthorizationCache {
             json.put("claims", user.getClaims());
             json.put("time", DateUtil.convertDateToSystemString(time));
             json.put("token", credential.getToken());
+            json.put("ip", user.getIp());
 
             bw.write(json.toString());
             bw.close();

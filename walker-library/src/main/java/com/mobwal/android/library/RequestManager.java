@@ -38,7 +38,7 @@ public class RequestManager {
     public final static int SERVER_CONNECTION_TIMEOUT = 3000;
 
     public final static String KEY_VERSION = "VERSION";
-    public final static String KEY_DB_VERSION = "DB_VERSION";
+    public final static String KEY_DATE = "DATE";
     public final static String KEY_IP = "IP";
 
     /**
@@ -162,11 +162,15 @@ public class RequestManager {
             String result = s.hasNext() ? s.next() : "";
             try {
                 JSONObject object = new JSONObject(result);
+                boolean success = object.getJSONObject("meta").getBoolean("success");
+                if(success) {
+                    JSONObject jsonObject = object.getJSONObject("result").getJSONArray("records").getJSONObject(0);
 
-                hashMap = new HashMap<>();
-                hashMap.put(KEY_VERSION, object.getString("version"));
-                hashMap.put(KEY_DB_VERSION, object.getString("dbVersion"));
-                hashMap.put(KEY_IP, object.getString("ip"));
+                    hashMap = new HashMap<>();
+                    hashMap.put(KEY_VERSION, jsonObject.getString("version"));
+                    hashMap.put(KEY_IP, jsonObject.getString("ip"));
+                    hashMap.put(KEY_DATE, jsonObject.getString("now"));
+                }
 
                 return hashMap;
             } catch (Exception formatExc) {

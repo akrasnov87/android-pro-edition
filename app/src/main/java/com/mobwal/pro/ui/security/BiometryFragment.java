@@ -19,14 +19,22 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mobwal.android.library.NewThread;
 import com.mobwal.android.library.PrefManager;
 import com.mobwal.android.library.LogManager;
+import com.mobwal.android.library.RequestManager;
+import com.mobwal.android.library.authorization.credential.BasicUser;
+import com.mobwal.android.library.util.NetworkInfoUtil;
+import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
 import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.databinding.FragmentBiometryBinding;
 import com.mobwal.pro.ui.BaseFragment;
 
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Авторизация по ПИН-коду
@@ -170,11 +178,37 @@ public class BiometryFragment extends BaseFragment
 
         mBinding.securityPass.setError(null);
 
-        // авторизация не требуется
         BasicAuthorizationSingleton authorization = BasicAuthorizationSingleton.getInstance();
-        authorization.setUser(authorization.getLastAuthUser());
+        if(NetworkInfoUtil.isNetworkAvailable(requireContext())) {
+            BasicUser user = authorization.getLastAuthUser();
 
-        WalkerApplication.authorized(requireActivity());
+            NewThread thread = new NewThread(requireActivity()) {
+                private HashMap<String, String> mHashMap;
+                @Override
+                public void onBackgroundExecute() {
+                    try {
+                        mHashMap = RequestManager.exists(Names.getConnectUrl());
+                    } catch (IOException e) {
+                        LogManager.getInstance().error("Ошибка провеки доступности сервера при авторизации.", e);
+                    }
+                }
+
+                @Override
+                public void onPostExecute() {
+                    if(mHashMap != null) {
+                        user.setIp(mHashMap.get(RequestManager.KEY_IP));
+                    }
+
+                    authorization.setUser(user);
+                    WalkerApplication.authorized(requireActivity());
+                }
+            };
+
+            thread.run();
+        } else {
+            authorization.setUser(authorization.getLastAuthUser());
+            WalkerApplication.authorized(requireActivity());
+        }
     }
 
     @Override

@@ -3,6 +3,10 @@ package com.mobwal.android.library.authorization;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 public interface AuthorizationListeners {
     /**
@@ -33,4 +37,10 @@ public interface AuthorizationListeners {
      * @return мета информация
      */
     AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response, int code);
+
+    /**
+     * Проверка на доступность подключения к серверу приложения
+     */
+    @Nullable
+    HashMap<String, String> exists();
 }

@@ -21,17 +21,20 @@ public class AuthorizationMeta extends Meta {
 
     private final String mLogin;
 
-    public AuthorizationMeta(int status, String message, String token, String claims, Long userId, String login) {
+    private final String mIP;
+
+    public AuthorizationMeta(int status, String message, String token, String claims, Long userId, String login, String ip) {
         super(status, message);
 
         mToken = token;
         mClaims = claims;
         mUserId = userId;
         mLogin = login;
+        mIP = ip;
     }
 
     public AuthorizationMeta(int status, String message) {
-        this(status, message, null, null, null, null);
+        this(status, message, null, null, null, null, null);
     }
 
     public String getToken() {
@@ -49,4 +52,6 @@ public class AuthorizationMeta extends Meta {
     public String getLogin() {
         return mLogin;
     }
+
+    public String getIP() { return mIP; }
 }
