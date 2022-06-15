@@ -81,23 +81,6 @@ public abstract class FileTransferWebSocketSynchronization
                     if (records.length > 0) {
 
                         for (Object record : records) {
-                            /*if (record instanceof OnFileListeners) {
-                                OnFileListeners file = (OnFileListeners) record;
-                                if (file.getIsDelete()) {
-                                    continue;
-                                }
-                                try {
-                                    byte[] bytes = manager.readPath(file.getFolder(), file.getC_name());
-                                    if (bytes != null) {
-                                        utils.addFile(file.getC_name(), file.getId(), bytes);
-                                    } else {
-                                        Log.e(Constants.TAG, "Найден файл длина которого равна null", new Exception());
-                                    }
-                                } catch (IOException e) {
-                                    onError(ProgressStep.PACKAGE_CREATE, "При обработке файла " + file.getC_name() + " возникла ошибка", tid);
-                                }
-                            }*/
-
                             if (record instanceof OnAttachmentListeners) {
                                 OnAttachmentListeners attachment = (OnAttachmentListeners) record;
                                 if (attachment.isDelete()) {

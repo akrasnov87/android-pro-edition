@@ -106,6 +106,7 @@ public class SynchronizationFragment extends Fragment
             binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_play_arrow_24, null));
             Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
         } else {
+            binding.synchronizationLabel.setVisibility(View.VISIBLE);
             binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_stop_24, null));
 
             mLogList.clear();
@@ -135,6 +136,13 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onRegistry() {
+        requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
+            @Override
+            public void inRun() {
+                binding.synchronizationLabel.setVisibility(View.GONE);
+            }
+        });
+
         synchronization.start(socketManager, new ProgressListeners() {
             @Override
             public void onStart(OnSynchronizationListeners synchronization) {
@@ -160,7 +168,7 @@ public class SynchronizationFragment extends Fragment
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
                     public void inRun() {
-
+                        binding.synchronizationLabel.setVisibility(View.GONE);
                         binding.synchronizationDataCategory.setVisibility(View.GONE);
                         binding.synchronizationFileCategory.setVisibility(View.GONE);
 
@@ -186,6 +194,8 @@ public class SynchronizationFragment extends Fragment
                 requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
                     @Override
                     public void inRun() {
+                        binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_play_arrow_24, null));
+
                         setLogMessage(message, true);
                     }
                 });

@@ -110,16 +110,16 @@ public class DataManager {
      * @return данные по маршруту
      */
     public RouteInfo[][] getRouteInfo(@Nullable String f_route) {
-        RouteInfo[][] results = new RouteInfo[2][];
+        RouteInfo[][] results = new RouteInfo[3][];
 
         if(f_route == null) {
             return results;
         }
 
         WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-        Collection<Route> routeCollection = sqlContext.select("select * from cd_routes as r where r.id = ?", new String[] { f_route }, Route.class);
-
         List<RouteInfo> items = new ArrayList<>();
+
+        Collection<Route> routeCollection = sqlContext.select("select * from cd_routes as r where r.id = ?", new String[] { f_route }, Route.class);
 
         if(routeCollection != null && routeCollection.size() > 0) {
             Route[] routes = routeCollection.toArray(new Route[0]);
@@ -128,9 +128,41 @@ public class DataManager {
                 items.add(new RouteInfo(mContext, mContext.getString(R.string.in_work), DateUtil.toDateTimeString(routes[0].d_date)));
             }
 
-            results[0] = items.toArray(new RouteInfo[0]);
+            results[1] = items.toArray(new RouteInfo[0]);
 
             items.clear();
+
+            Collection<Template> templateCollection = sqlContext.select("select * from cd_templates", new String[0], Template.class);
+            if(templateCollection != null && templateCollection.size() > 0) {
+                Template[] templates = templateCollection.toArray(new Template[0]);
+                String routeTemplates = routes[0].c_templates;
+                if(!StringUtil.isEmptyOrNull(routeTemplates)) {
+                    String[] array = routeTemplates.split(",");
+
+                    List<Template> list = new ArrayList<>();
+                    for (String s: array) {
+                        for (Template t: templates) {
+                            if(t.c_template.equals(s)) {
+                                list.add(t);
+                                break;
+                            }
+                        }
+                    }
+
+                    for (Template t: list) {
+                        items.add(new RouteInfo(mContext, t.c_template, t.c_name));
+                    }
+
+                    results[0] = items.toArray(new RouteInfo[0]);
+
+                    items.clear();
+                }
+            } else {
+                items.add(new RouteInfo(mContext, "DEFAULT", "По умолчанию"));
+                results[0] = items.toArray(new RouteInfo[0]);
+
+                items.clear();
+            }
         }
 
         Collection<Setting> settingCollection = sqlContext.select("select * from cd_settings as s order by s.c_key", null, Setting.class);
@@ -140,12 +172,12 @@ public class DataManager {
                 items.add(new RouteInfo(mContext, setting.toKeyName(mContext), setting.c_value));
             }
 
-            results[1] = items.toArray(new RouteInfo[0]);
+            results[2] = items.toArray(new RouteInfo[0]);
         } else {
             if(items.size() > 0) {
-                results[1] = items.toArray(new RouteInfo[0]);
+                results[2] = items.toArray(new RouteInfo[0]);
             } else {
-                results[1] = null;
+                results[2] = null;
             }
         }
 

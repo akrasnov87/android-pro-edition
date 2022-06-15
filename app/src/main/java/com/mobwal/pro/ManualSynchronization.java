@@ -59,8 +59,8 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         addEntity(new Entity(Template.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
         addEntity(new Entity(Result.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
 
-        addEntity(new Entity(Audit.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
-        addEntity(new Entity(MobileDevice.class).setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(Audit.class).setMany().setClearable().setParam(getAppVersion()).setTid(totalTid));
+        addEntity(new Entity(MobileDevice.class).setMany().setClearable().setParam(getAppVersion()).setTid(totalTid));
 
         addEntity(new EntityAttachment(Attachment.class).setClearable().setParam(getAppVersion()).setTid(fileTid));
     }

@@ -7,6 +7,16 @@
     tools:context=".ui.global.SynchronizationFragment">
 
     <TextView
+        android:id="@+id/synchronization_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:text="Подключение к серверу..."
+        android:padding="@dimen/indent_16"/>
+
+    <TextView
         android:id="@+id/synchronization_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +35,7 @@
         app:groupText="DATA"
         app:nameText="Данные"
         android:layout_margin="@dimen/indent_16"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/synchronization_label"
         android:visibility="gone" />
 
     <com.mobwal.pro.ui.SynchronizationProgressView
