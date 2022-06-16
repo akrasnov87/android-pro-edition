@@ -46,7 +46,7 @@ public class AttachmentSynchronizationTest extends DbGenerate {
         Object[] array = synchronization.getRecords(ReflectionUtil.getTableMetaData(Attachment.class).name(), "").toArray();
         for(Object o : array) {
             Attachment attachment = (Attachment)o;
-            assertTrue(getFileManager().exists(attachment.c_path));
+            assertTrue(getFileManager().exists(attachment.c_name));
         }
     }
 
