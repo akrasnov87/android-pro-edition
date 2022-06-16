@@ -50,6 +50,9 @@ public class Result {
     public String fn_point;
 
     @Expose
+    public long fn_user;
+
+    @Expose
     @Nullable
     public Double n_latitude;
 

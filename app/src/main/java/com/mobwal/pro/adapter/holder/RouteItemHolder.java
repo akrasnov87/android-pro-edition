@@ -15,7 +15,7 @@ import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.ui.RecycleViewItemRemovable;
 
 public class RouteItemHolder extends RecyclerView.ViewHolder
-    implements View.OnClickListener, RecycleViewItemRemovable {
+    implements View.OnClickListener {
 
     private final TextView mTitle;
     private final TextView mDescription;
@@ -45,7 +45,7 @@ public class RouteItemHolder extends RecyclerView.ViewHolder
         mTitle.setText(item.c_number);
         mDescription.setText(item.toUserString(mContext));
 
-        mInfo.setImageDrawable(item.b_export
+        mInfo.setImageDrawable(item.n_done == item.n_task
                 ? AppCompatResources.getDrawable(mContext, R.drawable.ic_baseline_check_circle_24)
                 : AppCompatResources.getDrawable(mContext, R.drawable.ic_baseline_info_24));
     }
@@ -57,13 +57,5 @@ public class RouteItemHolder extends RecyclerView.ViewHolder
         } else {
             mListeners.onViewItemClick(mItem.id);
         }
-    }
-
-    /**
-     * разрешено удаление или нет
-     * @return true - разрешено удаление
-     */
-    public boolean isRemovable() {
-        return mItem.b_export;
     }
 }

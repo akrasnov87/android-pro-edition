@@ -147,7 +147,8 @@ public class AttachmentLayout extends LinearLayout
         if (mAttachmentList == null) {
             Attachment[] attachments = mDataManager.getAttachments(bundle.f_route);
             if(attachments != null) {
-                mAttachmentList = Arrays.asList(attachments);
+                mAttachmentList = new ArrayList<>();
+                mAttachmentList.addAll(Arrays.asList(attachments));
             } else {
                 mAttachmentList = new ArrayList<>();
             }
@@ -163,7 +164,8 @@ public class AttachmentLayout extends LinearLayout
      */
     public void setData(@Nullable Attachment[] items) {
         if(items != null) {
-            mAttachmentList = Arrays.asList(items);
+            mAttachmentList = new ArrayList<>();
+            mAttachmentList.addAll(Arrays.asList(items));
         }
     }
 

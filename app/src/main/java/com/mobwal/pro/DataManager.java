@@ -599,27 +599,4 @@ public class DataManager {
 
         return null;
     }
-
-    /**
-     * Обновление точки
-     * @param f_point иден. точки
-     * @param isCheck подтверждение
-     * @param comment комментарий
-     * @return true - результат обновления
-     */
-    public boolean updatePoint(@Nullable String f_point, boolean isCheck, String comment) {
-        if(f_point == null) {
-            return false;
-        }
-        Point point = getPoint(f_point);
-        if(point != null) {
-            point.b_check = isCheck;
-            point.c_comment = comment;
-
-            WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
-            return sqlContext.insertMany(new Point[] { point });
-        }
-
-        return true;
-    }
 }

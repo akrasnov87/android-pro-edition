@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import com.mobwal.android.library.LogManager;
+import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
@@ -95,14 +96,10 @@ public class ResultFragment extends BaseFragment
         // Required empty public constructor
 
         // разрешения для фото
-        mPermissionGalleryActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-            binding.createResultGallery.onPermission(result);
-        });
+        mPermissionGalleryActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> binding.createResultGallery.onPermission(result));
 
         // разрешения для геолокации
-        mPermissionLocationActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-            binding.createResultLocation.onPermission(result);
-        });
+        mPermissionLocationActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> binding.createResultLocation.onPermission(result));
     }
 
     @Override
@@ -272,6 +269,7 @@ public class ResultFragment extends BaseFragment
         Result item = mResult == null
                 ? new Result(id, f_route, f_point, c_template, mLocation, mPoint)
                 : mResult;
+        item.fn_user = BasicAuthorizationSingleton.getInstance().getUser().getUserId();
         item.fn_template = f_template;
         item.__OBJECT_OPERATION_TYPE = item.b_server ? DbOperationType.UPDATED : DbOperationType.CREATED;
         item.__IS_SYNCHRONIZATION = false;
@@ -281,12 +279,6 @@ public class ResultFragment extends BaseFragment
         String txt = "";
 
         binding.createResultSave.setEnabled(false);
-
-        if(mPoint != null && mPoint.b_check) {
-            if(!binding.createResultCheck.saveData(f_point)) {
-                txt = getString(R.string.result_save_error3);
-            }
-        }
 
         if(mDataManager.addResult(item)) {
             if (binding.createResultGallery.saveData(item.id)) {

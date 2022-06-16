@@ -17,8 +17,6 @@ public class RouteItem {
      */
     public int n_fail;
     public Date d_date;
-    public boolean b_export;
-    public boolean b_check;
 
     public String toUserString(Context context) {
         return MessageFormat.format(context.getString(R.string.route_item_subtitle) + ": {0} из {1}.", n_task - n_done, n_task);
