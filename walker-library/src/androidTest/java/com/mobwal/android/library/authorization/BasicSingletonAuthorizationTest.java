@@ -42,10 +42,10 @@ public class BasicSingletonAuthorizationTest
 
     @Test
     public void isAutoSignIn() {
-        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".user.inspector."));
+        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".user.inspector.", ""));
         assertTrue(mAuthorization.isAuthorized());
 
-        mAuthorization.setUser(new BasicUser(new BasicCredential("temp", "temp0"), 1, ".user.inspector."));
+        mAuthorization.setUser(new BasicUser(new BasicCredential("temp", "temp0"), 1, ".user.inspector.", ""));
         assertNotNull(mAuthorization.getLastAuthUser());
         mAuthorization.reset();
 
@@ -54,16 +54,16 @@ public class BasicSingletonAuthorizationTest
 
     @Test
     public void isUser() {
-        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".user.master."));
+        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".user.master.", ""));
         assertTrue(mAuthorization.isUser());
 
-        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".admin.manager."));
+        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".admin.manager.", ""));
         assertFalse(mAuthorization.isUser());
     }
 
     @Test
     public void getLastAuthUser() {
-        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".user.inspector."));
+        mAuthorization.setUser(new BasicUser(new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD), 1, ".user.inspector.", ""));
         BasicUser basicUser = mAuthorization.getLastAuthUser();
         assertEquals(basicUser.getCredential().login, DEFAULT_USER_NAME);
     }

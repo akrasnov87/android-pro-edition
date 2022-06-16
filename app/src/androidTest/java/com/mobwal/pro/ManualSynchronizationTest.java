@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
@@ -19,33 +20,27 @@ import com.mobwal.android.library.util.PackageReadUtils;
 import com.mobwal.android.library.util.ReflectionUtil;
 import com.mobwal.pro.models.db.Attachment;
 import com.mobwal.android.library.util.SyncUtil;
+import com.mobwal.pro.models.db.Audit;
 
 import static org.junit.Assert.assertEquals;
 
 public class ManualSynchronizationTest extends DbGenerate {
     private ManualSynchronizationTest.MySynchronization synchronization;
 
-    private String mResultId;
-    private String mPointId;
-
     @Before
     public void setUp() {
+        Audit item = new Audit();
+        item.c_session_id = UUID.randomUUID().toString();
 
-        Attachment point = new Attachment();
-        getSQLContext().insert(point);
+        getSQLContext().insert(item);
 
         synchronization = new MySynchronization(getSQLContext(), getFileManager(), DbGenerate.getCredentials());
         synchronization.initEntities();
-
-        // без этого фильтрации не будет работать
-        // TODO 09/01/2020 нужно добавить проверку в метод start у синхронизации на передачу идентификатора пользователя, что null не было
-        synchronization.getEntity(ReflectionUtil.getTableName(Attachment.class)).setClearable().setSchema("dbo").setParam("1000.0.0.0");
-        //synchronization.getEntity(getDaoSession().getFilesDao().getTablename()).setParam("null", "1000.0.0.0");
     }
 
     @After
     public void tearDown() {
-        getSQLContext().trash();
+        destroy();
     }
 
     @Test
@@ -54,81 +49,13 @@ public class ManualSynchronizationTest extends DbGenerate {
         byte[] results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
         PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        int length = synchronization.getRecords(ReflectionUtil.getTableName(Attachment.class), "").toArray().length;
-// TODO: раскомментировать
-        //Assert.assertTrue(length > 0);
+        int length = synchronization.getRecords(ReflectionUtil.getTableName(Audit.class), "").toArray().length;
+        assertEquals(1, length);
         synchronization.destroy();
         utils.destroy();
-    }
-
-    @Test
-    public void attachments() throws IOException {
-        SimpleFileManager fileManager = synchronization.getFileManager();
-        fileManager.deleteFolder();
-
-        // создаем записи о вложениях
-
-        for(int i = 0; i < 2; i++) {
-            byte[] bytes = ("file number " + i).getBytes();
-            saveFile("file" + i + ".tmp", bytes);
-        }
-
-        boolean updateTid = SyncUtil.updateTid(synchronization, ReflectionUtil.getTableName(Attachment.class), synchronization.fileTid);
-        Assert.assertTrue(updateTid);
-
-        //updateTid = SyncUtil.updateTid(synchronization, session.getFilesDao().getTablename(), synchronization.fileTid);
-        //Assert.assertTrue(updateTid);
-
-        byte[] bytes = synchronization.generatePackage(synchronization.fileTid, (Object) null);
-        byte[] results = (byte[]) synchronization.sendBytes(synchronization.fileTid, bytes);
-
-        fileManager.deleteFolder();
-
-        getSQLContext().exec("delete from " + ReflectionUtil.getTableName(Attachment.class), new Object[0]);
-        //getDaoSession().getAttachmentsDao().deleteAll();
-        //getDaoSession().getFilesDao().deleteAll();
-
-        PackageReadUtils utils = new PackageReadUtils(results, synchronization.isZip());
-        synchronization.onProcessingPackage(utils, synchronization.fileTid);
-        byte[] fileBytes = fileManager.readPath("file0.tmp");
-        Assert.assertNull(fileBytes);
-
-        @SuppressWarnings("rawtypes") Collection records = synchronization.getRecords(ReflectionUtil.getTableName(Attachment.class), "");
-        // TODO: раскомментировать
-        //Assert.assertTrue(records.size() >= 2);
-
-        //records = synchronization.getRecords(session.getFilesDao().getTablename(), "");
-        //Assert.assertTrue(records.size() >= 2);
-
-        synchronization.destroy();
-        fileManager.deleteFolder();
-        utils.destroy();
-    }
-
-    /**
-     * Сохранение файла
-     *
-     * @param c_name имя файла
-     * @param bytes  массив байтов
-     * @return файл
-     * @throws IOException исключение
-     */
-    public Attachment saveFile(String c_name, byte[] bytes) throws IOException {
-        SimpleFileManager fileManager = new SimpleFileManager(getContext().getFilesDir(), getCredentials());
-        fileManager.writeBytes(c_name, bytes);
-
-        Attachment file = new Attachment();
-        file.c_path = c_name;
-        file.d_date = new Date();
-        //file.folder = folder;
-        file.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
-
-        getSQLContext().insert(file);
-        return file;
     }
 
     public static class MySynchronization extends ManualSynchronization {
-        private static long DEFAULT_USER_ID = 4;
 
         private final BasicCredential mCredentials;
         public MySynchronization(WalkerSQLContext context, SimpleFileManager fileManager, BasicCredential credentials) {
@@ -151,7 +78,7 @@ public class ManualSynchronizationTest extends DbGenerate {
 
         @Override
         public long getUserID() {
-            return DEFAULT_USER_ID;
+            return getBasicUser().getUserId();
         }
     }
 }

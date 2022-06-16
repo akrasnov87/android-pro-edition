@@ -28,9 +28,6 @@ import com.mobwal.android.library.data.rpc.RPCResultMeta;
 
 public class ServerSidePackageUtilTest extends DbGenerate {
 
-    public final static String DEFAULT_USER_NAME = "test";
-    public final static String DEFAULT_USER_PASSWORD = "1234";
-
     @Before
     public void setUp() {
         getSQLContext().exec("DELETE FROM " + ReflectionUtil.getTableName(Result.class), new Object[0]);
@@ -39,7 +36,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
     @After
     public void tearDown() {
-        getSQLContext().trash();
+        destroy();
     }
 
     @Test
@@ -183,7 +180,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
         String tid = UUID.randomUUID().toString();
         int blockTid = 0;
 
-        BasicCredential credentials = new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD);
+        BasicCredential credentials = getCredentials();
         SimpleFileManager fileManager = new SimpleFileManager(getContext().getFilesDir(), credentials);
         fileManager.deleteFolder();
 
@@ -191,7 +188,7 @@ public class ServerSidePackageUtilTest extends DbGenerate {
 
         Attachment attachment = new Attachment();
         attachment.id = LINK;
-        attachment.c_path = "file1.tmp";
+        attachment.c_name = "file1.tmp";
         attachment.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
         attachment.__TID = tid;
         attachment.__BLOCK_TID = String.valueOf(blockTid);

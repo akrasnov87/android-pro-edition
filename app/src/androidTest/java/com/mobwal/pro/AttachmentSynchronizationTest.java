@@ -1,39 +1,42 @@
 package com.mobwal.pro;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.UUID;
 
 import com.mobwal.android.library.SimpleFileManager;
 import com.mobwal.android.library.authorization.credential.BasicCredential;
 
+import com.mobwal.android.library.data.DbOperationType;
 import com.mobwal.android.library.data.sync.EntityAttachment;
 import com.mobwal.android.library.data.sync.MultipartUtility;
 import com.mobwal.android.library.util.PackageReadUtils;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.mobwal.android.library.util.ReflectionUtil;
+import com.mobwal.android.library.util.SyncUtil;
 import com.mobwal.pro.models.db.Attachment;
 
 public class AttachmentSynchronizationTest extends DbGenerate {
+
     private AttachmentSynchronizationTest.MySynchronization synchronization;
-    private static long DEFAULT_USER_ID = 4;
 
     @Before
     public void setUp() {
-        getSQLContext().exec("DELETE FROM " + ReflectionUtil.getTableMetaData(Attachment.class), new Object[0]);
+        // создаем файлы для тестирования
+        for(int i = 0; i < 2; i++) {
+            byte[] bytes = ("file number " + i).getBytes();
+            saveFile("file" + i + ".tmp", bytes);
+        }
 
-        synchronization = new MySynchronization(getSQLContext(), getFileManager(), DbGenerate.getCredentials());
-    }
-
-    @After
-    public void tearDown() {
-        getSQLContext().trash();
-        getFileManager().deleteFolder();
+        synchronization = new MySynchronization(getSQLContext(), getFileManager(), getCredentials());
     }
 
     @Test
@@ -44,10 +47,18 @@ public class AttachmentSynchronizationTest extends DbGenerate {
         synchronization.onProcessingPackage(utils, synchronization.fileTid);
 
         Object[] array = synchronization.getRecords(ReflectionUtil.getTableMetaData(Attachment.class).name(), "").toArray();
+
+        Assert.assertTrue(array.length > 0);
+
         for(Object o : array) {
             Attachment attachment = (Attachment)o;
-            assertTrue(getFileManager().exists(attachment.c_name));
+            assertFalse(getFileManager().exists(attachment.c_name));
         }
+    }
+
+    @After
+    public void tearDown() {
+        destroy();
     }
 
     public static class MySynchronization extends ManualSynchronization {
@@ -55,9 +66,11 @@ public class AttachmentSynchronizationTest extends DbGenerate {
         public MySynchronization(WalkerSQLContext context, SimpleFileManager fileManager, BasicCredential credentials) {
             super(context, fileManager, false);
             fileTid = UUID.randomUUID().toString();
-            addEntity(new EntityAttachment(Attachment.class).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));
-            //addEntity(new EntityAttachment(AttachmentsDao.TABLENAME, true, true).setParam(getUserID(), "1000.0.0.0").setUseCFunction().setTid(fileTid));
+
+            addEntity(new EntityAttachment(Attachment.class).setParam("").setTid(fileTid));
             mCredentials = credentials;
+
+            SyncUtil.updateTid(this, ReflectionUtil.getTableName(Attachment.class), fileTid);
         }
 
         @Override
@@ -75,7 +88,7 @@ public class AttachmentSynchronizationTest extends DbGenerate {
 
         @Override
         public long getUserID() {
-            return DEFAULT_USER_ID;
+            return getBasicUser().getUserId();
         }
     }
 }

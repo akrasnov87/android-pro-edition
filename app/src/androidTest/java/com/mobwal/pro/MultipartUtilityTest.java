@@ -2,6 +2,8 @@ package com.mobwal.pro;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,14 +20,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import com.mobwal.android.library.data.sync.MultipartUtility;
+import com.mobwal.android.library.util.ReflectionUtil;
+import com.mobwal.pro.models.db.Attachment;
+import com.mobwal.pro.models.db.Result;
 
 @RunWith(AndroidJUnit4.class)
-public class MultipartUtilityTest {
+public class MultipartUtilityTest extends DbGenerate {
     private final String URL_PART = "/synchronization/v0";
-    private final BasicCredential basicCredentials;
+    private BasicCredential basicCredentials;
 
-    public MultipartUtilityTest(){
-        basicCredentials = new BasicCredential("user", "1234");
+    @Before
+    public void setUp() {
+        basicCredentials = getCredentials();
     }
 
     @Test
@@ -69,5 +75,10 @@ public class MultipartUtilityTest {
         assert multipartUtility != null;
         multipartUtility.destroy();
         packageCreateUtils.destroy();
+    }
+
+    @After
+    public void tearDown() {
+        destroy();
     }
 }

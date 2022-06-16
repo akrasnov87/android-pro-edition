@@ -37,10 +37,4 @@ public interface AuthorizationListeners {
      * @return мета информация
      */
     AuthorizationMeta convertResponseToMeta(@NonNull Context context, @NonNull String response, int code);
-
-    /**
-     * Проверка на доступность подключения к серверу приложения
-     */
-    @Nullable
-    HashMap<String, String> exists();
 }

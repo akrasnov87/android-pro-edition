@@ -37,7 +37,7 @@ public class AuthorizationCacheTest {
     @Test
     public void writeTest() {
         BasicCredential credentials = new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD);
-        BasicUser user = new BasicUser(credentials, 1, "");
+        BasicUser user = new BasicUser(credentials, 1, "", "");
         cache.clear(null);
         assertTrue(cache.write(user));
         assertEquals(DEFAULT_USER_NAME, cache.read(DEFAULT_USER_NAME).getCredential().login);
@@ -52,7 +52,7 @@ public class AuthorizationCacheTest {
     @Test
     public void updateTest() {
         BasicCredential credentials = new BasicCredential(DEFAULT_USER_NAME, DEFAULT_USER_PASSWORD);
-        BasicUser user = new BasicUser(credentials, 1, "");
+        BasicUser user = new BasicUser(credentials, 1, "", "");
         cache.clear(null);
         assertTrue(cache.write(user));
 

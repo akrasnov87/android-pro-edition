@@ -130,20 +130,6 @@ public class AuthorizationRequest
     }
 
     /**
-     * Проверка на доступность подключения к серверу приложения
-     */
-    @Nullable
-    @Override
-    public HashMap<String, String> exists() {
-        try {
-            return RequestManager.exists(mBaseUrl);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * Экранирование данных в запросе
      * @param value значение
      * @return результат
