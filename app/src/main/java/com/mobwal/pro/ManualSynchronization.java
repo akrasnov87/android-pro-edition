@@ -42,7 +42,7 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
 
     protected ManualSynchronization(WalkerSQLContext context, SimpleFileManager fileManager, boolean zip) {
         super(context, "MANUAL_SYNCHRONIZATION", fileManager, zip);
-        oneOnlyMode = false;
+        oneOnlyMode = true;
 
         useAttachments = true;
         serverSidePackage = new FullServerSidePackage();
@@ -85,13 +85,6 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         } catch (Exception e) {
             onError(ProgressStep.START, "Ошибка обработки пакета байтов. " + e, fileTid);
         }
-    }
-
-    @Override
-    public void onError(int step, String message, String tid) {
-        super.onError(step, message, tid);
-
-        oneOnlyMode = true;
     }
 
     @Override

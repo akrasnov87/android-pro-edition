@@ -158,7 +158,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         initEntities();
         Log.e("SYNC", "BaseSynchronization initEntities");
         this.progressListener = progress;
-        //resetTid(this);
+        SyncUtil.resetTid(this);
 
         onProgress(ProgressStep.START, "", null);
         Log.e("SYNC", "BaseSynchronization onProgress");
