@@ -109,7 +109,7 @@ public class WalkerApplication extends Application implements ExceptionIntercept
 
         // TODO: после тестирования убрать
         //Transfer.CHUNK = 8;
-        Transfer.STATUS_TRANSFER_SPEED = true;
+        //Transfer.STATUS_TRANSFER_SPEED = true;
 
         PrefManager prefManager = new PrefManager(this);
         if(prefManager.get("error_reporting", false)) {

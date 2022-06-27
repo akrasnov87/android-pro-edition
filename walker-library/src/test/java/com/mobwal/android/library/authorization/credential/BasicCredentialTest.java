@@ -12,7 +12,7 @@ public class BasicCredentialTest {
     @Test
     public void auth() {
         BasicCredential basicCredential = new BasicCredential("","");
-        BasicUser basicUser = new BasicUser(basicCredential, (long)1, ".admin.master.user.");
+        BasicUser basicUser = new BasicUser(basicCredential, (long)1, ".admin.master.user.", "");
         Assert.assertTrue(basicUser.userInRole("user"));
         Assert.assertTrue(basicUser.userInRole("master"));
         Assert.assertTrue(basicUser.userInRole("admin"));

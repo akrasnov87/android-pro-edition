@@ -72,12 +72,12 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
         onProgress(ProgressStep.START, "пакет данных " + totalTid, null);
         onProgress(ProgressStep.START, "пакет байтов " + fileTid, null);
 
-        try {
+        /*try {
             byte[] dictionaryBytes = generatePackage(totalTid, (Object) null);
             sendBytes(totalTid, dictionaryBytes);
         } catch (Exception e) {
             onError(ProgressStep.START, "Ошибка обработки пакета данных. " + e, totalTid);
-        }
+        }*/
 
         try {
             byte[] dictionaryBytes = generatePackage(fileTid, (Object) null);
