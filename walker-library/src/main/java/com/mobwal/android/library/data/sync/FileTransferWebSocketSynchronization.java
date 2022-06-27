@@ -14,6 +14,7 @@ import com.mobwal.android.library.sql.SQLContext;
 import com.mobwal.android.library.util.StringUtil;
 
 import java.io.IOException;
+import java.util.Date;
 
 import com.mobwal.android.library.data.rpc.RPCItem;
 import com.mobwal.android.library.data.rpc.RPCResult;
@@ -167,12 +168,13 @@ public abstract class FileTransferWebSocketSynchronization
                 String tableName = result.action;
                 Entity entity = getEntity(tableName);
                 PackageResult packageResult;
+                //Log.d("SYNC_START_TIME_" + tableName, String.valueOf(new Date().getTime()));
                 if (tid.equals(fileTid) && useAttachments) {
                     packageResult = serverSidePackage.from(getContext(), result, tid, entity.to, true);
                 } else {
                     packageResult = serverSidePackage.from(getContext(), result, tid, entity.to, false);
                 }
-
+                //Log.d("SYNC_END_TIME_" + tableName, String.valueOf(new Date().getTime()));
                 if (!packageResult.success) {
                     onError(ProgressStep.PACKAGE_CREATE, packageResult.message, tid);
 

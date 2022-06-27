@@ -8,6 +8,7 @@ import com.mobwal.android.library.Constants;
 import com.mobwal.android.library.FieldNames;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.mobwal.android.library.SimpleFileManager;
@@ -204,6 +205,7 @@ public abstract class ServerSidePackage implements ServerSidePackageListeners {
                         }
 
                         boolean result = session.insertMany(objects.toArray(new Object[0]));
+
                         if (result) {
                             return PackageResult.success(null);
                         } else {

@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.mobwal.android.library.FieldNames;
@@ -269,6 +270,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
      * @param bytes массив байтов
      */
     public void processingPackage(String[] tid, byte[] bytes) {
+        //Log.d("SYNC_START_TIME", String.valueOf(new Date().getTime()));
         onProgress(ProgressStep.PACKAGE_CREATE, "", null);
         PackageReadUtils utils = new PackageReadUtils(bytes, isZip());
         try {
@@ -286,6 +288,7 @@ public abstract class BaseSynchronization implements OnSynchronizationListeners 
         }
 
         utils.destroy();
+        //Log.d("SYNC_END_TIME", String.valueOf(new Date().getTime()));
     }
 
     /**
