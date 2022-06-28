@@ -130,6 +130,7 @@ public class BiometryFragment extends BaseFragment
         }
 
         if(mBinding.securityPass.getText().toString().equals(pinCode)) {
+            mBinding.securityPass.removeTextChangedListener(this);
             // авторизация произведена
             onAuthorized();
         }

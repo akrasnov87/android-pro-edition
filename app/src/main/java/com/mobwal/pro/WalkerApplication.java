@@ -130,10 +130,11 @@ public class WalkerApplication extends Application implements ExceptionIntercept
 
         // меняем способ логирования на БД
         LogInDbWriter logInDb = new LogInDbWriter(walkerSQLContext, sSessionId);
-        LogInMemoryWriter logInMemory = (LogInMemoryWriter)LogManager.getInstance();
-        logInDb.writeArray(logInMemory.getAudits().toArray(new Audit[0]));
-        LogManager.createInstance(logInDb);
-
+        if(LogManager.getInstance() instanceof LogInMemoryWriter) {
+            LogInMemoryWriter logInMemory = (LogInMemoryWriter) LogManager.getInstance();
+            logInDb.writeArray(logInMemory.getAudits().toArray(new Audit[0]));
+            LogManager.createInstance(logInDb);
+        }
         ExceptionHandler exceptionHandler = new ExceptionHandler(activity);
 
         if(exceptionHandler.getCount() > 0) {
