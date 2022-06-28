@@ -307,7 +307,6 @@ public class DataManager {
             items.add(new PointInfo(mContext, mContext.getString(R.string.address), point.c_address));
             items.add(new PointInfo(mContext, mContext.getString(R.string.description), point.c_description));
 
-
             WalkerSQLContext sqlContext = WalkerApplication.getWalkerSQLContext(mContext);
             Collection<ResultTemplate> collection =  sqlContext.select("select \n" +
                     "\tt.id as F_TEMPLATE, \n" +

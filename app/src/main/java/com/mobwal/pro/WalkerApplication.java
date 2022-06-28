@@ -108,7 +108,7 @@ public class WalkerApplication extends Application implements ExceptionIntercept
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         // TODO: после тестирования убрать
-        //Transfer.CHUNK = 8;
+        //Transfer.CHUNK = 10 * 1024 * 1024;
         //Transfer.STATUS_TRANSFER_SPEED = true;
 
         PrefManager prefManager = new PrefManager(this);

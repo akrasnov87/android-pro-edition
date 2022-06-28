@@ -53,6 +53,7 @@ public class SynchronizationFragment extends Fragment
     private SyncLogAdapter mSyncLogAdapter;
 
     private boolean isDebug;
+    private boolean isErrorFinished = false;
 
     public SynchronizationFragment() {
         // Required empty public constructor
@@ -98,6 +99,7 @@ public class SynchronizationFragment extends Fragment
 
     @Override
     public void onClick(View v) {
+        isErrorFinished = false;
         binding.synchronizationInfo.setVisibility(View.GONE);
 
         if(synchronization.isRunning()) {
@@ -172,7 +174,9 @@ public class SynchronizationFragment extends Fragment
                         binding.synchronizationDataCategory.setVisibility(View.GONE);
                         binding.synchronizationFileCategory.setVisibility(View.GONE);
 
-                        Toast.makeText(requireContext(), "Синхронизация завершена успешно!", Toast.LENGTH_SHORT).show();
+                        if(!isErrorFinished) {
+                            Toast.makeText(requireContext(), "Синхронизация завершена успешно!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -324,14 +328,16 @@ public class SynchronizationFragment extends Fragment
 
     protected void setLogMessage(@NonNull String message, boolean isError) {
         if(isError) {
+            isErrorFinished = true;
+
             LogManager.getInstance().error(message);
-            mLogList.add(0, new SynchronizationLogItem(message, isError));
+            mLogList.add(0, new SynchronizationLogItem(message, true));
             mSyncLogAdapter.notifyItemInserted(0);
         } else {
             if(isDebug) {
                 LogManager.getInstance().debug(message);
 
-                mLogList.add(0, new SynchronizationLogItem(message, isError));
+                mLogList.add(0, new SynchronizationLogItem(message, false));
                 mSyncLogAdapter.notifyItemInserted(0);
             }
         }

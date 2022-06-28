@@ -16,7 +16,8 @@ public class Names {
 
     public static String CLAIMS = "user";
 
-    public static String BASE_URL = "http://10.10.6.100:5007";
+    public static String BASE_URL = "https://pro-edition.mobwal.com";
+    //public static String BASE_URL = "http://10.10.6.100:5007";
     public static String VIRTUAL_DIR_PATH = "/release";
 
     /**

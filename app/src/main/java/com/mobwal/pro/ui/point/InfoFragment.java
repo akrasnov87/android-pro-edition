@@ -38,6 +38,7 @@ import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.PointInfoItemAdapter;
 import com.mobwal.pro.databinding.FragmentPointInfoBinding;
 import com.mobwal.pro.models.PointInfo;
+import com.mobwal.pro.models.SettingRoute;
 import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Template;
@@ -124,6 +125,11 @@ public class InfoFragment extends Fragment
             LogManager.getInstance().debug("Точки. Информация. Доступ к геолокации не предоставлен.");
             binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.GONE);
+        }
+
+        SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
+        if(mLocation == null && settingRoute.geo) {
+            binding.osmPointInfoProgress.setVisibility(View.VISIBLE);
         }
 
         return binding.getRoot();
@@ -391,6 +397,7 @@ public class InfoFragment extends Fragment
     @Override
     public void onLocationChanged(@NonNull Location location) {
         mLocation = location;
+        binding.osmPointInfoProgress.setVisibility(View.GONE);
         updateLocations(mLocation);
     }
 

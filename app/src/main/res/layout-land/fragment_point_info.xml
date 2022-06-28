@@ -12,6 +12,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/osm_point_info_list_map"/>
 
+    <ProgressBar
+        android:id="@+id/osm_point_info_progress"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="@id/osm_point_info_list_map"
+        app:layout_constraintRight_toRightOf="@id/osm_point_info_list_map"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <org.osmdroid.views.MapView android:id="@+id/osm_point_info_list_map"
         android:layout_width="0dp"
         android:layout_height="match_parent"

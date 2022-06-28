@@ -19,6 +19,6 @@ public class RouteItem {
     public Date d_date;
 
     public String toUserString(Context context) {
-        return MessageFormat.format(context.getString(R.string.route_item_subtitle) + ": {0} из {1}.", n_task - n_done, n_task);
+        return MessageFormat.format(context.getString(R.string.route_item_subtitle) + ": {0}" + (n_fail > 0 ? "/{2}" : "") + " из {1}.", n_task - n_done, n_task, n_fail);
     }
 }

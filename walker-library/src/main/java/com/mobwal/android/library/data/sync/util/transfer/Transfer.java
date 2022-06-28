@@ -23,6 +23,7 @@ public abstract class Transfer {
     // TODO: должно быть вычисляемым
     public static int CHUNK = 1024;
     public static boolean STATUS_TRANSFER_SPEED = false;
+    public static int MIN_CHUNK = 1024;
 
     /**
      * вычисленный размер блоков для передачи за секунду
@@ -32,7 +33,7 @@ public abstract class Transfer {
     /**
      * интервал в течении которого происходят вычисления
      */
-    public static int INTERVAL = 1000;
+    public static int INTERVAL = 250;
 
     /**
      * Подключение через websocket
@@ -133,11 +134,13 @@ public abstract class Transfer {
      * обновление размера блока
      * @param chunk размер блока
      */
-    protected void updateChunk(long chunk){
+    protected void updateChunk(long chunk) {
+        chunk = chunk <= MIN_CHUNK ? MIN_CHUNK : chunk;
+
         if(chunk > 0) {
             calcChunk = chunk;
-        }else{
-            if(calcChunk + chunk > 0){
+        } else {
+            if(calcChunk + chunk > 0) {
                 calcChunk = calcChunk + chunk;
             }
         }

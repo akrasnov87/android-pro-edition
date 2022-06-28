@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +40,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
     private final Context mContext;
     private Attachment mAttachment;
     private final RecycleViewItemListeners mListeners;
+    private final ProgressBar mProgressBar;
 
     public AttachmentItemHolder(@NonNull View itemView, @Nullable RecycleViewItemListeners listeners) {
         super(itemView);
@@ -51,6 +53,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
 
         mImage = itemView.findViewById(R.id.attach_item_image);
         mTrash = itemView.findViewById(R.id.attach_item_trash);
+        mProgressBar = itemView.findViewById(R.id.attach_item_image_progress);
 
         if(mListeners != null) {
             mImage.setOnClickListener(v -> mListeners.onViewItemClick(mAttachment.id));
@@ -62,6 +65,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
         mAttachment = item;
 
         mTrash.setVisibility(item.b_disabled ? View.GONE : View.VISIBLE);
+        mProgressBar.setVisibility(item.b_server ? View.VISIBLE : View.GONE);
 
         if(item.b_server) {
             NewThread newThread = new NewThread((Activity)mContext) {
@@ -81,6 +85,7 @@ public class AttachmentItemHolder extends RecyclerView.ViewHolder {
 
                 @Override
                 public void onPostExecute() {
+                    mProgressBar.setVisibility(View.GONE);
                     mImage.setImageBitmap(item.b_disabled ? ImageUtil.blur(mContext, mBitmap) : mBitmap);
                 }
             };
