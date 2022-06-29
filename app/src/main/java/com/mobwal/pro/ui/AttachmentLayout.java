@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
@@ -44,6 +45,7 @@ import java.util.concurrent.Executors;
 import com.mobwal.android.library.LogManager;
 import com.mobwal.android.library.authorization.BasicAuthorizationSingleton;
 import com.mobwal.android.library.data.DbOperationType;
+import com.mobwal.android.library.util.LocationUtil;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.Names;
 import com.mobwal.pro.R;
@@ -73,11 +75,13 @@ public class AttachmentLayout extends LinearLayout
     private PointBundle mPointBundle;
     public String FileName;
     public boolean IsCameraOnly = false;
+    public boolean IsPhotoLabel = false;
     private LocationInfo mLocationInfo;
     private final SimpleFileManager mFileManager;
 
     private SettingRoute mSettingRoute;
     private final DataManager mDataManager;
+    public String Address = "";
 
     @Nullable
     private ActivityResultLauncher<String[]> mPermissionActivityResultLauncher;
@@ -300,7 +304,14 @@ public class AttachmentLayout extends LinearLayout
                     byte[] bytes = ImageUtil.compress(iStream, (int) (mSettingRoute.image_quality * 100), mSettingRoute.image_height);
                     if(bytes != null) {
                         Bitmap bitmap = ImageUtil.normalRotateImage(finalUri.getPath(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-
+                        if(IsPhotoLabel) {
+                            Location location = mLocationInfo.getLocation();
+                            String coordinates = "";
+                            if (location != null) {
+                                coordinates = LocationUtil.toString(location);
+                            }
+                            bitmap = ImageUtil.signBitmap(bitmap, Address, coordinates, getResources().getDimensionPixelSize(R.dimen.font_12));
+                        }
                         byte[] byteArray = ImageUtil.bitmapToBytes(bitmap);
 
                         mFileManager.writeBytes(id + ".jpg", byteArray);

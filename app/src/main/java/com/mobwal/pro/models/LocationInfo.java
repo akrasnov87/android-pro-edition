@@ -13,6 +13,8 @@ import java.io.Serializable;
 public class LocationInfo
         implements Serializable {
 
+    private Location mLocation;
+
     public LocationInfo() {
 
     }
@@ -23,6 +25,7 @@ public class LocationInfo
     }
 
     public LocationInfo(@Nullable Location location) {
+        mLocation = location;
         if(location != null) {
             myLongitude = location.getLongitude();
             myLatitude = location.getLatitude();
@@ -45,7 +48,7 @@ public class LocationInfo
     public Double taskLatitude;
 
     @Nullable
-    public Long getDistance() {
+    public Double getDistance() {
         if(myLongitude != null && myLatitude != null && taskLongitude != null && taskLatitude != null) {
             Location attachLocation = new Location(LocationManager.PASSIVE_PROVIDER);
             attachLocation.setLongitude(myLongitude);
@@ -55,7 +58,7 @@ public class LocationInfo
             myLocation.setLongitude(taskLongitude);
             myLocation.setLatitude(taskLatitude);
 
-            return Long.valueOf(String.valueOf(myLocation.distanceTo(attachLocation)));
+            return Double.valueOf(String.valueOf(myLocation.distanceTo(attachLocation)));
         }
 
         return null;
@@ -89,5 +92,9 @@ public class LocationInfo
 
     public boolean isValidLocations() {
         return myLongitude != null || myLatitude != null || taskLongitude != null || taskLatitude != null;
+    }
+
+    public Location getLocation() {
+        return mLocation;
     }
 }

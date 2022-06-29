@@ -20,6 +20,9 @@ public class SettingRoute {
                 case "image":
                     image = item.getValue().equals("true");
                     break;
+                case "photo_label":
+                    photo_label = item.getValue().equals("true");
+                    break;
                 case "camera_only":
                     camera_only = item.getValue().equals("true");
                     break;
@@ -53,4 +56,6 @@ public class SettingRoute {
     public int image_height = 720;
     // получать изображение только из камеры
     public boolean camera_only = false;
+    // текст на изображении
+    public boolean photo_label = false;
 }

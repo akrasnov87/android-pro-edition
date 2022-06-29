@@ -3,7 +3,10 @@ package com.mobwal.android.library.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -21,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.util.Date;
 
 /**
  * Работа с изображениями
@@ -195,5 +199,30 @@ public class ImageUtil {
         }
 
         return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+    }
+
+    /**
+     * Установка подписи на изображении
+     * @param bitmap изображение
+     * @param address адрес
+     * @param coordinates координаты
+     */
+    public static Bitmap signBitmap(@NonNull Bitmap bitmap, @NonNull String address, @NonNull String coordinates, int fontSize) {
+        Bitmap copyBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Paint paint = new Paint();
+        paint.setColor(Color.YELLOW);
+        paint.setTextSize(fontSize);
+        Date date = new Date();
+
+        String dateString = DateUtil.convertDateToUserString(date, DateUtil.SYSTEM_FORMAT);
+        Canvas canvas = new Canvas(copyBitmap);
+        canvas.drawText(dateString, 20, bitmap.getHeight() - 40, paint);
+        if (!StringUtil.isEmptyOrNull(coordinates)) {
+            canvas.drawText(coordinates, 20, bitmap.getHeight() - 40 - fontSize, paint);
+        }
+        if (!StringUtil.isEmptyOrNull(address)) {
+            canvas.drawText(address, 20, bitmap.getHeight() - 40 - fontSize - fontSize, paint);
+        }
+        return copyBitmap;
     }
 }

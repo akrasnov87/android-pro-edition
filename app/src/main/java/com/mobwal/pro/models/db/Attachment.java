@@ -49,7 +49,7 @@ public class Attachment implements Serializable, OnAttachmentListeners {
 
     @Expose
     @Nullable
-    public Long n_distance;
+    public Double n_distance;
 
     @Expose
     public boolean b_disabled;
