@@ -20,6 +20,9 @@ public class SettingRoute {
                 case "image":
                     image = item.getValue().equals("true");
                     break;
+                case "camera_only":
+                    camera_only = item.getValue().equals("true");
+                    break;
                 case "image_quality":
                     try {
                         image_quality = Double.parseDouble(item.getValue());
@@ -48,4 +51,6 @@ public class SettingRoute {
     public double image_quality = 0.6;
     // высота изображения
     public int image_height = 720;
+    // получать изображение только из камеры
+    public boolean camera_only = false;
 }

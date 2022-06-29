@@ -61,6 +61,7 @@ public class ResultFragment extends BaseFragment
 
     private boolean mLocationRequire = false;
     private boolean mImageRequire = false;
+    private boolean mCameraOnly = false;
 
     private String mLocationLevel = GeoLocationLayout.LEVEL;
     @Nullable
@@ -128,6 +129,7 @@ public class ResultFragment extends BaseFragment
             mLocationRequire = settingRoute.geo;
             mLocationLevel = settingRoute.geo_quality;
             mImageRequire = settingRoute.image;
+            mCameraOnly = settingRoute.camera_only;
 
             mTemplate = mDataManager.getTemplate(c_template);
             mPoint = mDataManager.getPoint(f_point);
@@ -156,6 +158,7 @@ public class ResultFragment extends BaseFragment
         binding.createResultGallery.setActivityResultLauncherChoice(mChoiceActivityResultLauncher);
         binding.createResultGallery.setActivityResultLauncherPermission(mPermissionGalleryActivityResultLauncher);
         binding.createResultGallery.FileName = mAttachmentFileName;
+        binding.createResultGallery.IsCameraOnly = mCameraOnly;
 
         binding.createResultLocation.setActivityResultLauncherPermission(mPermissionLocationActivityResultLauncher);
         binding.createResultLocation.setOnLocationListeners(this);

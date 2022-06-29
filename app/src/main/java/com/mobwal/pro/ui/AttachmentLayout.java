@@ -72,6 +72,7 @@ public class AttachmentLayout extends LinearLayout
     private List<Attachment> mAttachmentList;
     private PointBundle mPointBundle;
     public String FileName;
+    public boolean IsCameraOnly = false;
     private LocationInfo mLocationInfo;
     private final SimpleFileManager mFileManager;
 
@@ -188,6 +189,11 @@ public class AttachmentLayout extends LinearLayout
      */
     @Override
     public boolean onLongClick(@Nullable View v) {
+        if(IsCameraOnly) {
+            onClick(v);
+            return true;
+        }
+
         CharSequence[] items;
 
         items = new CharSequence[] { getContext().getString(R.string.camera), getContext().getString(R.string.album)};
