@@ -158,7 +158,7 @@ public class DataManager {
                     items.clear();
                 }
             } else {
-                items.add(new RouteInfo(mContext, "DEFAULT", "По умолчанию"));
+                items.add(new RouteInfo(mContext, "DEFAULT", mContext.getString(R.string.template_default)));
                 results[0] = items.toArray(new RouteInfo[0]);
 
                 items.clear();

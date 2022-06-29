@@ -13,14 +13,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"
         tools:visibility="visible"
-        android:text="Подключение к серверу..."
+        android:text="@string/connecting_server"
         android:padding="@dimen/indent_16"/>
 
     <TextView
         android:id="@+id/synchronization_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Внимание: синхронизацию требуется выполнять только в местах, где есть хороший сигнал интернета"
+        android:text="@string/sync_warning"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:groupText="DATA"
-        app:nameText="Данные"
+        app:nameText="@string/data"
         android:layout_margin="@dimen/indent_16"
         app:layout_constraintTop_toBottomOf="@id/synchronization_label"
         android:visibility="gone" />
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:groupText="FILES"
-        app:nameText="Файлы"
+        app:nameText="@string/files"
         android:layout_margin="@dimen/indent_16"
         app:layout_constraintTop_toBottomOf="@id/synchronization_data_category"
         android:visibility="gone" />

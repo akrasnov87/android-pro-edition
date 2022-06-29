@@ -69,21 +69,21 @@ public class ManualSynchronization extends FileTransferWebSocketSynchronization 
     public void start(@NonNull SocketManager socketManager, @NonNull ProgressListeners progress) {
         super.start(socketManager, progress);
 
-        onProgress(ProgressStep.START, "пакет данных " + totalTid, null);
-        onProgress(ProgressStep.START, "пакет байтов " + fileTid, null);
+        onProgress(ProgressStep.START, getContext().getContext().getString(R.string.manual_sync_msg3) + " " + totalTid, null);
+        onProgress(ProgressStep.START, getContext().getContext().getString(R.string.manual_sync_msg4) + " " + fileTid, null);
 
         try {
             byte[] dictionaryBytes = generatePackage(totalTid, (Object) null);
             sendBytes(totalTid, dictionaryBytes);
         } catch (Exception e) {
-            onError(ProgressStep.START, "Ошибка обработки пакета данных. " + e, totalTid);
+            onError(ProgressStep.START, getContext().getContext().getString(R.string.manual_sync_msg1) + " " + e, totalTid);
         }
 
         try {
             byte[] dictionaryBytes = generatePackage(fileTid, (Object) null);
             sendBytes(fileTid, dictionaryBytes);
         } catch (Exception e) {
-            onError(ProgressStep.START, "Ошибка обработки пакета байтов. " + e, fileTid);
+            onError(ProgressStep.START, getContext().getContext().getString(R.string.manual_sync_msg2) + " " + e, fileTid);
         }
     }
 

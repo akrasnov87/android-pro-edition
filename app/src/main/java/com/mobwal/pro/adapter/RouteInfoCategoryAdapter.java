@@ -45,7 +45,7 @@ public class RouteInfoCategoryAdapter extends RecyclerView.Adapter<RouteInfoCate
             String title = "";
             switch (position) {
                 case 0:
-                    title = "Шаблоны";
+                    title = mContext.getString(R.string.templates);
                     break;
                 case 1:
                     title = mContext.getString(R.string.history);

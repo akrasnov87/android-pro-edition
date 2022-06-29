@@ -194,4 +194,19 @@
     <string name="send_mail_journal">Прикрепить системный журнал</string>
     <string name="send_mail_subject">Сообщение с MOBWAL PRO</string>
     <string name="send_mail_title">Отправка сообщения…</string>
+
+    <string name="manual_sync_msg1">Ошибка обработки пакета данных.</string>
+    <string name="manual_sync_msg2">Ошибка обработки пакета байтов.</string>
+    <string name="manual_sync_msg3">пакет данных</string>
+    <string name="manual_sync_msg4">пакет байтов</string>
+
+    <string name="sync_finished">Синхронизация завершена вручную!</string>
+    <string name="sync_stoped">Синхронизация завершена принудительно!</string>
+    <string name="connect_toserver">Соединение с сервером создано</string>
+    <string name="sync_success">Синхронизация завершена успешно!</string>
+    <string name="disconnect_server">Соединение с сервером разорвано</string>
+    <string name="connecting_server">Подключение к серверу…</string>
+    <string name="sync_warning">Внимание: синхронизацию требуется выполнять только в местах, где есть хороший сигнал интернета</string>
+    <string name="data">Данные</string>
+    <string name="templates">Шаблоны</string>
 </resources>

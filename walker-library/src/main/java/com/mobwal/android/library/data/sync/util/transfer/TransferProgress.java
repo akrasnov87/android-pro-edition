@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.mobwal.android.library.R;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,7 +53,7 @@ public class TransferProgress {
 
     public String toString(@NonNull Context context) {
         if(getPercent() >= 100) {
-            return "обработка данных...";
+            return context.getString(R.string.data_processing);
         } else {
             Date date = new Date(mTime);
             DateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());

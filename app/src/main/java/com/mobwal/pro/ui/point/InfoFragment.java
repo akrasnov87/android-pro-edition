@@ -289,7 +289,7 @@ public class InfoFragment extends Fragment
                     marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
                     marker.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_48_green, null));
 
-                    String templateName = "По умолчанию";
+                    String templateName = requireContext().getString(R.string.template_default);
                     for (Template template:
                             mTemplates) {
                         if(template.id.equals(result.fn_template)) {

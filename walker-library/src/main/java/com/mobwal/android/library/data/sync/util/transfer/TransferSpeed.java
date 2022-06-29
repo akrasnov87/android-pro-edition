@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.mobwal.android.library.R;
 import com.mobwal.android.library.util.StringUtil;
 
 /**
@@ -27,6 +28,6 @@ public class TransferSpeed {
     }
 
     public String toString(@NonNull Context context) {
-        return StringUtil.getSize(context, (1000 * mChunk) / mTime) + "\\сек.";
+        return StringUtil.getSize(context, (1000 * mChunk) / mTime) + "\\" + context.getString(R.string.second);
     }
 }

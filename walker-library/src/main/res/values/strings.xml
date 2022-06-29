@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="byt">byte</string>
-    <string name="kb">KB</string>
-    <string name="mb">MB</string>
-    <string name="gb">GB</string>
-    <string name="tb">TB</string>
-    <string name="unknown_error">Unknown error. Code</string>
-    <string name="zip_error">Compression directory not found</string>
-    <string name="unzip_error">Output directory error. Code</string>
-
-    <string name="authorization_success">Вы авторизованы</string>
-    <string name="authorization_failed">Логин или пароль введены не верно</string>
-    <string name="authorization_network">У приложения отсутствует доступ к серверу. Проверьте интернет.</string>
-    <string name="authorization_error">Ошибка авторизации</string>
-    <string name="authorization_format">Результат авторизации не является JSON</string>
-    <string name="authorization_denied">Доступ запрещён</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	<string name="byt">byte</string>
+	<string name="kb">KB</string>
+	<string name="mb">MB</string>
+	<string name="gb">GB</string>
+	<string name="tb">TB</string>
+	<string name="unknown_error">Unknown error. Code</string>
+	<string name="zip_error">Compression directory not found</string>
+	<string name="unzip_error">Output directory error. Code</string>
+	<string name="authorization_success">You are logged in</string>
+	<string name="authorization_failed">Username or password entered incorrectly</string>
+	<string name="authorization_network">The application does not have access to the server. Check the internet.</string>
+	<string name="authorization_error">Authorisation Error</string>
+	<string name="authorization_format">Authorization result is not JSON</string>
+	<string name="authorization_denied">Access is denied</string>
+	<string name="data_processing">data processing…</string>
+	<string name="second">give me a sec</string>
 </resources>

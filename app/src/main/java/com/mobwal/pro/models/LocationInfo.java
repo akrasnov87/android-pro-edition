@@ -55,7 +55,7 @@ public class LocationInfo
             myLocation.setLongitude(taskLongitude);
             myLocation.setLatitude(taskLatitude);
 
-            return (long)0;// Long.valueOf(String.valueOf(myLocation.distanceTo(attachLocation)));
+            return Long.valueOf(String.valueOf(myLocation.distanceTo(attachLocation)));
         }
 
         return null;

@@ -17,4 +17,7 @@
     <string name="authorization_error">Ошибка авторизации</string>
     <string name="authorization_format">Результат авторизации не является JSON</string>
     <string name="authorization_denied">Доступ запрещён</string>
+
+    <string name="data_processing">обработка данных…</string>
+    <string name="second">секунду</string>
 </resources>

@@ -85,7 +85,7 @@ public class SynchronizationFragment extends Fragment
 
         if(synchronization != null) {
             if(synchronization.isRunning()) {
-                Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), requireContext().getString(R.string.sync_finished), Toast.LENGTH_SHORT).show();
             }
             synchronization.destroy();
         }
@@ -103,10 +103,10 @@ public class SynchronizationFragment extends Fragment
         binding.synchronizationInfo.setVisibility(View.GONE);
 
         if(synchronization.isRunning()) {
-            setLogMessage("Синхронизация завершена принудительно!", true);
+            setLogMessage(getString(R.string.sync_stoped), true);
             synchronization.stop();
             binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_play_arrow_24, null));
-            Toast.makeText(requireContext(), "Синхронизация завершена вручную!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sync_finished), Toast.LENGTH_SHORT).show();
         } else {
             binding.synchronizationLabel.setVisibility(View.VISIBLE);
             binding.synchronizationAction.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_stop_24, null));
@@ -131,7 +131,7 @@ public class SynchronizationFragment extends Fragment
         requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
             @Override
             public void inRun() {
-                setLogMessage("Соединение с сервером создано", false);
+                setLogMessage(getString(R.string.connect_toserver), false);
             }
         });
     }
@@ -175,7 +175,7 @@ public class SynchronizationFragment extends Fragment
                         binding.synchronizationFileCategory.setVisibility(View.GONE);
 
                         if(!isErrorFinished) {
-                            Toast.makeText(requireContext(), "Синхронизация завершена успешно!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), getString(R.string.sync_success), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -311,7 +311,7 @@ public class SynchronizationFragment extends Fragment
         requireActivity().runOnUiThread(new FragmentRunnable(SynchronizationFragment.this) {
             @Override
             public void inRun() {
-                setLogMessage("Соединение с сервером разорвано", false);
+                setLogMessage(getString(R.string.disconnect_server), false);
             }
         });
     }
