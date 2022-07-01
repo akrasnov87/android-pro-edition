@@ -25,7 +25,7 @@
         app:layout_constraintBottom_toBottomOf="@id/attach_item_image"
         android:visibility="gone"
         tools:visibility="visible"
-        android:elevation="@dimen/indent_8"/>
+        android:elevation="@dimen/indent_16"/>
 
     <ImageButton
         android:id="@+id/attach_item_trash"

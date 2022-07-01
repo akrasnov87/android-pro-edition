@@ -19,16 +19,14 @@
         app:layout_constraintBottom_toBottomOf="@id/osm_point_info_list_map"
         android:visibility="gone"
         tools:visibility="visible"
-        android:elevation="@dimen/indent_8"/>
+        android:elevation="@dimen/indent_16"/>
 
     <org.osmdroid.views.MapView android:id="@+id/osm_point_info_list_map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:minHeight="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/point_info_list"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/point_info_list" />
 
     <!--androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"

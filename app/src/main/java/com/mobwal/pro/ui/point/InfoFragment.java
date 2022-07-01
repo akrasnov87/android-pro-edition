@@ -10,6 +10,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -26,15 +28,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.mobwal.android.library.LogManager;
 import com.mobwal.pro.DataManager;
 import com.mobwal.pro.R;
-import com.mobwal.pro.WalkerApplication;
 import com.mobwal.pro.adapter.PointInfoItemAdapter;
 import com.mobwal.pro.databinding.FragmentPointInfoBinding;
 import com.mobwal.pro.models.PointInfo;
@@ -43,13 +45,8 @@ import com.mobwal.pro.models.db.Point;
 import com.mobwal.pro.models.db.Result;
 import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
+import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.OsmDroidUtil;
-
-import org.osmdroid.tileprovider.tilesource.BitmapTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
-import org.osmdroid.tileprovider.tilesource.TileSourcePolicy;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
-import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
@@ -75,9 +72,29 @@ public class InfoFragment extends Fragment
     @Nullable
     private Result[] mResults;
 
+    private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    @Nullable
+    private final ActivityResultLauncher<String[]> mPermissionActivityResultLauncher;
+
     public InfoFragment() {
         // Required empty public constructor
         mMarkers = new ArrayList<>();
+
+        mPermissionActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), this::onPermission);
+    }
+
+    public void onPermission(Map<String, Boolean> result) {
+        boolean areAllGranted = true;
+        for (Boolean b : result.values()) {
+            areAllGranted = areAllGranted && b;
+        }
+
+        if (!areAllGranted) {
+            String message = ActivityUtil.getMessageNotGranted(requireContext(), new String[] { requireContext().getString(R.string.location) });
+            Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).setAction(requireContext().getString(R.string.more), view -> requireContext().startActivity(ActivityUtil.getIntentApplicationSetting(requireContext()))).show();
+        } else {
+            startUpdates();
+        }
     }
 
     @Override
@@ -116,16 +133,6 @@ public class InfoFragment extends Fragment
 
         binding = FragmentPointInfoBinding.inflate(inflater, container, false);
         binding.pointInfoList.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.VISIBLE);
-            OsmDroidUtil.enableCompass(requireContext(), binding.osmPointInfoListMap);
-        } else {
-            LogManager.getInstance().debug("Точки. Информация. Доступ к геолокации не предоставлен.");
-            binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            Objects.requireNonNull(binding.osmPointInfoListMap).setVisibility(View.GONE);
-        }
 
         SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
         if(mLocation == null && settingRoute.geo) {
@@ -203,50 +210,45 @@ public class InfoFragment extends Fragment
 
         PointInfo[] items = mDataManager.getPointInfo(f_point);
 
-        if (items == null || items.length == 0) {
-            hiddenMap();
-        } else {
+        if (items != null && items.length > 0) {
             updateLocations(mLocation);
         }
 
         mPointInfoItemAdapter = new PointInfoItemAdapter(requireContext(), items, this);
         binding.pointInfoList.setAdapter(mPointInfoItemAdapter);
+    }
 
+    @SuppressLint("MissingPermission")
+    private void startUpdates() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             LogManager.getInstance().debug("Точки. Информация. Доступ к геолокации не предоставлен.");
-            return;
+            if(mPermissionActivityResultLauncher != null) {
+                mPermissionActivityResultLauncher.launch(REQUIRED_PERMISSIONS);
+            }
+
+            //binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        } else {
+            OsmDroidUtil.enableCompass(requireContext(), binding.osmPointInfoListMap);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
         }
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        startUpdates();
         Objects.requireNonNull(binding.osmPointInfoListMap).onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        Objects.requireNonNull(binding.osmPointInfoListMap).onPause();
     }
 
     @SuppressLint("MissingPermission")
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
 
         mLocationManager.removeUpdates(this);
-    }
-
-    /**
-     * Скрыть карту
-     */
-    private void hiddenMap() {
-        binding.osmPointInfoListMap.setVisibility(View.GONE);
+        Objects.requireNonNull(binding.osmPointInfoListMap).onPause();
     }
 
     /**

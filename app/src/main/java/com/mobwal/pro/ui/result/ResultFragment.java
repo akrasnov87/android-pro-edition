@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.UUID;
 
 import com.mobwal.android.library.LogManager;

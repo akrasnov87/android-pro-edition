@@ -30,9 +30,11 @@ public class Point {
     @Expose
     public String c_address;
 
+    @Expose
     @Nullable
     public Double n_latitude;
 
+    @Expose
     @Nullable
     public Double n_longitude;
 

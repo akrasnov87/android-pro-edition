@@ -235,7 +235,7 @@ public class DataManager {
 
         point.b_anomaly = true;
         point.__OBJECT_OPERATION_TYPE = DbOperationType.CREATED;
-        point.b_check = true;
+        point.b_check = false;
 
         return sqlContext.insertMany(new Point[] { point });
     }
