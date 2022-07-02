@@ -225,6 +225,7 @@ public class InfoFragment extends Fragment
             //binding.pointInfoList.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         } else {
             OsmDroidUtil.enableCompass(requireContext(), binding.osmPointInfoListMap);
+            mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 1, this);
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
         }
     }
