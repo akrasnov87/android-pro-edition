@@ -47,6 +47,8 @@ import com.mobwal.pro.models.db.Template;
 import com.mobwal.pro.ui.RecycleViewItemListeners;
 import com.mobwal.pro.utilits.ActivityUtil;
 import com.mobwal.pro.utilits.OsmDroidUtil;
+
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
@@ -133,6 +135,7 @@ public class InfoFragment extends Fragment
 
         binding = FragmentPointInfoBinding.inflate(inflater, container, false);
         binding.pointInfoList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.osmPointInfoListMap.getController().setZoom(18.0f);
 
         return binding.getRoot();
     }
@@ -322,10 +325,13 @@ public class InfoFragment extends Fragment
 
             mMarkers.add(marker);
         }
-        
+
 
         if(mMarkers.size() > 1) {
-            binding.osmPointInfoListMap.zoomToBoundingBox(OsmDroidUtil.toBoxing(points), true);
+            BoundingBox bb = OsmDroidUtil.toBoxing(points);
+            //binding.osmPointInfoListMap.zoomToBoundingBox(OsmDroidUtil.toBoxing(points), true);
+            binding.osmPointInfoListMap.getController().setCenter(bb.getCenterWithDateLine());
+            binding.osmPointInfoListMap.zoomToBoundingBox(bb, false);
         } else {
             // если одна точка
             if(mMarkers.size() == 1 && pointItem != null) {
