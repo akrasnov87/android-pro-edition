@@ -134,11 +134,6 @@ public class InfoFragment extends Fragment
         binding = FragmentPointInfoBinding.inflate(inflater, container, false);
         binding.pointInfoList.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        SettingRoute settingRoute = new SettingRoute(mDataManager.getRouteSettings());
-        if(mLocation == null && settingRoute.geo) {
-            binding.osmPointInfoProgress.setVisibility(View.VISIBLE);
-        }
-
         return binding.getRoot();
     }
 
@@ -399,7 +394,6 @@ public class InfoFragment extends Fragment
     @Override
     public void onLocationChanged(@NonNull Location location) {
         mLocation = location;
-        binding.osmPointInfoProgress.setVisibility(View.GONE);
         updateLocations(mLocation);
     }
 
